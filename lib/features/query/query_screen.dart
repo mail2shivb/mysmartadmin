@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/insight_card.dart';
 
 /// Query/Search screen
 /// 
@@ -31,75 +34,74 @@ class _QueryScreenState extends State<QueryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Search & Query'),
       ),
+      enableScroll: true,
+      padding: AppPadding.screen,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: SearchBar(
-              controller: _searchController,
-              hintText: 'Ask about your documents...',
-              leading: const Icon(Icons.search),
-              trailing: [
-                IconButton(
-                  icon: const Icon(Icons.mic_none),
-                  onPressed: () {
-                    // TODO: Voice input (on-device speech-to-text)
-                  },
-                  tooltip: 'Voice search',
-                ),
-              ],
-              onSubmitted: (query) {
-                // TODO: Execute query
-              },
-            ),
+          // Search bar
+          SearchBar(
+            controller: _searchController,
+            hintText: 'Ask about your documents...',
+            leading: const Icon(Icons.search),
+            trailing: [
+              IconButton(
+                icon: const Icon(Icons.mic_none),
+                onPressed: () {
+                  // TODO: Voice input (on-device speech-to-text)
+                },
+                tooltip: 'Voice search',
+              ),
+            ],
+            onSubmitted: (query) {
+              // TODO: Execute query
+            },
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              children: [
-                Text(
-                  'Example Queries',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                _buildExampleQuery(
-                  context,
-                  'When does my passport expire?',
-                ),
-                _buildExampleQuery(
-                  context,
-                  'List all active insurance policies',
-                ),
-                _buildExampleQuery(
-                  context,
-                  'Show my credit cards and limits',
-                ),
-                _buildExampleQuery(
-                  context,
-                  'What documents expire this month?',
-                ),
-              ],
-            ),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Example queries section
+          const SectionHeader(title: 'Example Queries'),
+          InsightCard(
+            leadingIcon: Icons.lightbulb_outline,
+            title: 'When does my passport expire?',
+            subtitle: 'Check expiry dates',
+            trailingIcon: Icons.arrow_forward_ios,
+            onTap: () {
+              _searchController.text = 'When does my passport expire?';
+            },
+          ),
+          InsightCard(
+            leadingIcon: Icons.lightbulb_outline,
+            title: 'List all active insurance policies',
+            subtitle: 'View insurance documents',
+            trailingIcon: Icons.arrow_forward_ios,
+            onTap: () {
+              _searchController.text = 'List all active insurance policies';
+            },
+          ),
+          InsightCard(
+            leadingIcon: Icons.lightbulb_outline,
+            title: 'Show my credit cards and limits',
+            subtitle: 'View banking information',
+            trailingIcon: Icons.arrow_forward_ios,
+            onTap: () {
+              _searchController.text = 'Show my credit cards and limits';
+            },
+          ),
+          InsightCard(
+            leadingIcon: Icons.lightbulb_outline,
+            title: 'What documents expire this month?',
+            subtitle: 'Upcoming expiries',
+            trailingIcon: Icons.arrow_forward_ios,
+            onTap: () {
+              _searchController.text = 'What documents expire this month?';
+            },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildExampleQuery(BuildContext context, String query) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: const Icon(Icons.lightbulb_outline),
-        title: Text(query),
-        onTap: () {
-          _searchController.text = query;
-          // TODO: Execute example query
-        },
       ),
     );
   }

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/colors.dart';
+import '../../core/ui/typography.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/insight_card.dart';
 import '../../core/utils/constants.dart';
 
 /// Settings screen
@@ -15,63 +21,60 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: ListView(
+      enableScroll: true,
+      padding: AppPadding.screen,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'Privacy'),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy Statement'),
-            subtitle: const Text(AppConstants.privacyStatement),
+          // Privacy section
+          const SectionHeader(title: 'Privacy'),
+          InsightCard(
+            leadingIcon: Icons.privacy_tip_outlined,
+            leadingIconColor: AppColors.success,
+            leadingIconBackground: AppColors.successLight,
+            title: 'Privacy First',
+            subtitle: AppConstants.privacyStatement,
           ),
-          const Divider(),
-          const _SectionHeader(title: 'Storage'),
-          ListTile(
-            leading: const Icon(Icons.storage),
-            title: const Text('Local Storage'),
-            subtitle: const Text('All data stored on device'),
-            trailing: const Text('0 MB'),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Storage section
+          const SectionHeader(title: 'Storage'),
+          InsightCard(
+            leadingIcon: Icons.storage,
+            leadingIconColor: AppColors.info,
+            leadingIconBackground: AppColors.infoLight,
+            title: 'Local Storage',
+            subtitle: '0 MB used · All data on device',
           ),
-          const Divider(),
-          const _SectionHeader(title: 'About'),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Version'),
-            subtitle: const Text(AppConstants.appVersion),
+          const SizedBox(height: AppSpacing.xl),
+
+          // About section
+          const SectionHeader(title: 'About'),
+          InsightCard(
+            leadingIcon: Icons.info_outline,
+            title: 'Version',
+            subtitle: AppConstants.appVersion,
           ),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: const Text('App Name'),
-            subtitle: const Text(AppConstants.appName),
+          InsightCard(
+            leadingIcon: Icons.description_outlined,
+            title: 'App Name',
+            subtitle: AppConstants.appName,
+          ),
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Footer
+          Center(
+            child: Text(
+              'Made with privacy in mind',
+              style: AppTypography.subtle(context),
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppConstants.defaultPadding,
-        24,
-        AppConstants.defaultPadding,
-        8,
-      ),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
       ),
     );
   }

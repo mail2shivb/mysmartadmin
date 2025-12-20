@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/router.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 
 /// Tasks screen
 /// 
@@ -23,7 +25,7 @@ class TasksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Tasks & Alerts'),
         actions: [
@@ -36,33 +38,18 @@ class TasksScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              context.push(AppRouter.settings);
-            },
+            onPressed: () => context.push(AppRouter.settings),
             tooltip: 'Settings',
           ),
         ],
       ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppConstants.defaultPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.task_alt, size: 64),
-              SizedBox(height: 16),
-              Text(
-                'No tasks yet',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Tasks will appear here when documents have upcoming expiry dates',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      padding: AppPadding.screen,
+      body: const EmptyStateWidget(
+        icon: Icons.task_alt,
+        title: 'No Tasks Yet',
+        description:
+            'Tasks and reminders will appear here automatically when your documents have upcoming expiry dates.',
+        primaryButtonLabel: 'Add Task',
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

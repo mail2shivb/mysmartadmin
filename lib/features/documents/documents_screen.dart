@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/router.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 
 /// Documents screen
 /// 
@@ -17,7 +19,7 @@ class DocumentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Documents'),
         actions: [
@@ -37,33 +39,19 @@ class DocumentsScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              context.push(AppRouter.settings);
-            },
+            onPressed: () => context.push(AppRouter.settings),
             tooltip: 'Settings',
           ),
         ],
       ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppConstants.defaultPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.description_outlined, size: 64),
-              SizedBox(height: 16),
-              Text(
-                'No documents yet',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Tap + to add your first document',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      padding: AppPadding.screen,
+      body: const EmptyStateWidget(
+        icon: Icons.description_outlined,
+        title: 'No Documents Yet',
+        description:
+            'Your documents are stored securely on this device only. Add your first document to get started.',
+        primaryButtonLabel: 'Add Document',
+        secondaryButtonLabel: 'Learn More',
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

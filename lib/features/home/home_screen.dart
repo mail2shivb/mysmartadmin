@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/router.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/colors.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/insight_card.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 
 /// Home screen - main dashboard
 /// 
@@ -16,50 +21,46 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appName),
-        centerTitle: false,
+        title: const Text('LedgerAI'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              context.push(AppRouter.settings);
-            },
+            onPressed: () => context.push(AppRouter.settings),
             tooltip: 'Settings',
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      enableScroll: true,
+      padding: AppPadding.screen,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Welcome section
           Text(
-            'Welcome to ${AppConstants.appName}',
-            style: Theme.of(context).textTheme.headlineMedium,
+            'Your Personal Record System',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Text(
-            AppConstants.privacyStatement,
-            style: Theme.of(context).textTheme.bodyMedium,
+            'All your important documents, stored securely on your device. No cloud sync, no analytics.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
-          const SizedBox(height: 24),
-          _buildSection(
-            context,
-            title: 'Upcoming Expiries',
-            icon: Icons.event_outlined,
-            child: const _EmptyStateMessage(
-              message: 'No documents with upcoming expiry dates',
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildSection(
-            context,
-            title: 'Recent Documents',
-            icon: Icons.history,
-            child: const _EmptyStateMessage(
-              message: 'No documents yet',
-            ),
-          ),
+          const SizedBox(height: AppSpacing.xxl),
+
+          // Upcoming expiries section
+          const SectionHeader(title: 'Upcoming Expiries'),
+          const _EmptyExpiryState(),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Recent documents section
+          const SectionHeader(title: 'Recent Documents'),
+          const _EmptyRecentState(),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -71,53 +72,41 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildSection(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Widget child,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            child,
-          ],
-        ),
-      ),
+class _EmptyExpiryState extends StatelessWidget {
+  const _EmptyExpiryState();
+
+  @override
+  Widget build(BuildContext context) {
+    return InsightCard(
+      leadingIcon: Icons.check_circle_outline,
+      leadingIconColor: AppColors.success,
+      leadingIconBackground: AppColors.successLight,
+      title: 'All Clear',
+      subtitle: 'No documents expiring soon',
     );
   }
 }
 
-class _EmptyStateMessage extends StatelessWidget {
-  final String message;
-
-  const _EmptyStateMessage({required this.message});
+class _EmptyRecentState extends StatelessWidget {
+  const _EmptyRecentState();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        message,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-        textAlign: TextAlign.center,
+    return Card(
+      child: Padding(
+        padding: AppPadding.card,
+        child: EmptyStateWidget(
+          icon: Icons.description_outlined,
+          title: 'No Documents Yet',
+          description:
+              'Start by adding your first document. Everything stays private on your device.',
+          primaryButtonLabel: 'Add Your First Document',
+          onPrimaryButtonPressed: () {
+            // TODO: Navigate to add document
+          },
+        ),
       ),
     );
   }

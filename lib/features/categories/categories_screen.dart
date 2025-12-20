@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/taxonomy/domain.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/colors.dart';
+import '../../core/ui/typography.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/insight_card.dart';
 
 /// Categories screen
 /// 
@@ -21,17 +25,22 @@ class CategoriesScreen extends StatelessWidget {
     final domains = Domain.values.toList()
       ..sort((a, b) => a.priority.compareTo(b.priority));
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Categories'),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        itemCount: domains.length,
-        itemBuilder: (context, index) {
-          final domain = domains[index];
-          return _DomainCard(domain: domain);
-        },
+      enableScroll: true,
+      padding: AppPadding.screen,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Browse by category',
+            style: AppTypography.muted(context),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ...domains.map((domain) => _DomainCard(domain: domain)),
+        ],
       ),
     );
   }
@@ -42,23 +51,58 @@ class _DomainCard extends StatelessWidget {
 
   const _DomainCard({required this.domain});
 
+  Color _getIconBackground() {
+    switch (domain) {
+      case Domain.identityLegal:
+        return AppColors.iconBackgroundBlue;
+      case Domain.vehiclesTransport:
+        return AppColors.iconBackgroundOrange;
+      case Domain.propertyHome:
+        return AppColors.iconBackgroundGreen;
+      case Domain.insuranceProtection:
+        return AppColors.iconBackgroundPurple;
+      case Domain.bankingCredit:
+        return AppColors.iconBackgroundBlue;
+      case Domain.subscriptionsMemberships:
+        return AppColors.iconBackgroundOrange;
+      case Domain.employmentIncome:
+        return AppColors.iconBackgroundGreen;
+      case Domain.general:
+        return AppColors.iconBackgroundGrey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(domain.icon),
-        ),
-        title: Text(domain.displayName),
-        subtitle: domain.priority == 1
-            ? const Text('MVP Priority', style: TextStyle(fontSize: 12))
-            : null,
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          // TODO: Navigate to domain detail screen
-        },
-      ),
+    return InsightCard(
+      leadingIcon: domain.icon,
+      leadingIconBackground: _getIconBackground(),
+      leadingIconColor: Theme.of(context).colorScheme.primary,
+      title: domain.displayName,
+      subtitle: domain.priority == 1 ? 'Start here first' : null,
+      badge: domain.priority == 1
+          ? Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.info.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
+              child: Text(
+                'MVP',
+                style: AppTypography.labelSmall(context).copyWith(
+                  color: AppColors.info,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+          : null,
+      trailingIcon: Icons.arrow_forward_ios,
+      onTap: () {
+        // TODO: Navigate to domain detail screen
+      },
     );
   }
 }
