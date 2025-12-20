@@ -1,0 +1,7 @@
+- spacing scale (8/12/16/20/24/32)
+- typography scale
+- corner radius rules (12/16/20)
+- shadows and surfaces rules
+- icon rules
+- tone of voice for microcopy
+- accessibility rules (tap targets, contrast)

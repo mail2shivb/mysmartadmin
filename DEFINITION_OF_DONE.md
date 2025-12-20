@@ -1,0 +1,7 @@
+- flutter pub get
+- flutter run
+- dart analyze
+- app navigation works
+- no dead routes
+- no unused imports
+- no placeholder empty files
