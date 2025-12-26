@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../tokens.dart';
+import '../theme_inherited_widget.dart';
 
 /// Domain icon with circular background
 /// 
 /// Used for displaying domain categories with subtle accent colors.
+/// Adapts to current theme automatically.
 class DomainIconBadge extends StatelessWidget {
   final IconData icon;
   final Color? backgroundColor;
@@ -44,6 +46,7 @@ class DomainIconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppThemeProvider.colorsOf(context);
     final badgeSize = size ?? AppSizes.avatarMedium;
     final iconSize = badgeSize * 0.5;
 
@@ -51,14 +54,13 @@ class DomainIconBadge extends StatelessWidget {
       width: badgeSize,
       height: badgeSize,
       decoration: BoxDecoration(
-        color: backgroundColor ??
-            Theme.of(context).colorScheme.primaryContainer,
+        color: backgroundColor ?? colors.iconBackground, // Use semantic icon background token
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Icon(
         icon,
         size: iconSize,
-        color: iconColor ?? Theme.of(context).colorScheme.primary,
+        color: iconColor ?? colors.primary,
       ),
     );
   }

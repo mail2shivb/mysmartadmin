@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 /// Application color palette
 /// 
-/// Design principles:
-/// - Calm, trustworthy colors
-/// - No aggressive finance-shaming colors
-/// - Accessible contrast ratios
-/// - Subtle semantic colors
+/// DEPRECATED: This class is deprecated in favor of the semantic theme system.
+/// Use AppThemeProvider.colorsOf(context) in widgets instead.
+/// 
+/// Example migration:
+///   Before: AppColors.primary
+///   After:  AppThemeProvider.colorsOf(context).primary
+/// 
+/// Kept temporarily for reference during migration.
+@Deprecated('Use AppThemeProvider.colorsOf(context) instead')
 class AppColors {
   AppColors._();
 

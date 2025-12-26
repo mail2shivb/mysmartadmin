@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/taxonomy/domain.dart';
 import '../../core/ui/tokens.dart';
-import '../../core/ui/colors.dart';
 import '../../core/ui/typography.dart';
+import '../../core/ui/theme_inherited_widget.dart';
 import '../../core/ui/components/app_scaffold.dart';
 import '../../core/ui/components/insight_card.dart';
 
@@ -51,32 +51,36 @@ class _DomainCard extends StatelessWidget {
 
   const _DomainCard({required this.domain});
 
-  Color _getIconBackground() {
+  Color _getIconBackground(BuildContext context) {
+    final colors = AppThemeProvider.colorsOf(context);
+    
     switch (domain) {
       case Domain.identityLegal:
-        return AppColors.iconBackgroundBlue;
+        return colors.iconBackgroundBlue;
       case Domain.vehiclesTransport:
-        return AppColors.iconBackgroundOrange;
+        return colors.iconBackgroundOrange;
       case Domain.propertyHome:
-        return AppColors.iconBackgroundGreen;
+        return colors.iconBackgroundGreen;
       case Domain.insuranceProtection:
-        return AppColors.iconBackgroundPurple;
+        return colors.iconBackgroundPurple;
       case Domain.bankingCredit:
-        return AppColors.iconBackgroundBlue;
+        return colors.iconBackgroundBlue;
       case Domain.subscriptionsMemberships:
-        return AppColors.iconBackgroundOrange;
+        return colors.iconBackgroundOrange;
       case Domain.employmentIncome:
-        return AppColors.iconBackgroundGreen;
+        return colors.iconBackgroundGreen;
       case Domain.general:
-        return AppColors.iconBackgroundGrey;
+        return colors.iconBackgroundGrey;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppThemeProvider.colorsOf(context);
+    
     return InsightCard(
       leadingIcon: domain.icon,
-      leadingIconBackground: _getIconBackground(),
+      leadingIconBackground: _getIconBackground(context),
       leadingIconColor: Theme.of(context).colorScheme.primary,
       title: domain.displayName,
       subtitle: domain.priority == 1 ? 'Start here first' : null,
@@ -87,13 +91,13 @@ class _DomainCard extends StatelessWidget {
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha: 0.1),
+                color: colors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Text(
                 'MVP',
                 style: AppTypography.labelSmall(context).copyWith(
-                  color: AppColors.info,
+                  color: colors.info,
                   fontWeight: FontWeight.w600,
                 ),
               ),

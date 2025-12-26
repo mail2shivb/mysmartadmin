@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../tokens.dart';
 import '../typography.dart';
+import '../theme_inherited_widget.dart';
 
 /// Premium card for displaying information
 /// 
@@ -10,6 +11,7 @@ import '../typography.dart';
 /// - Optional badge
 /// - Optional trailing icon
 /// - Consistent styling
+/// - Adapts to current theme automatically
 class InsightCard extends StatelessWidget {
   final IconData? leadingIcon;
   final Color? leadingIconColor;
@@ -36,6 +38,8 @@ class InsightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppThemeProvider.colorsOf(context);
+    
     final card = Card(
       margin: margin ?? const EdgeInsets.only(bottom: AppSpacing.sm),
       child: InkWell(
@@ -51,15 +55,13 @@ class InsightCard extends StatelessWidget {
                   width: AppSizes.avatarSmall,
                   height: AppSizes.avatarSmall,
                   decoration: BoxDecoration(
-                    color: leadingIconBackground ??
-                        Theme.of(context).colorScheme.primaryContainer,
+                    color: leadingIconBackground ?? colors.iconBackground, // Use semantic token
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Icon(
                     leadingIcon,
                     size: AppSizes.iconMedium,
-                    color: leadingIconColor ??
-                        Theme.of(context).colorScheme.primary,
+                    color: leadingIconColor ?? colors.primary,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),

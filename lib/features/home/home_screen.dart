@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/router.dart';
 import '../../core/ui/tokens.dart';
-import '../../core/ui/colors.dart';
+import '../../core/ui/theme_inherited_widget.dart';
 import '../../core/ui/components/app_scaffold.dart';
 import '../../core/ui/components/section_header.dart';
 import '../../core/ui/components/insight_card.dart';
@@ -79,10 +79,12 @@ class _EmptyExpiryState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppThemeProvider.colorsOf(context);
+    
     return InsightCard(
       leadingIcon: Icons.check_circle_outline,
-      leadingIconColor: AppColors.success,
-      leadingIconBackground: AppColors.successLight,
+      leadingIconColor: colors.success,
+      leadingIconBackground: colors.successLight,
       title: 'All Clear',
       subtitle: 'No documents expiring soon',
     );
