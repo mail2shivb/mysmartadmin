@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'shell_scaffold.dart';
-import '../features/home/home_screen.dart';
-import '../features/documents/documents_screen.dart';
+import '../features/dashboard/dashboard_screen.dart';
+import '../features/bills/bills_screen.dart';
+import '../features/documents/documents_functional_screen.dart';
+import '../features/reminders/reminders_screen.dart';
 import '../features/categories/categories_screen.dart';
 import '../features/query/query_screen.dart';
 import '../features/tasks/tasks_screen.dart';
@@ -33,7 +35,9 @@ class AppRouter {
 
   /// Route paths
   static const String home = '/home';
+  static const String bills = '/bills';
   static const String documents = '/documents';
+  static const String reminders = '/reminders';
   static const String categories = '/categories';
   static const String query = '/query';
   static const String tasks = '/tasks';
@@ -55,11 +59,19 @@ class AppRouter {
           );
         },
         routes: [
-          // Home tab
+          // Dashboard tab
           GoRoute(
             path: home,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: HomeScreen(),
+              child: DashboardScreen(),
+            ),
+          ),
+          
+          // Bills tab
+          GoRoute(
+            path: bills,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: BillsScreen(),
             ),
           ),
           
@@ -67,27 +79,19 @@ class AppRouter {
           GoRoute(
             path: documents,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: DocumentsScreen(),
+              child: DocumentsFunctionalScreen(),
             ),
           ),
           
-          // Categories tab
+          // Reminders tab
           GoRoute(
-            path: categories,
+            path: reminders,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: CategoriesScreen(),
+              child: RemindersScreen(),
             ),
           ),
           
-          // Query tab
-          GoRoute(
-            path: query,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: QueryScreen(),
-            ),
-          ),
-          
-          // Tasks tab
+          // Tasks tab (keep existing)
           GoRoute(
             path: tasks,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -111,11 +115,11 @@ class AppRouter {
     switch (location) {
       case home:
         return 0;
-      case documents:
+      case bills:
         return 1;
-      case categories:
+      case documents:
         return 2;
-      case query:
+      case reminders:
         return 3;
       case tasks:
         return 4;
@@ -130,11 +134,11 @@ class AppRouter {
       case 0:
         return home;
       case 1:
-        return documents;
+        return bills;
       case 2:
-        return categories;
+        return documents;
       case 3:
-        return query;
+        return reminders;
       case 4:
         return tasks;
       default:
