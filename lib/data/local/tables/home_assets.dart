@@ -74,3 +74,5 @@ class HomeAssets extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+
+

@@ -82,3 +82,5 @@ class Vehicles extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+
+

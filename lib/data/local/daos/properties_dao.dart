@@ -312,3 +312,5 @@ class PropertiesDao extends DatabaseAccessor<AppDatabase> with _$PropertiesDaoMi
   }
 }
 
+
+

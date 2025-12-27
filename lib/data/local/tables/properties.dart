@@ -73,3 +73,5 @@ class Properties extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+
+
