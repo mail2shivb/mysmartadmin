@@ -242,5 +242,33 @@ class RemindersDao extends DatabaseAccessor<AppDatabase> with _$RemindersDaoMixi
     final result = await query.getSingle();
     return result.read(reminders.id.count()) ?? 0;
   }
+
+  /// Cancel bill reminders for a specific bill
+  /// 
+  /// Uses description field pattern [ENTITY:bill:$billId] for matching
+  Future<void> cancelBillReminders(int billId) async {
+    // Get bill_due reminders that are not completed/cancelled
+    final candidates = await (select(reminders)
+          ..where((r) => r.reminderType.equals('bill_due'))
+          ..where((r) => r.deletedAt.isNull())
+          ..where((r) => r.status.isNotIn(['completed', 'cancelled'])))
+        .get();
+
+    // Filter by entity identifier in description
+    final billReminders = candidates.where(
+      (r) => r.description != null && 
+             r.description!.contains('[ENTITY:bill:$billId]'),
+    );
+
+    // Cancel each matching reminder
+    for (final reminder in billReminders) {
+      await (update(reminders)..where((t) => t.id.equals(reminder.id))).write(
+        RemindersCompanion(
+          status: const Value('cancelled'),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+    }
+  }
 }
 

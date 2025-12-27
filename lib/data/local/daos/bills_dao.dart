@@ -302,5 +302,14 @@ class BillsDao extends DatabaseAccessor<AppDatabase> with _$BillsDaoMixin {
 
     return into(bills).insert(newVersion);
   }
+
+  Future<List<BillEntity>> getAllVersionsForBill(int billId) {
+    return (select(bills)
+      ..where((b) =>
+      b.id.equals(billId) |
+      b.previousVersionId.equals(billId)))
+        .get();
+  }
+
 }
 
