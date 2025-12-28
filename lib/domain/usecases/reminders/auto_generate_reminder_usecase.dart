@@ -22,7 +22,6 @@ class AutoGenerateReminderUseCase {
     required DateTime reminderDate,
     required String title,
     String? description,
-    int priority = 0,
   }) async {
     if (documentId <= 0) {
       throw ArgumentError('Invalid document ID');
@@ -60,12 +59,13 @@ class AutoGenerateReminderUseCase {
     // Create the auto-generated reminder
     final reminderId = await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: 'document',
+        entityId: documentId,
         title: title,
         reminderDate: reminderDate,
         reminderType: reminderType,
         description: Value(description),
         documentId: Value(documentId),
-        priority: Value(priority),
         status: const Value('pending'),
       ),
     );

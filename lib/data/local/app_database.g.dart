@@ -1586,6 +1586,28 @@ class $RemindersTable extends Reminders
       'REFERENCES documents (id) ON DELETE CASCADE',
     ),
   );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<int> entityId = GeneratedColumn<int>(
+    'entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -1691,18 +1713,6 @@ class $RemindersTable extends Reminders
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _priorityMeta = const VerificationMeta(
-    'priority',
-  );
-  @override
-  late final GeneratedColumn<int> priority = GeneratedColumn<int>(
-    'priority',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
   static const VerificationMeta _deletedAtMeta = const VerificationMeta(
     'deletedAt',
   );
@@ -1742,6 +1752,8 @@ class $RemindersTable extends Reminders
   List<GeneratedColumn> get $columns => [
     id,
     documentId,
+    entityType,
+    entityId,
     title,
     description,
     reminderType,
@@ -1751,7 +1763,6 @@ class $RemindersTable extends Reminders
     recurrencePattern,
     status,
     completedAt,
-    priority,
     deletedAt,
     createdAt,
     updatedAt,
@@ -1776,6 +1787,22 @@ class $RemindersTable extends Reminders
         _documentIdMeta,
         documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
       );
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityIdMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -1858,12 +1885,6 @@ class $RemindersTable extends Reminders
         ),
       );
     }
-    if (data.containsKey('priority')) {
-      context.handle(
-        _priorityMeta,
-        priority.isAcceptableOrUnknown(data['priority']!, _priorityMeta),
-      );
-    }
     if (data.containsKey('deleted_at')) {
       context.handle(
         _deletedAtMeta,
@@ -1899,6 +1920,14 @@ class $RemindersTable extends Reminders
         DriftSqlType.int,
         data['${effectivePrefix}document_id'],
       ),
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}entity_id'],
+      )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -1935,10 +1964,6 @@ class $RemindersTable extends Reminders
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
       ),
-      priority: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}priority'],
-      )!,
       deletedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}deleted_at'],
@@ -1963,6 +1988,8 @@ class $RemindersTable extends Reminders
 class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   final int id;
   final int? documentId;
+  final String entityType;
+  final int entityId;
   final String title;
   final String? description;
   final String reminderType;
@@ -1972,13 +1999,14 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   final String? recurrencePattern;
   final String status;
   final DateTime? completedAt;
-  final int priority;
   final DateTime? deletedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   const ReminderEntity({
     required this.id,
     this.documentId,
+    required this.entityType,
+    required this.entityId,
     required this.title,
     this.description,
     required this.reminderType,
@@ -1988,7 +2016,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     this.recurrencePattern,
     required this.status,
     this.completedAt,
-    required this.priority,
     this.deletedAt,
     required this.createdAt,
     required this.updatedAt,
@@ -2000,6 +2027,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     if (!nullToAbsent || documentId != null) {
       map['document_id'] = Variable<int>(documentId);
     }
+    map['entity_type'] = Variable<String>(entityType);
+    map['entity_id'] = Variable<int>(entityId);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -2017,7 +2046,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
     }
-    map['priority'] = Variable<int>(priority);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
     }
@@ -2032,6 +2060,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       documentId: documentId == null && nullToAbsent
           ? const Value.absent()
           : Value(documentId),
+      entityType: Value(entityType),
+      entityId: Value(entityId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -2049,7 +2079,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
-      priority: Value(priority),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
@@ -2066,6 +2095,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     return ReminderEntity(
       id: serializer.fromJson<int>(json['id']),
       documentId: serializer.fromJson<int?>(json['documentId']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<int>(json['entityId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       reminderType: serializer.fromJson<String>(json['reminderType']),
@@ -2077,7 +2108,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       ),
       status: serializer.fromJson<String>(json['status']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
-      priority: serializer.fromJson<int>(json['priority']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -2089,6 +2119,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'documentId': serializer.toJson<int?>(documentId),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<int>(entityId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'reminderType': serializer.toJson<String>(reminderType),
@@ -2098,7 +2130,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       'recurrencePattern': serializer.toJson<String?>(recurrencePattern),
       'status': serializer.toJson<String>(status),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
-      'priority': serializer.toJson<int>(priority),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -2108,6 +2139,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   ReminderEntity copyWith({
     int? id,
     Value<int?> documentId = const Value.absent(),
+    String? entityType,
+    int? entityId,
     String? title,
     Value<String?> description = const Value.absent(),
     String? reminderType,
@@ -2117,13 +2150,14 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     Value<String?> recurrencePattern = const Value.absent(),
     String? status,
     Value<DateTime?> completedAt = const Value.absent(),
-    int? priority,
     Value<DateTime?> deletedAt = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => ReminderEntity(
     id: id ?? this.id,
     documentId: documentId.present ? documentId.value : this.documentId,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId ?? this.entityId,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     reminderType: reminderType ?? this.reminderType,
@@ -2135,7 +2169,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
         : this.recurrencePattern,
     status: status ?? this.status,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
-    priority: priority ?? this.priority,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -2146,6 +2179,10 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       documentId: data.documentId.present
           ? data.documentId.value
           : this.documentId,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -2169,7 +2206,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
-      priority: data.priority.present ? data.priority.value : this.priority,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -2181,6 +2217,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     return (StringBuffer('ReminderEntity(')
           ..write('id: $id, ')
           ..write('documentId: $documentId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('reminderType: $reminderType, ')
@@ -2190,7 +2228,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
           ..write('recurrencePattern: $recurrencePattern, ')
           ..write('status: $status, ')
           ..write('completedAt: $completedAt, ')
-          ..write('priority: $priority, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -2202,6 +2239,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   int get hashCode => Object.hash(
     id,
     documentId,
+    entityType,
+    entityId,
     title,
     description,
     reminderType,
@@ -2211,7 +2250,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     recurrencePattern,
     status,
     completedAt,
-    priority,
     deletedAt,
     createdAt,
     updatedAt,
@@ -2222,6 +2260,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       (other is ReminderEntity &&
           other.id == this.id &&
           other.documentId == this.documentId &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
           other.title == this.title &&
           other.description == this.description &&
           other.reminderType == this.reminderType &&
@@ -2231,7 +2271,6 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
           other.recurrencePattern == this.recurrencePattern &&
           other.status == this.status &&
           other.completedAt == this.completedAt &&
-          other.priority == this.priority &&
           other.deletedAt == this.deletedAt &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -2240,6 +2279,8 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
 class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   final Value<int> id;
   final Value<int?> documentId;
+  final Value<String> entityType;
+  final Value<int> entityId;
   final Value<String> title;
   final Value<String?> description;
   final Value<String> reminderType;
@@ -2249,13 +2290,14 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   final Value<String?> recurrencePattern;
   final Value<String> status;
   final Value<DateTime?> completedAt;
-  final Value<int> priority;
   final Value<DateTime?> deletedAt;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const RemindersCompanion({
     this.id = const Value.absent(),
     this.documentId = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.reminderType = const Value.absent(),
@@ -2265,7 +2307,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     this.recurrencePattern = const Value.absent(),
     this.status = const Value.absent(),
     this.completedAt = const Value.absent(),
-    this.priority = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -2273,6 +2314,8 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   RemindersCompanion.insert({
     this.id = const Value.absent(),
     this.documentId = const Value.absent(),
+    required String entityType,
+    required int entityId,
     required String title,
     this.description = const Value.absent(),
     required String reminderType,
@@ -2282,16 +2325,19 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     this.recurrencePattern = const Value.absent(),
     this.status = const Value.absent(),
     this.completedAt = const Value.absent(),
-    this.priority = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : title = Value(title),
+  }) : entityType = Value(entityType),
+       entityId = Value(entityId),
+       title = Value(title),
        reminderType = Value(reminderType),
        reminderDate = Value(reminderDate);
   static Insertable<ReminderEntity> custom({
     Expression<int>? id,
     Expression<int>? documentId,
+    Expression<String>? entityType,
+    Expression<int>? entityId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<String>? reminderType,
@@ -2301,7 +2347,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     Expression<String>? recurrencePattern,
     Expression<String>? status,
     Expression<DateTime>? completedAt,
-    Expression<int>? priority,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -2309,6 +2354,8 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (documentId != null) 'document_id': documentId,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (reminderType != null) 'reminder_type': reminderType,
@@ -2318,7 +2365,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
       if (recurrencePattern != null) 'recurrence_pattern': recurrencePattern,
       if (status != null) 'status': status,
       if (completedAt != null) 'completed_at': completedAt,
-      if (priority != null) 'priority': priority,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -2328,6 +2374,8 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   RemindersCompanion copyWith({
     Value<int>? id,
     Value<int?>? documentId,
+    Value<String>? entityType,
+    Value<int>? entityId,
     Value<String>? title,
     Value<String?>? description,
     Value<String>? reminderType,
@@ -2337,7 +2385,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     Value<String?>? recurrencePattern,
     Value<String>? status,
     Value<DateTime?>? completedAt,
-    Value<int>? priority,
     Value<DateTime?>? deletedAt,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -2345,6 +2392,8 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     return RemindersCompanion(
       id: id ?? this.id,
       documentId: documentId ?? this.documentId,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
       title: title ?? this.title,
       description: description ?? this.description,
       reminderType: reminderType ?? this.reminderType,
@@ -2354,7 +2403,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
       recurrencePattern: recurrencePattern ?? this.recurrencePattern,
       status: status ?? this.status,
       completedAt: completedAt ?? this.completedAt,
-      priority: priority ?? this.priority,
       deletedAt: deletedAt ?? this.deletedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -2369,6 +2417,12 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     }
     if (documentId.present) {
       map['document_id'] = Variable<int>(documentId.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<int>(entityId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -2397,9 +2451,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
     }
-    if (priority.present) {
-      map['priority'] = Variable<int>(priority.value);
-    }
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
@@ -2417,6 +2468,8 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     return (StringBuffer('RemindersCompanion(')
           ..write('id: $id, ')
           ..write('documentId: $documentId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('reminderType: $reminderType, ')
@@ -2426,7 +2479,6 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
           ..write('recurrencePattern: $recurrencePattern, ')
           ..write('status: $status, ')
           ..write('completedAt: $completedAt, ')
-          ..write('priority: $priority, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -24640,6 +24692,8 @@ typedef $$RemindersTableCreateCompanionBuilder =
     RemindersCompanion Function({
       Value<int> id,
       Value<int?> documentId,
+      required String entityType,
+      required int entityId,
       required String title,
       Value<String?> description,
       required String reminderType,
@@ -24649,7 +24703,6 @@ typedef $$RemindersTableCreateCompanionBuilder =
       Value<String?> recurrencePattern,
       Value<String> status,
       Value<DateTime?> completedAt,
-      Value<int> priority,
       Value<DateTime?> deletedAt,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -24658,6 +24711,8 @@ typedef $$RemindersTableUpdateCompanionBuilder =
     RemindersCompanion Function({
       Value<int> id,
       Value<int?> documentId,
+      Value<String> entityType,
+      Value<int> entityId,
       Value<String> title,
       Value<String?> description,
       Value<String> reminderType,
@@ -24667,7 +24722,6 @@ typedef $$RemindersTableUpdateCompanionBuilder =
       Value<String?> recurrencePattern,
       Value<String> status,
       Value<DateTime?> completedAt,
-      Value<int> priority,
       Value<DateTime?> deletedAt,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -24708,6 +24762,16 @@ class $$RemindersTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get entityId => $composableBuilder(
+    column: $table.entityId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24753,11 +24817,6 @@ class $$RemindersTableFilterComposer
 
   ColumnFilters<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get priority => $composableBuilder(
-    column: $table.priority,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24814,6 +24873,16 @@ class $$RemindersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -24856,11 +24925,6 @@ class $$RemindersTableOrderingComposer
 
   ColumnOrderings<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get priority => $composableBuilder(
-    column: $table.priority,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24915,6 +24979,14 @@ class $$RemindersTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get entityId =>
+      $composableBuilder(column: $table.entityId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -24955,9 +25027,6 @@ class $$RemindersTableAnnotationComposer
     column: $table.completedAt,
     builder: (column) => column,
   );
-
-  GeneratedColumn<int> get priority =>
-      $composableBuilder(column: $table.priority, builder: (column) => column);
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
@@ -25022,6 +25091,8 @@ class $$RemindersTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> documentId = const Value.absent(),
+                Value<String> entityType = const Value.absent(),
+                Value<int> entityId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String> reminderType = const Value.absent(),
@@ -25031,13 +25102,14 @@ class $$RemindersTableTableManager
                 Value<String?> recurrencePattern = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
-                Value<int> priority = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => RemindersCompanion(
                 id: id,
                 documentId: documentId,
+                entityType: entityType,
+                entityId: entityId,
                 title: title,
                 description: description,
                 reminderType: reminderType,
@@ -25047,7 +25119,6 @@ class $$RemindersTableTableManager
                 recurrencePattern: recurrencePattern,
                 status: status,
                 completedAt: completedAt,
-                priority: priority,
                 deletedAt: deletedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -25056,6 +25127,8 @@ class $$RemindersTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> documentId = const Value.absent(),
+                required String entityType,
+                required int entityId,
                 required String title,
                 Value<String?> description = const Value.absent(),
                 required String reminderType,
@@ -25065,13 +25138,14 @@ class $$RemindersTableTableManager
                 Value<String?> recurrencePattern = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
-                Value<int> priority = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => RemindersCompanion.insert(
                 id: id,
                 documentId: documentId,
+                entityType: entityType,
+                entityId: entityId,
                 title: title,
                 description: description,
                 reminderType: reminderType,
@@ -25081,7 +25155,6 @@ class $$RemindersTableTableManager
                 recurrencePattern: recurrencePattern,
                 status: status,
                 completedAt: completedAt,
-                priority: priority,
                 deletedAt: deletedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

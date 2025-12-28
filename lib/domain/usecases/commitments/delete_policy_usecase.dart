@@ -37,6 +37,11 @@ class DeletePolicyUseCase {
         ));
       }
 
+      await _database.remindersDao.cancelRemindersForEntity(
+        entityType: 'policy',
+        entityId: policyId,
+      );
+
       return rowsAffected > 0;
     });
   }

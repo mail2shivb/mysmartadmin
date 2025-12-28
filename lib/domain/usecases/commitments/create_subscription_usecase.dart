@@ -104,10 +104,12 @@ class CreateSubscriptionUseCase {
       return;
     }
 
-    // Create the reminder with entity identifier in description
+    // Create the reminder with entity identifier
     final reminderType = isTrial ? 'Trial ending' : 'Subscription renewal';
     await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: 'subscription',
+        entityId: subscriptionId,
         title: '$reminderType: $subscriptionName',
         description: Value('[ENTITY:subscription:$subscriptionId] Renews on ${renewalDate.toIso8601String().split('T')[0]}'),
         reminderDate: reminderDate,

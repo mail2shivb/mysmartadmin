@@ -133,6 +133,8 @@ class UpdateBillUseCase {
       // Create new reminder with entity identifier
       await _database.remindersDao.createReminder(
         RemindersCompanion.insert(
+          entityType: 'bill',
+          entityId: billId,
           title: 'Bill Due: $billName',
           description: Value('[ENTITY:bill:$billId] Bill payment due on ${dueDate.toIso8601String().split('T')[0]}'),
           reminderDate: reminderDate,

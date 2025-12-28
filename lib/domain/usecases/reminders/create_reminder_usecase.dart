@@ -14,6 +14,8 @@ class CreateReminderUseCase {
   /// 
   /// Returns the ID of the newly created reminder
   Future<int> call({
+    required String entityType,
+    required int entityId,
     required String title,
     required DateTime reminderDate,
     required String reminderType,
@@ -21,7 +23,6 @@ class CreateReminderUseCase {
     int? documentId,
     bool isRecurring = false,
     String? recurrencePattern,
-    int priority = 0,
   }) async {
     // Use centralized entity validator
     EntityValidators.validateReminder(
@@ -41,6 +42,8 @@ class CreateReminderUseCase {
     // Create the reminder with status = pending
     final reminderId = await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: entityType,
+        entityId: entityId,
         title: title,
         reminderDate: reminderDate,
         reminderType: reminderType,
@@ -48,7 +51,6 @@ class CreateReminderUseCase {
         documentId: Value(documentId),
         isRecurring: Value(isRecurring),
         recurrencePattern: Value(recurrencePattern),
-        priority: Value(priority),
         status: const Value('pending'),
       ),
     );

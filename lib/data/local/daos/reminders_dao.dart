@@ -270,5 +270,24 @@ class RemindersDao extends DatabaseAccessor<AppDatabase> with _$RemindersDaoMixi
       );
     }
   }
+
+  Future<void> cancelRemindersForEntity({
+    required String entityType,
+    required int entityId,
+  }) async {
+    await (update(reminders)
+      ..where((r) =>
+      r.entityType.equals(entityType) &
+      r.entityId.equals(entityId) &
+      r.deletedAt.isNull() &
+      r.status.isNotIn(['completed', 'cancelled'])))
+        .write(
+      RemindersCompanion(
+        status: const Value('cancelled'),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
 }
 

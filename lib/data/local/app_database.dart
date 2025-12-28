@@ -90,7 +90,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -99,11 +99,13 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        // Future migrations will go here
-        // Example:
-        // if (from < 2) {
-        //   await m.addColumn(documents, documents.newColumn);
-        // }
+        // Schema v2: Added entityType and entityId to Reminders table
+        if (from < 2) {
+          // Simplest migration: drop and recreate reminders table
+          // (Acceptable for development - reminders are transient data)
+          await m.deleteTable(reminders.actualTableName);
+          await m.createTable(reminders);
+        }
       },
       beforeOpen: (details) async {
         // Enable foreign keys

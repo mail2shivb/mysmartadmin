@@ -133,6 +133,8 @@ class UpdateSubscriptionUseCase {
       // Create new reminder with entity identifier
       await _database.remindersDao.createReminder(
         RemindersCompanion.insert(
+          entityType: 'subscription',
+          entityId: subscriptionId,
           title: 'Subscription renewal: $subscriptionName',
           description: Value('[ENTITY:subscription:$subscriptionId] Renews on ${renewalDate.toIso8601String().split('T')[0]}'),
           reminderDate: reminderDate,

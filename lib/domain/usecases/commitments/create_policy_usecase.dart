@@ -105,9 +105,11 @@ class CreatePolicyUseCase {
       return;
     }
 
-    // Create the reminder with entity identifier in description
+    // Create the reminder with entity identifier
     await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: 'policy',
+        entityId: policyId,
         title: 'Policy Renewal: $policyName',
         description: Value('[ENTITY:policy:$policyId] Policy renewal due on ${renewalDate.toIso8601String().split('T')[0]}'),
         reminderDate: reminderDate,

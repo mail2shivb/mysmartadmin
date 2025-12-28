@@ -37,6 +37,11 @@ class DeleteSubscriptionUseCase {
         ));
       }
 
+      await _database.remindersDao.cancelRemindersForEntity(
+        entityType: 'subscription',
+        entityId: subscriptionId,
+      );
+
       return rowsAffected > 0;
     });
   }

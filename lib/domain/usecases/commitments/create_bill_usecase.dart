@@ -95,9 +95,11 @@ class CreateBillUseCase {
       return;
     }
 
-    // Create the reminder with entity identifier in description
+    // Create the reminder with entity identifier
     await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: 'bill',
+        entityId: billId,
         title: 'Bill Due: $billName',
         description: Value('[ENTITY:bill:$billId] Bill payment due on ${dueDate.toIso8601String().split('T')[0]}'),
         reminderDate: reminderDate,

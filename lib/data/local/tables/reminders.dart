@@ -1,38 +1,41 @@
 import 'package:drift/drift.dart';
 import 'documents.dart';
 
-/// Reminders table - for expiry, renewal, and custom reminders
 @DataClassName('ReminderEntity')
 class Reminders extends Table {
-  // Primary key
   IntColumn get id => integer().autoIncrement()();
 
-  // Foreign key - optional link to document
-  IntColumn get documentId => integer().nullable().references(Documents, #id, onDelete: KeyAction.cascade)();
+  // Optional document link
+  IntColumn get documentId =>
+      integer().nullable().references(Documents, #id, onDelete: KeyAction.cascade)();
+
+  // 🔐 ENTITY IDENTITY (REQUIRED for isolation)
+  TextColumn get entityType => text()();        // 'bill', 'subscription', 'policy', 'document'
+  IntColumn get entityId => integer()();
 
   // Reminder details
   TextColumn get title => text().withLength(min: 1, max: 255)();
   TextColumn get description => text().nullable()();
-  TextColumn get reminderType => text()(); // 'expiry', 'renewal', 'review', 'custom'
+  TextColumn get reminderType => text()();
 
   // Scheduling
   DateTimeColumn get reminderDate => dateTime()();
   DateTimeColumn get snoozeUntil => dateTime().nullable()();
-  BoolColumn get isRecurring => boolean().withDefault(const Constant(false))();
-  TextColumn get recurrencePattern => text().nullable()(); // JSON: {interval: 'monthly', count: 12}
+  BoolColumn get isRecurring =>
+      boolean().withDefault(const Constant(false))();
+  TextColumn get recurrencePattern => text().nullable()();
 
   // Status
-  TextColumn get status => text().withDefault(const Constant('pending'))(); // 'pending', 'snoozed', 'completed', 'overdue'
+  TextColumn get status =>
+      text().withDefault(const Constant('pending'))();
   DateTimeColumn get completedAt => dateTime().nullable()();
 
-  // Priority
-  IntColumn get priority => integer().withDefault(const Constant(0))(); // 0=normal, 1=high, -1=low
-
-  // Soft delete pattern
+  // Soft delete
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
-  // Audit timestamps
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  // Audit
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
 }
-

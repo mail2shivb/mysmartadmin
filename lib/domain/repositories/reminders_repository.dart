@@ -11,6 +11,8 @@ class RemindersRepository {
 
   /// Add a new reminder
   Future<int> addReminder({
+    required String entityType,
+    required int entityId,
     required String title,
     required DateTime reminderDate,
     required String reminderType,
@@ -21,6 +23,8 @@ class RemindersRepository {
   }) {
     return _database.remindersDao.createReminder(
       RemindersCompanion.insert(
+        entityType: entityType,
+        entityId: entityId,
         title: title,
         reminderDate: reminderDate,
         reminderType: reminderType,

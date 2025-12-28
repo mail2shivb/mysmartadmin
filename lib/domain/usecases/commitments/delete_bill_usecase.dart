@@ -13,6 +13,13 @@ class DeleteBillUseCase {
     await _database.transaction(() async {
       await _database.billsDao.softDeleteBill(billId);
       await _database.remindersDao.cancelBillReminders(billId);
+      await _database.remindersDao.cancelRemindersForEntity(
+        entityType: 'bill',
+        entityId: billId,
+      );
+
     });
   }
+
+
 }
