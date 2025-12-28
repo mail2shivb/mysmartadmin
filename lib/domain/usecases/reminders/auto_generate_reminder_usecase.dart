@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/reminders.dart';
 import '../../validation/date_rules.dart';
 
 /// Use case for auto-generating reminders for entities

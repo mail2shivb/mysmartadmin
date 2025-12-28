@@ -1,7 +1,5 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/subscriptions.dart';
-import '../../../data/local/tables/reminders.dart';
 import '../../validation/entity_validators.dart';
 
 /// Use case for creating a new subscription

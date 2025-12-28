@@ -1,5 +1,4 @@
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/bills.dart';
 
 /// Use case for retrieving active bills
 ///

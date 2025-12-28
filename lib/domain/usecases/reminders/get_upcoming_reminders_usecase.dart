@@ -1,5 +1,4 @@
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/reminders.dart';
 
 /// Use case for retrieving upcoming reminders
 ///

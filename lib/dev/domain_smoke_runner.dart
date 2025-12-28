@@ -8,11 +8,15 @@ import '../domain/usecases/commitments/calculate_monthly_commitments_usecase.dar
 import '../domain/usecases/reminders/get_active_reminders_usecase.dart';
 
 Future<void> runDomainSmokeTest() async {
+
   debugPrint('==============================');
   debugPrint('🚀 DOMAIN SMOKE TEST STARTED');
   debugPrint('==============================');
 
   final database = AppDatabase();
+  await database.hardReset();
+  final count = await database.billsDao.getActiveBills();
+  debugPrint('[DEBUG] Bills after reset: ${count.length}');
 
   try {
     /// -------------------------------

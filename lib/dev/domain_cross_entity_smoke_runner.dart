@@ -41,7 +41,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
     debugPrint('');
     debugPrint('📋 SCENARIO 1: Document ↔ Policy ↔ Reminder');
     debugPrint('────────────────────────────────────────');
-
+    await db.hardReset();
     try {
       // Step 1: Create a document
       final docId = await addDocument.call(
@@ -106,6 +106,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
     debugPrint('');
     debugPrint('💰 SCENARIO 2: Bill + Subscription Aggregation');
     debugPrint('────────────────────────────────────────');
+    await db.hardReset();
 
     try {
       // Step 1: Create a bill (£120/month)
@@ -170,6 +171,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
     debugPrint('');
     debugPrint('🔔 SCENARIO 3: Reminder Isolation');
     debugPrint('────────────────────────────────────────');
+    await db.hardReset();
 
     try {
       // Step 1: Create bill → reminder A
@@ -253,6 +255,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
     debugPrint('');
     debugPrint('🔄 SCENARIO 4: Versioning Stability');
     debugPrint('────────────────────────────────────────');
+    await db.hardReset();
 
     try {
       // Step 1: Create policy → reminder
@@ -339,5 +342,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
     debugPrint(e.toString());
     debugPrint(stack.toString());
   }
+  await db.hardReset();
+
 }
 

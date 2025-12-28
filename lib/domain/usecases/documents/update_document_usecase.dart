@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/documents.dart';
 import '../../validation/expiry_rules.dart';
 import '../../validation/date_rules.dart';
 

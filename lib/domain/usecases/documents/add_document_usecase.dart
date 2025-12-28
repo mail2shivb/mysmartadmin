@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/documents.dart';
 import '../../validation/entity_validators.dart';
 
 /// Use case for adding a new document

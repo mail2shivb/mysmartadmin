@@ -5,8 +5,6 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/bills/bills_screen.dart';
 import '../features/documents/documents_functional_screen.dart';
 import '../features/reminders/reminders_screen.dart';
-import '../features/categories/categories_screen.dart';
-import '../features/query/query_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
 

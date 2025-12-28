@@ -1,0 +1,12 @@
+# DOMAIN FROZEN
+
+Status:
+- B10.10 domain verification PASSED
+- Bills lifecycle verified
+- Policy lifecycle verified
+- Reminder isolation verified
+- Aggregation verified
+
+From this point:
+- Domain behaviour must NOT change
+- Only cleanup and non-functional refactors allowed

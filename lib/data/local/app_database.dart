@@ -81,7 +81,13 @@ part 'app_database.g.dart';
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  static AppDatabase? _instance;
+
+  factory AppDatabase() {
+    return _instance ??= AppDatabase._internal();
+  }
+
+  AppDatabase._internal() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -102,7 +108,7 @@ class AppDatabase extends _$AppDatabase {
       beforeOpen: (details) async {
         // Enable foreign keys
         await customStatement('PRAGMA foreign_keys = ON');
-        
+
         if (details.wasCreated) {
           // Database was just created - initial setup if needed
           // No seed data per requirements
@@ -110,6 +116,53 @@ class AppDatabase extends _$AppDatabase {
       },
     );
   }
+  Future<void> clearAllData() async {
+    await transaction(() async {
+      await batch((batch) {
+        batch.deleteAll(documentLinks);
+        batch.deleteAll(reminders);
+        batch.deleteAll(documents);
+        batch.deleteAll(policies);
+        batch.deleteAll(bills);
+        batch.deleteAll(subscriptions);
+        batch.deleteAll(accounts);
+        batch.deleteAll(properties);
+        batch.deleteAll(vehicles);
+        batch.deleteAll(homeAssets);
+        batch.deleteAll(complianceRecords);
+        batch.deleteAll(serviceRecords);
+        batch.deleteAll(claims);
+        batch.deleteAll(tasks);
+      });
+    });
+  }
+
+  Future<void> hardReset() async {
+    await transaction(() async {
+      await customStatement('PRAGMA foreign_keys = OFF');
+
+      await batch((batch) {
+        batch.deleteAll(reminders);
+        batch.deleteAll(documentLinks);
+        batch.deleteAll(documents);
+        batch.deleteAll(policies);
+        batch.deleteAll(bills);
+        batch.deleteAll(subscriptions);
+        batch.deleteAll(accounts);
+        batch.deleteAll(properties);
+        batch.deleteAll(vehicles);
+        batch.deleteAll(homeAssets);
+        batch.deleteAll(complianceRecords);
+        batch.deleteAll(serviceRecords);
+        batch.deleteAll(claims);
+        batch.deleteAll(tasks);
+      });
+
+      await customStatement('PRAGMA foreign_keys = ON');
+    });
+  }
+
+
 }
 
 /// Opens the database connection

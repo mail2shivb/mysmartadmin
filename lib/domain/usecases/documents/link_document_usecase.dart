@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../../data/local/tables/document_links.dart';
 
 /// Use case for linking documents together
 ///
