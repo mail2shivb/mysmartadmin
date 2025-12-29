@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'shell_scaffold.dart';
-import '../features/dashboard/dashboard_screen.dart';
+import '../presentation/screens/dashboard_screen.dart' as b13;
+import '../presentation/screens/reminders_screen.dart' as b13;
+import '../presentation/screens/reports_screen.dart' as b13;
+import '../presentation/screens/policies_screen.dart' as b13;
 import '../features/bills/bills_screen.dart';
 import '../features/documents/documents_functional_screen.dart';
-import '../features/reminders/reminders_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
 
@@ -36,6 +38,8 @@ class AppRouter {
   static const String bills = '/bills';
   static const String documents = '/documents';
   static const String reminders = '/reminders';
+  static const String reports = '/reports';
+  static const String policies = '/policies';
   static const String categories = '/categories';
   static const String query = '/query';
   static const String tasks = '/tasks';
@@ -57,11 +61,11 @@ class AppRouter {
           );
         },
         routes: [
-          // Dashboard tab
+          // Dashboard tab (B13)
           GoRoute(
             path: home,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: DashboardScreen(),
+              child: b13.DashboardScreen(),
             ),
           ),
           
@@ -81,11 +85,27 @@ class AppRouter {
             ),
           ),
           
-          // Reminders tab
+          // Reminders tab (B13)
           GoRoute(
             path: reminders,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: RemindersScreen(),
+              child: b13.RemindersScreen(),
+            ),
+          ),
+          
+          // Reports tab (B13)
+          GoRoute(
+            path: reports,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: b13.ReportsScreen(),
+            ),
+          ),
+          
+          // Policies tab (B13)
+          GoRoute(
+            path: policies,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: b13.PoliciesScreen(),
             ),
           ),
           
@@ -119,8 +139,12 @@ class AppRouter {
         return 2;
       case reminders:
         return 3;
-      case tasks:
+      case reports:
         return 4;
+      case policies:
+        return 5;
+      case tasks:
+        return 6;
       default:
         return 0;
     }
@@ -138,6 +162,10 @@ class AppRouter {
       case 3:
         return reminders;
       case 4:
+        return reports;
+      case 5:
+        return policies;
+      case 6:
         return tasks;
       default:
         return home;
