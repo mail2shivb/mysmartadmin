@@ -1,4 +1,4 @@
-// F1.5 STATUS: IMPLEMENTED
+// F1.7 STATUS: IMPLEMENTED
 
 import 'package:flutter/material.dart';
 
@@ -128,20 +128,30 @@ class AppTheme {
         ),
       ),
       
-      // Bottom Navigation Bar - white sheet
+      // Bottom Navigation Bar - anchored white sheet with divider
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: colorScheme.surfaceContainerLowest, // Pure white
-        selectedItemColor: colorScheme.primary, // Confident blue
-        unselectedItemColor: colorScheme.secondary, // Muted grey
+        backgroundColor: const Color(0xFFFFFFFF), // Pure white
+        selectedItemColor: colorScheme.primary, // #1E6FD9
+        unselectedItemColor: const Color(0xFF64748B), // Neutral grey
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: 0, // No shadow, using divider instead
         selectedLabelStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
         unselectedLabelStyle: const TextStyle(
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+        ),
+        selectedIconTheme: IconThemeData(
+          size: 24,
+          color: colorScheme.primary,
+        ),
+        unselectedIconTheme: const IconThemeData(
+          size: 24,
+          color: Color(0xFF64748B),
         ),
       ),
       

@@ -1,4 +1,4 @@
-// F1.6 STATUS: IMPLEMENTED
+// F1.7 STATUS: IMPLEMENTED
 
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
@@ -16,6 +16,7 @@ import 'policies_screen.dart';
 ///
 /// Uses strong canvas + sheet model (Starling/Apple Wallet style).
 /// Canvas background (#F1F6FB) with white card sheets floating above.
+/// Bottom navigation is anchored with 1px top divider for visual separation.
 /// SafeArea is applied INSIDE each screen to prevent status bar overlap.
 /// This is a dumb widget with no business logic.
 class AppScaffold extends StatefulWidget {
@@ -53,35 +54,53 @@ class _AppScaffoldState extends State<AppScaffold> {
         centerTitle: true,
       ),
       body: _screens[_currentIndex], // SafeArea is INSIDE each screen
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Pure white
+          border: Border(
+            top: BorderSide(
+              color: theme.colorScheme.outlineVariant, // #E2E8F0
+              width: 1,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Reminders',
+        ),
+        child: SafeArea(
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.dashboard_outlined),
+                activeIcon: Icon(Icons.dashboard),
+                label: 'Dashboard',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications_outlined),
+                activeIcon: Icon(Icons.notifications),
+                label: 'Reminders',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart_outlined),
+                activeIcon: Icon(Icons.bar_chart),
+                label: 'Reports',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shield_outlined),
+                activeIcon: Icon(Icons.shield),
+                label: 'Policies',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Reports',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shield),
-            label: 'Policies',
-          ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 
