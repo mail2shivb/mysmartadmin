@@ -1,10 +1,11 @@
-// F1.7 STATUS: IMPLEMENTED
+// F2.1 STATUS: RE-IMPLEMENTED
 
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'reminders_screen.dart';
 import 'reports_screen.dart';
 import 'policies_screen.dart';
+import '../widgets/add_entry_bottom_sheet.dart';
 
 /// Main app scaffold with bottom navigation
 ///
@@ -18,6 +19,7 @@ import 'policies_screen.dart';
 /// Canvas background (#F1F6FB) with white card sheets floating above.
 /// Bottom navigation is anchored with 1px top divider for visual separation.
 /// SafeArea is applied INSIDE each screen to prevent status bar overlap.
+/// Dashboard has a "+" action for adding new entries.
 /// This is a dumb widget with no business logic.
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
@@ -52,6 +54,23 @@ class _AppScaffoldState extends State<AppScaffold> {
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
         centerTitle: true,
+        actions: _currentIndex == 0 // Show "+" only on Dashboard
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.add_rounded),
+                  color: const Color(0xFF1E6FD9), // Primary blue - clearly visible on #F1F6FB
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      builder: (context) => const AddEntryBottomSheet(),
+                    );
+                  },
+                  tooltip: 'Add entry',
+                ),
+              ]
+            : null,
       ),
       body: _screens[_currentIndex], // SafeArea is INSIDE each screen
       bottomNavigationBar: Container(
