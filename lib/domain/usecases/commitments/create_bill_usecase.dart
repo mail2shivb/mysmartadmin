@@ -2,17 +2,10 @@ import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
 import '../../validation/entity_validators.dart';
 
-/// Use case for creating a new bill
-///
-/// Creates bill and optionally generates a reminder for next due date
 class CreateBillUseCase {
   final AppDatabase _database;
-
   CreateBillUseCase(this._database);
 
-  /// Create a new bill with optional reminder generation
-  /// 
-  /// Returns the ID of the newly created bill
   Future<int> call({
     required String name,
     required String category,
@@ -26,7 +19,6 @@ class CreateBillUseCase {
     String currency = 'GBP',
     bool generateReminder = true,
   }) async {
-    // Use centralized entity validator
     EntityValidators.validateBill(
       name: name,
       category: category,
@@ -36,9 +28,7 @@ class CreateBillUseCase {
       nextDueDate: nextDueDate,
     );
 
-    // Wrap in transaction to ensure atomicity
     return await _database.transaction(() async {
-      // Create the bill
       final billId = await _database.billsDao.createBill(
         BillsCompanion.insert(
           name: name,
@@ -55,58 +45,36 @@ class CreateBillUseCase {
         ),
       );
 
-      // Auto-generate reminder if requested and nextDueDate is set
       if (generateReminder && nextDueDate != null) {
-        await _generateBillReminder(
-          billId: billId,
-          billName: name,
-          dueDate: nextDueDate,
-        );
+        await _generateBillReminder(billId: billId, dueDate: nextDueDate);
       }
 
       return billId;
     });
   }
 
-  /// Generate reminder for bill due date
   Future<void> _generateBillReminder({
     required int billId,
-    required String billName,
     required DateTime dueDate,
   }) async {
-    // Calculate reminder date (3 days before due date)
-    final reminderDate = dueDate.subtract(const Duration(days: 3));
-    
-    // Only create reminder if it's in the future
-    if (reminderDate.isBefore(DateTime.now())) {
-      return;
-    }
+    const leadIn = 3;
+    final firesAt = dueDate.subtract(const Duration(days: leadIn));
+    if (firesAt.isBefore(DateTime.now())) return;
 
-    // Check if reminder already exists for this bill using entity-based detection
-    final existingReminders = await _database.remindersDao.getAllReminders();
-    final duplicateExists = existingReminders.any(
-      (r) => r.description != null &&
-             r.description!.contains('[ENTITY:bill:$billId]') &&
-             r.reminderType == 'bill_due' && 
-             r.status != 'completed',
-    );
+    final existing = await _database.remindersDao.getForSource('bill', billId);
+    final dup = existing.any((r) =>
+        r.triggerTypeId == 'payment_due_date' && r.state != 'completed');
+    if (dup) return;
 
-    if (duplicateExists) {
-      return;
-    }
-
-    // Create the reminder with entity identifier
     await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
-        entityType: 'bill',
-        entityId: billId,
-        title: 'Bill Due: $billName',
-        description: Value('[ENTITY:bill:$billId] Bill payment due on ${dueDate.toIso8601String().split('T')[0]}'),
-        reminderDate: reminderDate,
-        reminderType: 'bill_due',
-        status: const Value('pending'),
+        sourceEntityKind: 'bill',
+        sourceEntityId: billId,
+        triggerTypeId: 'payment_due_date',
+        targetDate: dueDate,
+        leadInDaysSnapshot: const Value(leadIn),
+        firesAt: firesAt,
       ),
     );
   }
 }
-

@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'documents.dart';
 
 /// Vehicles table - cars, motorcycles, bikes, EVs
 /// Monetary values stored as INTEGER (cents/pence)
+///
+/// Documents attach to vehicles via the [Relationships] table (B6.4).
+/// No direct document_id FK — use relationship_type_id = 'vehicle_policy'
+/// or the generic [Relationships] entity for other document ↔ vehicle links.
 @DataClassName('VehicleEntity')
 class Vehicles extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
-
-  // Foreign key - link to vehicle documents (V5C, MOT, service records, etc.)
-  IntColumn get documentId => integer().nullable().references(Documents, #id, onDelete: KeyAction.setNull)();
 
   // Vehicle identification
   TextColumn get vehicleName => text().withLength(min: 1, max: 255)(); // Friendly name

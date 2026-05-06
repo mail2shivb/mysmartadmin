@@ -35,14 +35,14 @@ class SettingsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Appearance Section
-          const SectionHeader(title: 'Appearance'),
+          const SectionHeader(title: 'Look and Feel'),
           
           // Theme Mode (ONLY user control)
           _ThemeModeSection(appearance: appearance),
           const SizedBox(height: AppSpacing.xxl),
 
           // Privacy Section
-          const SectionHeader(title: 'Privacy'),
+          const SectionHeader(title: 'Privacy on This Device'),
           InsightCard(
             leadingIcon: Icons.privacy_tip_outlined,
             title: 'Privacy First',
@@ -51,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
 
           // Storage Section
-          const SectionHeader(title: 'Storage'),
+          const SectionHeader(title: 'Local Storage'),
           InsightCard(
             leadingIcon: Icons.storage,
             title: 'Local Storage',
@@ -60,7 +60,7 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
 
           // About Section
-          const SectionHeader(title: 'About'),
+          const SectionHeader(title: 'App Information'),
           InsightCard(
             leadingIcon: Icons.info_outline,
             title: 'App Version',
@@ -87,7 +87,7 @@ class _ThemeModeSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Theme Mode',
+          'Theme Preference',
           style: AppTypography.labelMedium(context).copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -98,7 +98,7 @@ class _ThemeModeSection extends StatelessWidget {
         _ThemeModeOption(
           mode: ThemeMode.system,
           label: 'System',
-          description: 'Follow device settings',
+          description: 'Use the same appearance as your device',
           icon: Icons.brightness_auto_outlined,
           isSelected: currentMode == ThemeMode.system,
           onTap: () => appearance.setThemeMode(ThemeMode.system),
@@ -108,7 +108,7 @@ class _ThemeModeSection extends StatelessWidget {
         _ThemeModeOption(
           mode: ThemeMode.light,
           label: 'Light',
-          description: 'Always light mode',
+          description: 'Use the light appearance at all times',
           icon: Icons.light_mode_outlined,
           isSelected: currentMode == ThemeMode.light,
           onTap: () => appearance.setThemeMode(ThemeMode.light),
@@ -118,7 +118,7 @@ class _ThemeModeSection extends StatelessWidget {
         _ThemeModeOption(
           mode: ThemeMode.dark,
           label: 'Dark',
-          description: 'Always dark mode',
+          description: 'Use the dark appearance at all times',
           icon: Icons.dark_mode_outlined,
           isSelected: currentMode == ThemeMode.dark,
           onTap: () => appearance.setThemeMode(ThemeMode.dark),

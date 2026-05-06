@@ -27,14 +27,14 @@ class TasksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('Tasks & Alerts'),
+        title: const Text('Tasks'),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
               // TODO: Filter tasks
             },
-            tooltip: 'Filter',
+            tooltip: 'Filter tasks',
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -46,16 +46,16 @@ class TasksScreen extends StatelessWidget {
       padding: AppPadding.screen,
       body: const EmptyStateWidget(
         icon: Icons.task_alt,
-        title: 'No Tasks Yet',
+        title: 'Nothing needs your attention yet',
         description:
-            'Tasks and reminders will appear here automatically when your documents have upcoming expiry dates.',
-        primaryButtonLabel: 'Add Task',
+            'Tasks are created from important dates such as expiry, renewal, and review points, so you can see what needs action in one place. You can also add a manual task for anything you want to track yourself.',
+        primaryButtonLabel: 'Create Manual Task',
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Create manual task
         },
-        tooltip: 'Add Task',
+        tooltip: 'Create Manual Task',
         child: const Icon(Icons.add),
       ),
     );

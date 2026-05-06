@@ -1,3 +1,4 @@
+// B4.3 STATUS: IMPLEMENTED
 // F1 STATUS: IMPLEMENTED
 
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _LedgerAppState extends State<LedgerApp> with WidgetsBindingObserver {
           debugShowCheckedModeBanner: false,
           // F1 Design System: Production-grade calm UI
           theme: AppTheme.light(),
-          darkTheme: AppTheme.light(), // Dark mode: future enhancement
+          darkTheme: AppTheme.dark(),
           themeMode: _appearanceController.themeMode,
           routerConfig: AppRouter.router,
           builder: (context, child) {

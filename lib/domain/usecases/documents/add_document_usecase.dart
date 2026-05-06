@@ -1,61 +1,65 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../validation/entity_validators.dart';
 
-/// Use case for adding a new document
-///
-/// Inserts document via DocumentsDao and returns the inserted document ID
+/// Inserts a new document (initially classification_pending).
+/// Classification is applied separately via [DocumentsDao.classify].
 class AddDocumentUseCase {
   final AppDatabase _database;
-
   AddDocumentUseCase(this._database);
 
-  /// Add a new document
-  /// 
-  /// Returns the ID of the newly created document
   Future<int> call({
     required String title,
-    required String documentType,
-    required String category,
     String? description,
     String? filePath,
-    String? fileType,
+    String? fileMime,
     int? fileSizeBytes,
-    String? extractedData,
-    String? tags,
-    DateTime? documentDate,
+    String? issuer,
+    String? referenceNumber,
+    DateTime? issueDate,
     DateTime? expiryDate,
-    DateTime? reminderDate,
+    String? extraFieldsJson,
+    String source = 'manual',
   }) async {
-    // Use centralized entity validator
-    EntityValidators.validateDocument(
-      title: title,
-      documentType: documentType,
-      category: category,
-      documentDate: documentDate,
-      expiryDate: expiryDate,
-      reminderDate: reminderDate,
-      fileSizeBytes: fileSizeBytes,
-    );
+    if (title.trim().isEmpty) {
+      throw ArgumentError('Document title cannot be empty');
+    }
+    if (fileSizeBytes != null && fileSizeBytes < 0) {
+      throw ArgumentError('File size cannot be negative');
+    }
+    if (extraFieldsJson != null) {
+      _validateJsonObject(extraFieldsJson);
+    }
 
-    final documentId = await _database.documentsDao.insertDocument(
+    return _database.documentsDao.insertDocument(
       DocumentsCompanion.insert(
         title: title,
-        documentType: documentType,
-        category: category,
         description: Value(description),
         filePath: Value(filePath),
-        fileType: Value(fileType),
+        fileMime: Value(fileMime),
         fileSizeBytes: Value(fileSizeBytes),
-        extractedData: Value(extractedData),
-        tags: Value(tags),
-        documentDate: Value(documentDate),
+        issuer: Value(issuer),
+        referenceNumber: Value(referenceNumber),
+        issueDate: Value(issueDate),
         expiryDate: Value(expiryDate),
-        reminderDate: Value(reminderDate),
+        extraFieldsJson: Value(extraFieldsJson),
+        source: Value(source),
       ),
     );
+  }
 
-    return documentId;
+  /// Ensure [json] is a valid JSON object (map at the top level).
+  /// Throws [ArgumentError] on invalid JSON or non-object root types.
+  static void _validateJsonObject(String json) {
+    try {
+      final decoded = jsonDecode(json);
+      if (decoded is! Map) {
+        throw ArgumentError(
+            'extraFieldsJson must be a JSON object (got ${decoded.runtimeType})');
+      }
+    } on FormatException catch (e) {
+      throw ArgumentError('extraFieldsJson is not valid JSON: $e');
+    }
   }
 }
-

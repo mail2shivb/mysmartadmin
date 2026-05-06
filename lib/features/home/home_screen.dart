@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('LedgerAI'),
+        title: const Text('MySmartAdmin'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'All your important documents, stored securely on your device. No cloud sync, no analytics.',
+            'Keep important records clear, private, and easy to manage on this device. No cloud storage by default and no unnecessary noise.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -85,8 +85,8 @@ class _EmptyExpiryState extends StatelessWidget {
       leadingIcon: Icons.check_circle_outline,
       leadingIconColor: colors.success,
       leadingIconBackground: colors.successLight,
-      title: 'All Clear',
-      subtitle: 'No documents expiring soon',
+      title: 'Nothing urgent right now',
+      subtitle: 'No tracked documents are due to expire soon',
     );
   }
 }
@@ -101,10 +101,10 @@ class _EmptyRecentState extends StatelessWidget {
         padding: AppPadding.card,
         child: EmptyStateWidget(
           icon: Icons.description_outlined,
-          title: 'No Documents Yet',
+          title: 'No documents stored yet',
           description:
-              'Start by adding your first document. Everything stays private on your device.',
-          primaryButtonLabel: 'Add Your First Document',
+              'Add your first document to start building a private record system for reminders, reference, and future insights.',
+          primaryButtonLabel: 'Add your first document',
           onPrimaryButtonPressed: () {
             // TODO: Navigate to add document
           },

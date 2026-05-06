@@ -51,7 +51,7 @@ Future<void> runDomainSmokeTest() async {
 
     debugPrint('📌 Active reminders count: ${reminders.length}');
     for (final r in reminders) {
-      debugPrint('🔔 Reminder → id=${r.id}, type=${r.reminderType}, status=${r.status}');
+      debugPrint('🔔 Reminder → id=${r.id}, type=${r.triggerTypeId}, state=${r.state}');
     }
 
     /// -------------------------------

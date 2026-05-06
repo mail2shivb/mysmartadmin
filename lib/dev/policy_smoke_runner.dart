@@ -50,12 +50,12 @@ Future<void> runPolicySmokeTest() async {
     // Verify reminder was auto-created
     final reminders1 = await getReminders.call();
     final policyReminders1 = reminders1.where(
-      (r) => r.description != null && r.description!.contains('[ENTITY:policy:$policyId]'),
+      (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
     ).toList();
 
     debugPrint('📌 Active reminders for policy: ${policyReminders1.length}');
     for (final r in policyReminders1) {
-      debugPrint('🔔 Reminder → id=${r.id}, type=${r.reminderType}, status=${r.status}');
+      debugPrint('🔔 Reminder → id=${r.id}, type=${r.triggerTypeId}, state=${r.state}');
     }
 
     if (policyReminders1.isEmpty) {
@@ -87,12 +87,12 @@ Future<void> runPolicySmokeTest() async {
     // Verify reminder was updated, not duplicated
     final reminders2 = await getReminders.call();
     final policyReminders2 = reminders2.where(
-      (r) => r.description != null && r.description!.contains('[ENTITY:policy:$policyId]'),
+      (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
     ).toList();
 
     debugPrint('🔁 Active reminders after renewal: ${policyReminders2.length}');
     for (final r in policyReminders2) {
-      debugPrint('🔔 Reminder → id=${r.id}, type=${r.reminderType}, date=${r.reminderDate.toIso8601String().split('T')[0]}');
+      debugPrint('🔔 Reminder → id=${r.id}, type=${r.triggerTypeId}, date=${r.firesAt.toIso8601String().split('T')[0]}');
     }
 
     if (policyReminders2.length != 1) {
@@ -102,7 +102,7 @@ Future<void> runPolicySmokeTest() async {
     final updatedReminder = policyReminders2.first;
     // Verify reminder date was updated (should be 14 days before new renewal date)
     final expectedReminderDate = newRenewalDate.subtract(const Duration(days: 14));
-    final dateDiff = updatedReminder.reminderDate.difference(expectedReminderDate).inDays.abs();
+    final dateDiff = updatedReminder.firesAt.difference(expectedReminderDate).inDays.abs();
     if (dateDiff > 1) {
       throw StateError('FAIL: Reminder date not updated correctly');
     }
@@ -121,7 +121,7 @@ Future<void> runPolicySmokeTest() async {
     // Verify reminder was cancelled (not in active reminders)
     final reminders3 = await getReminders.call();
     final policyReminders3 = reminders3.where(
-      (r) => r.description != null && r.description!.contains('[ENTITY:policy:$policyId]'),
+      (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
     ).toList();
 
     debugPrint('❌ Active reminders after delete: ${policyReminders3.length}');

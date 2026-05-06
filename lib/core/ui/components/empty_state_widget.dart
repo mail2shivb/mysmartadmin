@@ -47,19 +47,19 @@ class EmptyStateWidget extends StatelessWidget {
           children: [
             // Icon with subtle background circle
             Container(
-              width: 96,
-              height: 96,
+              width: 112,
+              height: 112,
               decoration: BoxDecoration(
-                color: colors.iconBackground, // Use semantic icon background token
+                color: colors.iconBackground,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                size: 48, // Larger icon
+                size: 56,
                 color: colors.primary,
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: 28),
 
             // Title
             Text(
@@ -69,7 +69,7 @@ class EmptyStateWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: 12),
 
             // Description
             Text(

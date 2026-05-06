@@ -4,178 +4,241 @@ import '../tables/documents.dart';
 
 part 'documents_dao.g.dart';
 
-/// Data Access Object for Documents
-/// 
-/// Provides CRUD operations with soft delete support
 @DriftAccessor(tables: [Documents])
-class DocumentsDao extends DatabaseAccessor<AppDatabase> with _$DocumentsDaoMixin {
+class DocumentsDao extends DatabaseAccessor<AppDatabase>
+    with _$DocumentsDaoMixin {
   DocumentsDao(AppDatabase db) : super(db);
 
-  // ============================================================
-  // CREATE
-  // ============================================================
+  // ── CREATE ─────────────────────────────────────────────────────────────────
 
-  /// Insert a new document
-  Future<int> insertDocument(DocumentsCompanion document) {
-    return into(documents).insert(document);
+  Future<int> insertDocument(DocumentsCompanion document) =>
+      into(documents).insert(document);
+
+  Future<void> insertDocuments(List<DocumentsCompanion> docs) async {
+    await batch((b) => b.insertAll(documents, docs));
   }
 
-  /// Insert multiple documents
-  Future<void> insertDocuments(List<DocumentsCompanion> documentList) async {
-    await batch((batch) {
-      batch.insertAll(documents, documentList);
-    });
-  }
+  // ── READ ───────────────────────────────────────────────────────────────────
 
-  // ============================================================
-  // READ
-  // ============================================================
+  Future<DocumentEntity?> getDocumentById(int id) =>
+      (select(documents)
+            ..where((t) => t.id.equals(id))
+            ..where((t) => t.deletedAt.isNull()))
+          .getSingleOrNull();
 
-  /// Get a single document by ID (excluding soft deleted)
-  Future<DocumentEntity?> getDocumentById(int id) {
-    return (select(documents)
-          ..where((t) => t.id.equals(id))
-          ..where((t) => t.deletedAt.isNull()))
-        .getSingleOrNull();
-  }
+  Future<List<DocumentEntity>> getAllDocuments() =>
+      (select(documents)..where((t) => t.deletedAt.isNull())).get();
 
-  /// Get all documents (excluding soft deleted)
-  Future<List<DocumentEntity>> getAllDocuments() {
-    return (select(documents)..where((t) => t.deletedAt.isNull())).get();
-  }
+  // ── Classification-based queries ──────────────────────────────────────────
 
-  /// Get documents by category
-  Future<List<DocumentEntity>> getDocumentsByCategory(String category) {
-    return (select(documents)
-          ..where((t) => t.category.equals(category))
-          ..where((t) => t.deletedAt.isNull()))
-        .get();
-  }
+  Future<List<DocumentEntity>> getByDomain(String domainId) =>
+      (select(documents)
+            ..where((t) => t.domainId.equals(domainId))
+            ..where((t) => t.deletedAt.isNull()))
+          .get();
 
-  /// Get documents by type
-  Future<List<DocumentEntity>> getDocumentsByType(String documentType) {
-    return (select(documents)
-          ..where((t) => t.documentType.equals(documentType))
-          ..where((t) => t.deletedAt.isNull()))
-        .get();
-  }
+  Future<List<DocumentEntity>> getByCategory(String categoryId) =>
+      (select(documents)
+            ..where((t) => t.categoryId.equals(categoryId))
+            ..where((t) => t.deletedAt.isNull()))
+          .get();
 
-  /// Get documents expiring within a date range
-  Future<List<DocumentEntity>> getDocumentsExpiringBetween(
-    DateTime start,
-    DateTime end,
-  ) {
-    return (select(documents)
-          ..where((t) => t.expiryDate.isBetweenValues(start, end))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.expiryDate)]))
-        .get();
-  }
+  Future<List<DocumentEntity>> getByDocumentType(String documentTypeId) =>
+      (select(documents)
+            ..where((t) => t.documentTypeId.equals(documentTypeId))
+            ..where((t) => t.deletedAt.isNull()))
+          .get();
 
-  /// Search documents by title or description
+  Future<List<DocumentEntity>> getPendingClassification() =>
+      (select(documents)
+            ..where((t) =>
+                t.classificationState.equals('classification_pending'))
+            ..where((t) => t.deletedAt.isNull()))
+          .get();
+
+  Stream<List<DocumentEntity>> watchPendingClassification() =>
+      (select(documents)
+            ..where((t) =>
+                t.classificationState.equals('classification_pending'))
+            ..where((t) => t.deletedAt.isNull()))
+          .watch();
+
+  // ── Date-driven queries (for dashboard / reminders) ───────────────────────
+
+  Future<List<DocumentEntity>> getExpiringBetween(
+      DateTime start, DateTime end) =>
+      (select(documents)
+            ..where((t) => t.expiryDate.isBetweenValues(start, end))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.expiryDate)]))
+          .get();
+
+  Future<List<DocumentEntity>> getRenewalsBetween(
+      DateTime start, DateTime end) =>
+      (select(documents)
+            ..where((t) => t.renewalDate.isBetweenValues(start, end))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.renewalDate)]))
+          .get();
+
+  // ── Search (title / description — FTS handled separately via customSelect) ─
+
   Future<List<DocumentEntity>> searchDocuments(String query) {
-    final searchPattern = '%$query%';
+    final pattern = '%$query%';
     return (select(documents)
           ..where((t) =>
-              t.title.like(searchPattern) |
-              t.description.like(searchPattern))
+              t.title.like(pattern) |
+              t.description.like(pattern) |
+              t.issuer.like(pattern) |
+              t.referenceNumber.like(pattern))
           ..where((t) => t.deletedAt.isNull()))
         .get();
   }
 
-  /// Get document versions (for a specific document chain)
-  Future<List<DocumentEntity>> getDocumentVersions(int documentId) {
-    return (select(documents)
-          ..where((t) =>
-              t.id.equals(documentId) |
-              t.previousVersionId.equals(documentId))
-          ..orderBy([(t) => OrderingTerm.desc(t.version)]))
-        .get();
-  }
+  // ── Versioning ────────────────────────────────────────────────────────────
 
-  /// Stream all documents (for real-time updates)
-  Stream<List<DocumentEntity>> watchAllDocuments() {
-    return (select(documents)..where((t) => t.deletedAt.isNull())).watch();
-  }
+  Future<List<DocumentEntity>> getVersionChain(int documentId) =>
+      (select(documents)
+            ..where((t) =>
+                t.id.equals(documentId) |
+                t.previousVersionId.equals(documentId))
+            ..orderBy([(t) => OrderingTerm.desc(t.version)]))
+          .get();
 
-  /// Stream documents by category
-  Stream<List<DocumentEntity>> watchDocumentsByCategory(String category) {
-    return (select(documents)
-          ..where((t) => t.category.equals(category))
-          ..where((t) => t.deletedAt.isNull()))
-        .watch();
-  }
+  // ── Watch ─────────────────────────────────────────────────────────────────
 
-  // ============================================================
-  // UPDATE
-  // ============================================================
+  Stream<List<DocumentEntity>> watchAllDocuments() =>
+      (select(documents)..where((t) => t.deletedAt.isNull())).watch();
 
-  /// Update a document
-  Future<bool> updateDocument(DocumentEntity document) {
-    return update(documents).replace(document);
-  }
+  Stream<List<DocumentEntity>> watchByDomain(String domainId) =>
+      (select(documents)
+            ..where((t) => t.domainId.equals(domainId))
+            ..where((t) => t.deletedAt.isNull()))
+          .watch();
 
-  /// Update specific fields of a document
-  Future<int> updateDocumentFields(int id, DocumentsCompanion updates) {
-    return (update(documents)..where((t) => t.id.equals(id))).write(updates);
-  }
+  Stream<List<DocumentEntity>> watchByCategory(String categoryId) =>
+      (select(documents)
+            ..where((t) => t.categoryId.equals(categoryId))
+            ..where((t) => t.deletedAt.isNull()))
+          .watch();
 
-  // ============================================================
-  // DELETE
-  // ============================================================
+  // ── UPDATE ─────────────────────────────────────────────────────────────────
 
-  /// Soft delete a document
-  Future<int> softDeleteDocument(int id) {
-    return (update(documents)..where((t) => t.id.equals(id))).write(
+  Future<bool> updateDocument(DocumentEntity doc) =>
+      update(documents).replace(doc);
+
+  Future<int> updateDocumentFields(int id, DocumentsCompanion updates) =>
+      (update(documents)..where((t) => t.id.equals(id))).write(updates);
+
+  /// Classify or reclassify a document.
+  ///
+  /// Guards:
+  /// - Taxonomy ID fields must be non-empty strings (they carry no FK so
+  ///   we validate at the call site).
+  /// - [allowReclassify] must be `true` to overwrite an already-classified
+  ///   document; this prevents silent overwrites triggered by OCR re-runs or
+  ///   duplicate API calls.
+  /// - Throws [StateError] if the document does not exist or is soft-deleted.
+  Future<int> classify({
+    required int id,
+    required String documentTypeId,
+    required String categoryId,
+    required String domainId,
+    required int taxonomyVersion,
+    bool allowReclassify = false,
+  }) async {
+    // Validate taxonomy ID fields — stored as plain TEXT with no FK constraint.
+    if (documentTypeId.trim().isEmpty) {
+      throw ArgumentError('documentTypeId cannot be empty');
+    }
+    if (categoryId.trim().isEmpty) {
+      throw ArgumentError('categoryId cannot be empty');
+    }
+    if (domainId.trim().isEmpty) {
+      throw ArgumentError('domainId cannot be empty');
+    }
+    if (taxonomyVersion <= 0) {
+      throw ArgumentError('taxonomyVersion must be a positive integer');
+    }
+
+    // Load the live document so we can inspect its current classification state.
+    final doc = await getDocumentById(id);
+    if (doc == null) {
+      throw StateError('Document $id not found or has been deleted');
+    }
+
+    // Guard against silent reclassification: the caller must opt-in explicitly.
+    if (doc.classificationState == 'classified' && !allowReclassify) {
+      throw StateError(
+        'Document $id is already classified. '
+        'Pass allowReclassify: true to overwrite.',
+      );
+    }
+
+    final rows = await (update(documents)..where((t) => t.id.equals(id))).write(
       DocumentsCompanion(
-        deletedAt: Value(DateTime.now()),
+        documentTypeId: Value(documentTypeId),
+        categoryId: Value(categoryId),
+        domainId: Value(domainId),
+        taxonomyVersion: Value(taxonomyVersion),
+        classificationState: const Value('classified'),
         updatedAt: Value(DateTime.now()),
       ),
     );
+    // rows == 0 should not happen after the getDocumentById guard above,
+    // but guard defensively in case of a race between fetch and write.
+    if (rows == 0) {
+      throw StateError('Document $id could not be classified (concurrent modification?)');
+    }
+    return rows;
   }
 
-  /// Hard delete a document (permanent)
-  Future<int> hardDeleteDocument(int id) {
-    return (delete(documents)..where((t) => t.id.equals(id))).go();
-  }
+  // ── DELETE ─────────────────────────────────────────────────────────────────
 
-  /// Restore a soft deleted document
-  Future<int> restoreDocument(int id) {
-    return (update(documents)..where((t) => t.id.equals(id))).write(
-      const DocumentsCompanion(
-        deletedAt: Value(null),
-      ),
-    );
-  }
+  Future<int> softDeleteDocument(int id) =>
+      (update(documents)..where((t) => t.id.equals(id))).write(
+        DocumentsCompanion(
+          deletedAt: Value(DateTime.now()),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
 
-  /// Get all soft deleted documents
-  Future<List<DocumentEntity>> getSoftDeletedDocuments() {
-    return (select(documents)..where((t) => t.deletedAt.isNotNull())).get();
-  }
+  Future<int> hardDeleteDocument(int id) =>
+      (delete(documents)..where((t) => t.id.equals(id))).go();
 
-  // ============================================================
-  // STATISTICS
-  // ============================================================
+  Future<int> restoreDocument(int id) =>
+      (update(documents)..where((t) => t.id.equals(id))).write(
+        const DocumentsCompanion(deletedAt: Value(null)),
+      );
 
-  /// Count documents by category
-  Future<int> countDocumentsByCategory(String category) async {
-    final query = selectOnly(documents)
-      ..addColumns([documents.id.count()])
-      ..where(documents.category.equals(category))
-      ..where(documents.deletedAt.isNull());
+  Future<List<DocumentEntity>> getSoftDeletedDocuments() =>
+      (select(documents)..where((t) => t.deletedAt.isNotNull())).get();
 
-    final result = await query.getSingle();
-    return result.read(documents.id.count()) ?? 0;
-  }
+  // ── STATISTICS ─────────────────────────────────────────────────────────────
 
-  /// Count all documents
-  Future<int> countAllDocuments() async {
-    final query = selectOnly(documents)
+  Future<int> countAll() async {
+    final q = selectOnly(documents)
       ..addColumns([documents.id.count()])
       ..where(documents.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(documents.id.count()) ?? 0;
+  }
 
-    final result = await query.getSingle();
-    return result.read(documents.id.count()) ?? 0;
+  Future<int> countByDomain(String domainId) async {
+    final q = selectOnly(documents)
+      ..addColumns([documents.id.count()])
+      ..where(documents.domainId.equals(domainId))
+      ..where(documents.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(documents.id.count()) ?? 0;
+  }
+
+  Future<int> countPendingClassification() async {
+    final q = selectOnly(documents)
+      ..addColumns([documents.id.count()])
+      ..where(documents.classificationState.equals('classification_pending'))
+      ..where(documents.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(documents.id.count()) ?? 0;
   }
 }
-

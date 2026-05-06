@@ -77,12 +77,12 @@ class RemindersViewModel {
   /// [entityType] Type of entity (e.g., 'bill', 'policy')
   /// [entityId] ID of the entity
   Future<List<ReminderEntity>> loadRemindersForEntity({
-    required String entityType,
-    required int entityId,
+    required String sourceEntityKind,
+    required int sourceEntityId,
   }) async {
     return await _repository.getRemindersForEntity(
-      entityType: entityType,
-      entityId: entityId,
+      sourceEntityKind: sourceEntityKind,
+      sourceEntityId: sourceEntityId,
     );
   }
 }

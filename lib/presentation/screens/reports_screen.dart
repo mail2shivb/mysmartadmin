@@ -2,13 +2,14 @@
 
 import 'package:flutter/material.dart';
 import '../../core/database_provider.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 import '../../domain/reports/reports_repository.dart';
 import '../viewmodels/reports_view_model.dart';
 import '../widgets/app_card.dart';
 import '../widgets/primary_card.dart';
-import '../widgets/section_header.dart';
-import '../widgets/empty_state.dart';
-import '../theme/spacing.dart';
 
 /// Reports screen
 ///
@@ -25,9 +26,11 @@ class ReportsScreen extends StatelessWidget {
     final viewModel = ReportsViewModel(repository);
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(Spacing.md),
+    return AppScaffold(
+      useSafeArea: true,
+      enableScroll: true,
+      body: Padding(
+        padding: AppPadding.screen,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,7 +45,7 @@ class ReportsScreen extends StatelessWidget {
                   return const PrimaryCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.lg),
+                        padding: EdgeInsets.all(AppSpacing.lg),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -50,10 +53,11 @@ class ReportsScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return PrimaryCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.query_stats_outlined,
-                      title: 'Total unavailable',
-                      description: 'Your monthly total will appear shortly',
+                      title: 'Your monthly picture is not available yet',
+                      description:
+                          'This screen helps you understand regular spending across bills and subscriptions, so you can see ongoing commitments more clearly.',
                     ),
                   );
                 }
@@ -64,10 +68,11 @@ class ReportsScreen extends StatelessWidget {
                 
                 if (grandTotal == 0) {
                   return PrimaryCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.money_off_csred_outlined,
-                      title: 'No data recorded yet',
-                      description: 'Add bills or subscriptions to see insights',
+                      title: 'No regular spending to review yet',
+                      description:
+                          'Once bills or subscriptions are recorded, this screen will help you understand monthly patterns and recurring costs.',
                     ),
                   );
                 }
@@ -79,18 +84,20 @@ class ReportsScreen extends StatelessWidget {
                         Text(
                           '£${(grandTotal / 100).toStringAsFixed(2)}',
                           style: theme.textTheme.displayLarge?.copyWith(
-                            fontSize: 52,
+                            fontSize: 56,
                             fontWeight: FontWeight.w800,
                             color: theme.colorScheme.primary,
-                            height: 1.1,
+                            height: 1.0,
+                            letterSpacing: -1.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
-                          'bills + subscriptions per month',
+                          'tracked each month across bills and subscriptions',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 13,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
@@ -100,10 +107,10 @@ class ReportsScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Bills
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Bills', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Bill Commitments
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Bill Commitments'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.loadBillsMonthlyTotal(),
               builder: (context, snapshot) {
@@ -111,7 +118,7 @@ class ReportsScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.xl),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -119,20 +126,22 @@ class ReportsScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.receipt_long_outlined,
-                      title: 'Bills data loading',
-                      description: 'Your bill information will appear shortly',
+                      title: 'Your bill summary is not available yet',
+                      description:
+                          'This section shows the monthly cost of tracked bills, so you can understand regular household outgoings.',
                     ),
                   );
                 }
                 final total = snapshot.data!;
                 if (total == 0) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.money_off_csred_outlined,
-                      title: 'No bills recorded yet',
-                      description: 'Add your first bill to see insights here.',
+                      title: 'No bills are being tracked yet',
+                      description:
+                          'When you start recording bills, this section will show their monthly total and help you monitor ongoing commitments.',
                     ),
                   );
                 }
@@ -144,13 +153,13 @@ class ReportsScreen extends StatelessWidget {
                         size: 32,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: Spacing.md),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Monthly Total',
+                              'Tracked monthly total',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -168,10 +177,10 @@ class ReportsScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Subscriptions
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Subscriptions', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Subscription Spend
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Subscription Spend'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.loadSubscriptionsMonthlyTotal(),
               builder: (context, snapshot) {
@@ -179,7 +188,7 @@ class ReportsScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.xl),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -187,20 +196,22 @@ class ReportsScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.subscriptions_outlined,
-                      title: 'Subscriptions data loading',
-                      description: 'Your subscription information will appear shortly',
+                      title: 'Your subscription summary is not available yet',
+                      description:
+                          'This section shows the monthly cost of subscriptions, so you can review recurring digital and service spending in one place.',
                     ),
                   );
                 }
                 final total = snapshot.data!;
                 if (total == 0) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.subscriptions_outlined,
-                      title: 'No subscriptions recorded yet',
-                      description: 'Add your first subscription to see insights here.',
+                      title: 'No subscriptions are being tracked yet',
+                      description:
+                          'When subscriptions are recorded, this section will help you see what they cost each month and what may be worth reviewing.',
                     ),
                   );
                 }
@@ -212,13 +223,13 @@ class ReportsScreen extends StatelessWidget {
                         size: 32,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: Spacing.md),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Monthly Total',
+                              'Tracked monthly total',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -235,7 +246,7 @@ class ReportsScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: Spacing.md), // Bottom padding
+            const SizedBox(height: AppSpacing.md), // Bottom padding
           ],
         ),
       ),

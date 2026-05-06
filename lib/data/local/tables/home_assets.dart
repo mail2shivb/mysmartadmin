@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'documents.dart';
 
 /// HomeAssets table - appliances, electronics, furniture with warranties
 /// Monetary values stored as INTEGER (cents/pence)
+///
+/// Documents attach to home assets via the [Relationships] table (B6.4).
+/// No direct document_id FK — use relationship_type_id = 'property_home_asset'
+/// or the generic [Relationships] entity for other document ↔ asset links.
 @DataClassName('HomeAssetEntity')
 class HomeAssets extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
-
-  // Foreign key - link to receipts, manuals, warranties
-  IntColumn get documentId => integer().nullable().references(Documents, #id, onDelete: KeyAction.setNull)();
 
   // Asset identification
   TextColumn get assetName => text().withLength(min: 1, max: 255)();

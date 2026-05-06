@@ -1,63 +1,67 @@
 import 'package:drift/drift.dart';
 import '../../data/local/app_database.dart';
 
-/// Domain repository for document operations
-/// 
-/// Thin layer above documentsDao - delegates to existing DAO methods
+/// Domain repository for document operations.
+///
+/// Thin layer above [DocumentsDao] — delegates to existing DAO methods
+/// and translates domain-level parameters to the B8 storage model.
 class DocumentsRepository {
   final AppDatabase _database;
 
   DocumentsRepository(this._database);
 
-  /// Add a new document
-  /// Returns the inserted document ID
+  /// Add a new document (initially classification_pending).
+  /// Classification is assigned separately via [DocumentsDao.classify].
   Future<int> addDocument({
-    required String name,
-    required String documentType,
-    required String category,
-    required String filePath,
+    required String title,
+    String? description,
+    String? filePath,
+    String? fileMime,
     DateTime? issueDate,
     DateTime? expiryDate,
-    String? notes,
+    String? issuer,
+    String? referenceNumber,
+    String source = 'manual',
   }) {
     return _database.documentsDao.insertDocument(
       DocumentsCompanion.insert(
-        title: name,
-        category: category,
-        documentType: documentType,
+        title: title,
+        description: Value(description),
         filePath: Value(filePath),
-        documentDate: Value(issueDate),
+        fileMime: Value(fileMime),
+        issueDate: Value(issueDate),
         expiryDate: Value(expiryDate),
-        description: Value(notes),
+        issuer: Value(issuer),
+        referenceNumber: Value(referenceNumber),
+        source: Value(source),
       ),
     );
   }
 
-  /// Stream all documents (excluding soft deleted)
-  Stream<List<DocumentEntity>> watchAllDocuments() {
-    return _database.documentsDao.watchAllDocuments();
-  }
+  /// Stream all documents (excluding soft-deleted).
+  Stream<List<DocumentEntity>> watchAllDocuments() =>
+      _database.documentsDao.watchAllDocuments();
 
-  /// Get a single document by ID
-  Future<DocumentEntity?> getDocumentById(int id) {
-    return _database.documentsDao.getDocumentById(id);
-  }
+  /// Get a single document by ID.
+  Future<DocumentEntity?> getDocumentById(int id) =>
+      _database.documentsDao.getDocumentById(id);
 
-  /// Soft delete a document (can be restored later)
-  Future<int> softDeleteDocument(int id) {
-    return _database.documentsDao.softDeleteDocument(id);
-  }
+  /// Soft-delete a document (reversible).
+  Future<int> softDeleteDocument(int id) =>
+      _database.documentsDao.softDeleteDocument(id);
 
-  /// Restore a previously soft-deleted document
-  Future<int> restoreDocument(int id) {
-    return _database.documentsDao.restoreDocument(id);
-  }
+  /// Restore a soft-deleted document.
+  Future<int> restoreDocument(int id) =>
+      _database.documentsDao.restoreDocument(id);
 
-  /// Get documents expiring within a date range
+  /// Documents with [expiryDate] between [from] and [to].
   Future<List<DocumentEntity>> getDocumentsExpiringBetween(
     DateTime from,
     DateTime to,
-  ) {
-    return _database.documentsDao.getDocumentsExpiringBetween(from, to);
-  }
+  ) =>
+      _database.documentsDao.getExpiringBetween(from, to);
+
+  /// Full-text search across title, description, issuer, reference, OCR text.
+  Future<List<DocumentEntity>> search(String query) =>
+      _database.ftsSearch(query);
 }

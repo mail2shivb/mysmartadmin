@@ -1,15 +1,16 @@
+// B4.3 STATUS: IMPLEMENTED
 // F2.1 STATUS: FIXED
 
 import 'package:flutter/material.dart';
 import '../../core/database_provider.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 import '../../domain/reports/reports_repository.dart';
 import '../viewmodels/dashboard_view_model.dart';
 import '../widgets/app_card.dart';
 import '../widgets/primary_card.dart';
-import '../widgets/section_header.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/add_entry_bottom_sheet.dart';
-import '../theme/spacing.dart';
 
 /// Dashboard screen
 ///
@@ -30,248 +31,245 @@ class DashboardScreen extends StatelessWidget {
     final repository = ReportsRepository(db);
     final viewModel = DashboardViewModel(repository);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF1F6FB),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF1F6FB),
-        elevation: 0,
-        title: const Text('Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded),
-            color: const Color(0xFF1E6FD9),
-            tooltip: 'Add to Ledger',
-            onPressed: () => _showAddToLedgerSheet(context),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        top: false, // AppBar already accounts for status bar padding.
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(Spacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // HERO: Total Monthly Commitments (NO HEADER)
-              FutureBuilder(
-                future: viewModel.loadTotalMonthlyCommitments(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const PrimaryCard(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(Spacing.lg),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return const PrimaryCard(
-                      child: EmptyState(
-                        icon: Icons.account_balance_outlined,
-                        title: 'Commitments loading',
-                        description: 'Your monthly total will appear shortly',
-                      ),
-                    );
-                  }
-                  final total = snapshot.data!;
-                  final theme = Theme.of(context);
-                  return PrimaryCard(
+    return AppScaffold(
+      useSafeArea: true,
+      enableScroll: true,
+      body: Padding(
+        padding: AppPadding.screen,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // HERO: Total Monthly Commitments (NO HEADER)
+            FutureBuilder(
+              future: viewModel.loadTotalMonthlyCommitments(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const PrimaryCard(
                     child: Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            '£${(total / 100).toStringAsFixed(2)}',
-                            style: theme.textTheme.displayLarge?.copyWith(
-                              fontSize: 52,
-                              fontWeight: FontWeight.w800,
-                              color: theme.colorScheme.primary,
-                              height: 1.1,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'per month',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.xxl),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
+                        ),
                       ),
                     ),
                   );
-                },
-              ),
-
-              // SECTION: Monthly Overview
-              const SizedBox(height: Spacing.sectionHeaderTop),
-              const SectionHeader(title: 'Monthly Overview', addTopMargin: false),
-              const SizedBox(height: Spacing.sectionHeaderBottom),
-              FutureBuilder(
-                future: viewModel.loadMonthlyCostSummary(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const AppCard(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(Spacing.xl),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return const AppCard(
-                      child: EmptyState(
-                        icon: Icons.query_stats_outlined,
-                        title: 'Cost summary unavailable',
-                        description: 'Your monthly costs will appear here',
-                      ),
-                    );
-                  }
-                  final summary = snapshot.data!;
-                  return AppCard(
+                }
+                if (snapshot.hasError) {
+                  return const PrimaryCard(
+                    child: EmptyStateWidget(
+                      icon: Icons.account_balance_outlined,
+                      title: 'Commitments loading',
+                      description: 'Your monthly total will appear shortly',
+                    ),
+                  );
+                }
+                final total = snapshot.data!;
+                final theme = Theme.of(context);
+                return PrimaryCard(
+                  child: Center(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildCostRow(context, 'Bills', summary.billsTotal),
-                        const SizedBox(height: Spacing.xs),
-                        _buildCostRow(context, 'Subscriptions', summary.subscriptionsTotal),
-                        const SizedBox(height: Spacing.xs),
-                        _buildCostRow(context, 'Policies', summary.policiesTotal),
-                        const Divider(height: Spacing.md),
-                        _buildCostRow(
-                          context,
-                          'Total',
-                          summary.grandTotal,
-                          isBold: true,
+                        Text(
+                          '£${(total / 100).toStringAsFixed(2)}',
+                          style: theme.textTheme.displayLarge?.copyWith(
+                            fontSize: 56,
+                            fontWeight: FontWeight.w800,
+                            color: theme.colorScheme.primary,
+                            height: 1.0,
+                            letterSpacing: -1.5,
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-
-              // SECTION: Active Items
-              const SizedBox(height: Spacing.sectionHeaderTop),
-              const SectionHeader(title: 'Active Items', addTopMargin: false),
-              const SizedBox(height: Spacing.sectionHeaderBottom),
-              FutureBuilder(
-                future: viewModel.loadActiveEntitiesSummary(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const AppCard(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(Spacing.xl),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return const AppCard(
-                      child: EmptyState(
-                        icon: Icons.inventory_2_outlined,
-                        title: 'Summary coming soon',
-                        description: 'Your active items will be counted here',
-                      ),
-                    );
-                  }
-                  final summary = snapshot.data!;
-                  return AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildCountRow(context, Icons.receipt_long, 'Bills', summary.activeBills),
-                        const SizedBox(height: Spacing.xs),
-                        _buildCountRow(context, Icons.subscriptions, 'Subscriptions', summary.activeSubscriptions),
-                        const SizedBox(height: Spacing.xs),
-                        _buildCountRow(context, Icons.shield, 'Policies', summary.activePolicies),
-                        const SizedBox(height: Spacing.xs),
-                        _buildCountRow(context, Icons.description, 'Documents', summary.activeDocuments),
-                      ],
-                    ),
-                  );
-                },
-              ),
-
-              // SECTION: Reminders Summary
-              const SizedBox(height: Spacing.sectionHeaderTop),
-              const SectionHeader(title: 'Reminders Summary', addTopMargin: false),
-              const SizedBox(height: Spacing.sectionHeaderBottom),
-              FutureBuilder(
-                future: viewModel.loadActiveEntitiesSummary(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const AppCard(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(Spacing.xl),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return const AppCard(
-                      child: EmptyState(
-                        icon: Icons.notifications_outlined,
-                        title: 'Reminders unavailable',
-                        description: 'Your reminders will appear here',
-                      ),
-                    );
-                  }
-                  final summary = snapshot.data!;
-                  final theme = Theme.of(context);
-                  return AppCard(
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.notifications_active,
-                          size: 32,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: Spacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Pending Reminders',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              Text(
-                                '${summary.pendingReminders}',
-                                style: theme.textTheme.headlineMedium,
-                              ),
-                            ],
+                        const SizedBox(height: 6),
+                        Text(
+                          'estimated each month',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 13,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
+            ),
 
-              const SizedBox(height: Spacing.md), // Bottom padding
-            ],
-          ),
+            // SECTION: Monthly Commitments
+            const SizedBox(height: AppSpacing.xxl),
+            const SectionHeader(title: 'Monthly Commitments'),
+            const SizedBox(height: AppSpacing.sm),
+            FutureBuilder(
+              future: viewModel.loadMonthlyCostSummary(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const AppCard(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.xl),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const AppCard(
+                    child: EmptyStateWidget(
+                      icon: Icons.query_stats_outlined,
+                      title: 'Your monthly summary is not ready yet',
+                      description:
+                          'This section brings together bills, subscriptions, and policies so you can quickly understand your regular commitments.',
+                    ),
+                  );
+                }
+                final summary = snapshot.data!;
+                return AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildCostRow(context, 'Bills', summary.billsTotal),
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildCostRow(context, 'Subscriptions', summary.subscriptionsTotal),
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildCostRow(context, 'Policies', summary.policiesTotal),
+                      const Divider(height: AppSpacing.md),
+                      _buildCostRow(
+                        context,
+                        'Total',
+                        summary.grandTotal,
+                        isBold: true,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            // SECTION: What You’re Tracking
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'What You’re Tracking'),
+            const SizedBox(height: AppSpacing.sm),
+            FutureBuilder(
+              future: viewModel.loadActiveEntitiesSummary(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const AppCard(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.xl),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const AppCard(
+                    child: EmptyStateWidget(
+                      icon: Icons.inventory_2_outlined,
+                      title: 'Your tracked items are not available yet',
+                      description:
+                          'This area shows how many active records you already have across bills, subscriptions, policies, and documents.',
+                    ),
+                  );
+                }
+                final summary = snapshot.data!;
+                return AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildCountRow(context, Icons.receipt_long, 'Bills', summary.activeBills),
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildCountRow(context, Icons.subscriptions, 'Subscriptions', summary.activeSubscriptions),
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildCountRow(context, Icons.shield, 'Policies', summary.activePolicies),
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildCountRow(context, Icons.description, 'Documents', summary.activeDocuments),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            // SECTION: Upcoming Attention
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Upcoming Attention'),
+            const SizedBox(height: AppSpacing.sm),
+            FutureBuilder(
+              future: viewModel.loadActiveEntitiesSummary(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const AppCard(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.xl),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const AppCard(
+                    child: EmptyStateWidget(
+                      icon: Icons.notifications_outlined,
+                      title: 'Your reminder overview is not available yet',
+                      description:
+                          'This section highlights the reminders that matter next, so you can see pending actions at a glance.',
+                    ),
+                  );
+                }
+                final summary = snapshot.data!;
+                final theme = Theme.of(context);
+                return AppCard(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.notifications_active,
+                        size: 32,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pending reminders',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            Text(
+                              '${summary.pendingReminders}',
+                              style: theme.textTheme.headlineMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: AppSpacing.md), // Bottom padding
+          ],
         ),
       ),
-    );
-  }
-
-  void _showAddToLedgerSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => const _AddToLedgerBottomSheet(),
     );
   }
 
@@ -298,7 +296,7 @@ class DashboardScreen extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
-        const SizedBox(width: Spacing.xs),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
           child: Text(label, style: theme.textTheme.bodyMedium),
         ),
@@ -309,102 +307,6 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AddToLedgerBottomSheet extends StatelessWidget {
-  const _AddToLedgerBottomSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: Spacing.sm),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(Spacing.xl),
-              child: Text(
-                'Add to Ledger',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.edit_outlined,
-                size: 28,
-                color: theme.colorScheme.primary,
-              ),
-              title: Text(
-                'Manual Entry',
-                style: theme.textTheme.titleMedium,
-              ),
-              subtitle: Text(
-                'Add bill, subscription, or policy',
-                style: theme.textTheme.bodySmall,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ManualEntryScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: Icon(
-                Icons.document_scanner_outlined,
-                size: 28,
-                color: theme.colorScheme.primary,
-              ),
-              title: Text(
-                'Add Document',
-                style: theme.textTheme.titleMedium,
-              ),
-              subtitle: Text(
-                'Scan or upload a document',
-                style: theme.textTheme.bodySmall,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddDocumentScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: Spacing.md),
-          ],
-        ),
-      ),
     );
   }
 }

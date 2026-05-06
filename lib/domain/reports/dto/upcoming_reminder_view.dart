@@ -1,25 +1,26 @@
-/// Upcoming reminder view DTO
-/// 
-/// Read-only view of reminders due within a timeframe
+/// Upcoming reminder view DTO.
+///
+/// Read-only view of a reminder within a timeframe, aligned to the B8 schema.
 class UpcomingReminderView {
   final int reminderId;
-  final String entityType;
-  final int entityId;
-  final String title;
-  final DateTime reminderDate;
-  final String reminderType;
-  final String status;
+  final String sourceEntityKind;
+  final int sourceEntityId;
+  final String triggerTypeId;
+  final DateTime firesAt;
+  final DateTime targetDate;
+  final String state;
   final int daysUntilDue;
+  final String? userNote;
 
   const UpcomingReminderView({
     required this.reminderId,
-    required this.entityType,
-    required this.entityId,
-    required this.title,
-    required this.reminderDate,
-    required this.reminderType,
-    required this.status,
+    required this.sourceEntityKind,
+    required this.sourceEntityId,
+    required this.triggerTypeId,
+    required this.firesAt,
+    required this.targetDate,
+    required this.state,
     required this.daysUntilDue,
+    this.userNote,
   });
 }
-

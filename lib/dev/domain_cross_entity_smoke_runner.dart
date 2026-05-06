@@ -46,8 +46,6 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
       // Step 1: Create a document
       final docId = await addDocument.call(
         title: 'Home Insurance Policy Doc',
-        documentType: 'insurance_policy',
-        category: 'insurance',
         expiryDate: DateTime.now().add(const Duration(days: 365)),
       );
       debugPrint('✓ Document created (id=$docId)');
@@ -69,7 +67,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
       // Step 3: Verify exactly 1 reminder exists
       final reminders1 = await getReminders.call();
       final policyReminders = reminders1.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
 
       if (policyReminders.length != 1) {
@@ -90,7 +88,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
 
       final reminders2 = await getReminders.call();
       final policyReminders2 = reminders2.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
       debugPrint('✓ Reminder count after doc delete: ${policyReminders2.length}');
 
@@ -188,7 +186,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
 
       final remindersA = await getReminders.call();
       final billReminders = remindersA.where(
-        (r) => r.description?.contains('[ENTITY:bill:$billId]') ?? false,
+        (r) => r.sourceEntityKind == 'bill' && r.sourceEntityId == billId,
       ).toList();
       if (billReminders.isEmpty) {
         throw StateError('Bill reminder not created');
@@ -211,7 +209,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
 
       final remindersB = await getReminders.call();
       final policyReminders = remindersB.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
       if (policyReminders.isEmpty) {
         throw StateError('Policy reminder not created');
@@ -226,11 +224,11 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
       final remindersC = await getReminders.call();
       
       final billRemindersAfter = remindersC.where(
-        (r) => r.description?.contains('[ENTITY:bill:$billId]') ?? false,
+        (r) => r.sourceEntityKind == 'bill' && r.sourceEntityId == billId,
       ).toList();
       
       final policyRemindersAfter = remindersC.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
 
       if (billRemindersAfter.isNotEmpty) {
@@ -274,7 +272,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
 
       final reminders1 = await getReminders.call();
       final initialReminders = reminders1.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
 
       if (initialReminders.isEmpty) {
@@ -303,7 +301,7 @@ Future<void> runCrossEntitySmokeTests(AppDatabase db) async {
       // Step 3: Verify reminder count = 1 and ID unchanged
       final reminders2 = await getReminders.call();
       final finalReminders = reminders2.where(
-        (r) => r.description?.contains('[ENTITY:policy:$policyId]') ?? false,
+        (r) => r.sourceEntityKind == 'policy' && r.sourceEntityId == policyId,
       ).toList();
 
       if (finalReminders.length != 1) {

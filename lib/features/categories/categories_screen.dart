@@ -27,7 +27,7 @@ class CategoriesScreen extends StatelessWidget {
 
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: const Text('Document Categories'),
       ),
       enableScroll: true,
       padding: AppPadding.screen,
@@ -35,7 +35,7 @@ class CategoriesScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Browse by category',
+            'Browse the main record areas in your life admin system',
             style: AppTypography.muted(context),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -83,7 +83,7 @@ class _DomainCard extends StatelessWidget {
       leadingIconBackground: _getIconBackground(context),
       leadingIconColor: Theme.of(context).colorScheme.primary,
       title: domain.displayName,
-      subtitle: domain.priority == 1 ? 'Start here first' : null,
+      subtitle: domain.priority == 1 ? 'A practical place to begin' : null,
       badge: domain.priority == 1
           ? Container(
               padding: const EdgeInsets.symmetric(

@@ -1,6 +1,9 @@
+// B4.3.1 STATUS: IMPLEMENTED
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'router.dart';
+import '../core/ui/components/app_scaffold.dart';
 
 /// Shell scaffold with bottom navigation bar
 /// 
@@ -21,15 +24,31 @@ class ShellScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = AppRouter.getIndexForLocation(location);
-    
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: NavigationBar(
+    // Documents supplies its own AppBar (with inline add-mode toggle), so it
+    // must not receive a second AppBar from ShellScaffold.
+    final showAddAction = location == AppRouter.home;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final navBar = Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: isDark 
+              ? theme.colorScheme.outline.withOpacity(0.1)
+              : theme.colorScheme.outline.withOpacity(0.08),
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
           final targetLocation = AppRouter.getLocationForIndex(index);
           context.go(targetLocation);
         },
+        elevation: 0,
+        backgroundColor: theme.colorScheme.surface,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
@@ -58,6 +77,34 @@ class ShellScaffold extends StatelessWidget {
           ),
         ],
       ),
+    );
+    
+    if (!showAddAction) {
+      return Scaffold(
+        body: child,
+        bottomNavigationBar: navBar,
+      );
+    }
+
+    final title = location == AppRouter.documents ? 'Documents' : 'Dashboard';
+
+    // Dashboard uses an inner SafeArea; remove top padding so AppBar spacing is consistent.
+    final wrappedBody = location == AppRouter.home
+        ? MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: child,
+          )
+        : child;
+
+    return AppScaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      showAddAction: true,
+      useSafeArea: false,
+      body: wrappedBody,
+      bottomNavigationBar: navBar,
     );
   }
 }

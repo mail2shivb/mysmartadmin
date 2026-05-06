@@ -7,23 +7,27 @@ import '../presentation/screens/reports_screen.dart' as b13;
 import '../presentation/screens/policies_screen.dart' as b13;
 import '../features/bills/bills_screen.dart';
 import '../features/documents/documents_functional_screen.dart';
+import '../features/documents/add_document_screen.dart';
+import '../features/documents/document_types.dart';
+import '../features/documents/driving_licence/driving_licence_list_screen.dart';
+import '../features/documents/passport/passport_list_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
 
 /// Application router configuration using go_router
 /// 
-/// Routes (exact):
-/// - /home
-/// - /documents
-/// - /categories
-/// - /query
-/// - /tasks
-/// - /settings
+/// Routes:
+/// - /home - Dashboard
+/// - /bills - Bills
+/// - /documents - Documents
+/// - /reminders - Reminders
+/// - /reports - Reports (accessible via navigation, not in bottom nav)
+/// - /policies - Policies (accessible via navigation, not in bottom nav)
+/// - /tasks - Tasks
+/// - /settings - Settings (full screen, not in bottom nav)
 /// 
 /// Bottom nav tabs (5):
-/// Home, Documents, Categories, Query, Tasks
-/// 
-/// Settings accessible via AppBar icon
+/// Dashboard, Bills, Documents, Reminders, Tasks
 class AppRouter {
   AppRouter._();
 
@@ -44,6 +48,12 @@ class AppRouter {
   static const String query = '/query';
   static const String tasks = '/tasks';
   static const String settings = '/settings';
+  static const String passportList = '/passport';
+  static const String passportAdd = '/passport/add';
+  static const String drivingLicenceList = '/driving-licence';
+  static const String drivingLicenceAdd = '/driving-licence/add';
+  /// Untyped entry point — shows the document-type selector first.
+  static const String addDocument = '/documents/add';
 
   /// Router configuration
   static final GoRouter router = GoRouter(
@@ -116,14 +126,55 @@ class AppRouter {
               child: TasksScreen(),
             ),
           ),
+
+          // Passport list (in shell — no bottom nav slot, reached from Documents)
+          GoRoute(
+            path: passportList,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PassportListScreen(),
+            ),
+          ),
+
+          // Driving licence list (in shell — no bottom nav slot)
+          GoRoute(
+            path: drivingLicenceList,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: DrivingLicenceListScreen(),
+            ),
+          ),
         ],
       ),
-      
+
       // Settings (not in bottom nav)
       GoRoute(
         path: settings,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsScreen(),
+      ),
+
+      // Passport add — pre-selects passport type in the unified form.
+      GoRoute(
+        path: passportAdd,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AddDocumentScreen(
+          initialType: SupportedDocumentType.passport,
+        ),
+      ),
+
+      // Driving licence add — pre-selects driving licence type in the unified form.
+      GoRoute(
+        path: drivingLicenceAdd,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AddDocumentScreen(
+          initialType: SupportedDocumentType.drivingLicence,
+        ),
+      ),
+
+      // Untyped entry point — shows type selector first (e.g. from Documents hub FAB).
+      GoRoute(
+        path: addDocument,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AddDocumentScreen(),
       ),
     ],
   );
@@ -139,12 +190,11 @@ class AppRouter {
         return 2;
       case reminders:
         return 3;
-      case reports:
-        return 4;
-      case policies:
-        return 5;
       case tasks:
-        return 6;
+        return 4;
+      // reports and policies are accessible routes but not in bottom nav
+      case reports:
+      case policies:
       default:
         return 0;
     }
@@ -162,10 +212,6 @@ class AppRouter {
       case 3:
         return reminders;
       case 4:
-        return reports;
-      case 5:
-        return policies;
-      case 6:
         return tasks;
       default:
         return home;

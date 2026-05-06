@@ -2,17 +2,10 @@ import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
 import '../../validation/entity_validators.dart';
 
-/// Use case for creating a new subscription
-///
-/// Creates subscription and optionally generates a reminder for renewal
 class CreateSubscriptionUseCase {
   final AppDatabase _database;
-
   CreateSubscriptionUseCase(this._database);
 
-  /// Create a new subscription with optional reminder generation
-  /// 
-  /// Returns the ID of the newly created subscription
   Future<int> call({
     required String name,
     required String category,
@@ -28,7 +21,6 @@ class CreateSubscriptionUseCase {
     String currency = 'GBP',
     bool generateReminder = true,
   }) async {
-    // Use centralized entity validator
     EntityValidators.validateSubscription(
       name: name,
       category: category,
@@ -40,10 +32,9 @@ class CreateSubscriptionUseCase {
       trialEndDate: trialEndDate,
     );
 
-    // Wrap in transaction to ensure atomicity
     return await _database.transaction(() async {
-      // Create the subscription
-      final subscriptionId = await _database.subscriptionsDao.createSubscription(
+      final subscriptionId =
+          await _database.subscriptionsDao.createSubscription(
         SubscriptionsCompanion.insert(
           name: name,
           category: category,
@@ -61,13 +52,12 @@ class CreateSubscriptionUseCase {
         ),
       );
 
-      // Auto-generate reminder if requested
       if (generateReminder) {
-        final reminderDate = isTrial && trialEndDate != null ? trialEndDate : renewalDate;
+        final targetDate =
+            isTrial && trialEndDate != null ? trialEndDate : renewalDate;
         await _generateSubscriptionReminder(
           subscriptionId: subscriptionId,
-          subscriptionName: name,
-          renewalDate: reminderDate,
+          targetDate: targetDate,
           isTrial: isTrial,
         );
       }
@@ -76,47 +66,31 @@ class CreateSubscriptionUseCase {
     });
   }
 
-  /// Generate reminder for subscription renewal
   Future<void> _generateSubscriptionReminder({
     required int subscriptionId,
-    required String subscriptionName,
-    required DateTime renewalDate,
+    required DateTime targetDate,
     required bool isTrial,
   }) async {
-    // Calculate reminder date (7 days before renewal for annual, 3 days for monthly/trial)
-    final reminderDate = renewalDate.subtract(Duration(days: isTrial ? 2 : 7));
-    
-    // Only create reminder if it's in the future
-    if (reminderDate.isBefore(DateTime.now())) {
-      return;
-    }
+    final leadIn = isTrial ? 2 : 7;
+    final firesAt = targetDate.subtract(Duration(days: leadIn));
+    if (firesAt.isBefore(DateTime.now())) return;
 
-    // Check if reminder already exists using entity-based detection
-    final existingReminders = await _database.remindersDao.getAllReminders();
-    final duplicateExists = existingReminders.any(
-      (r) => r.description != null &&
-             r.description!.contains('[ENTITY:subscription:$subscriptionId]') &&
-             r.reminderType == 'subscription_renewal' && 
-             r.status != 'completed',
-    );
+    final existing =
+        await _database.remindersDao.getForSource('subscription', subscriptionId);
+    final triggerType = isTrial ? 'trial_end_date' : 'renewal_date';
+    final dup = existing.any(
+        (r) => r.triggerTypeId == triggerType && r.state != 'completed');
+    if (dup) return;
 
-    if (duplicateExists) {
-      return;
-    }
-
-    // Create the reminder with entity identifier
-    final reminderType = isTrial ? 'Trial ending' : 'Subscription renewal';
     await _database.remindersDao.createReminder(
       RemindersCompanion.insert(
-        entityType: 'subscription',
-        entityId: subscriptionId,
-        title: '$reminderType: $subscriptionName',
-        description: Value('[ENTITY:subscription:$subscriptionId] Renews on ${renewalDate.toIso8601String().split('T')[0]}'),
-        reminderDate: reminderDate,
-        reminderType: 'subscription_renewal',
-        status: const Value('pending'),
+        sourceEntityKind: 'subscription',
+        sourceEntityId: subscriptionId,
+        triggerTypeId: triggerType,
+        targetDate: targetDate,
+        leadInDaysSnapshot: Value(leadIn),
+        firesAt: firesAt,
       ),
     );
   }
 }
-

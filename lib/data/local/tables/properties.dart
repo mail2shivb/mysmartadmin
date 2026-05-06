@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'documents.dart';
 
 /// Properties table - owned and rented properties
 /// Monetary values stored as INTEGER (cents/pence)
+///
+/// Documents attach to properties via the [Relationships] table (B6.4).
+/// No direct document_id FK — use relationship_type_id = 'property_policy'
+/// or the generic [Relationships] entity for other document ↔ property links.
 @DataClassName('PropertyEntity')
 class Properties extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
-
-  // Foreign key - link to property documents (deeds, mortgage, etc.)
-  IntColumn get documentId => integer().nullable().references(Documents, #id, onDelete: KeyAction.setNull)();
 
   // Property details
   TextColumn get propertyName => text().withLength(min: 1, max: 255)();

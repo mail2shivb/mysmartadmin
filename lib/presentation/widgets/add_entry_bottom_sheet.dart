@@ -1,7 +1,9 @@
-// F2.1 STATUS: RE-IMPLEMENTED
+// B4.3 STATUS: IMPLEMENTED
+// F2.2 STATUS: IMPLEMENTED
 
 import 'package:flutter/material.dart';
-import '../theme/spacing.dart';
+import '../../core/ui/tokens.dart';
+import 'app_card.dart';
 
 /// Bottom sheet for choosing how to add new data
 /// 
@@ -17,7 +19,7 @@ class AddEntryBottomSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surfaceContainerLowest,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -31,7 +33,7 @@ class AddEntryBottomSheet extends StatelessWidget {
             // Handle bar
             Center(
               child: Container(
-                margin: const EdgeInsets.only(top: Spacing.sm),
+                margin: const EdgeInsets.only(top: AppSpacing.sm),
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
@@ -43,9 +45,9 @@ class AddEntryBottomSheet extends StatelessWidget {
             
             // Title
             Padding(
-              padding: const EdgeInsets.all(Spacing.xl),
+              padding: const EdgeInsets.all(AppSpacing.xl),
               child: Text(
-                'Add to Ledger',
+                'Add a new record',
                 style: theme.textTheme.titleLarge,
               ),
             ),
@@ -58,11 +60,11 @@ class AddEntryBottomSheet extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                'Add Document',
+                'Add a document',
                 style: theme.textTheme.titleMedium,
               ),
               subtitle: Text(
-                'Scan or upload a document',
+                'Scan a paper record or upload a file from this device',
                 style: theme.textTheme.bodySmall,
               ),
               onTap: () {
@@ -85,11 +87,11 @@ class AddEntryBottomSheet extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                'Manual Entry',
+                'Enter details manually',
                 style: theme.textTheme.titleMedium,
               ),
               subtitle: Text(
-                'Add bill, subscription, or policy',
+                'Create a bill, subscription, or policy record without a file',
                 style: theme.textTheme.bodySmall,
               ),
               onTap: () {
@@ -103,7 +105,7 @@ class AddEntryBottomSheet extends StatelessWidget {
               },
             ),
             
-            const SizedBox(height: Spacing.md),
+            const SizedBox(height: AppSpacing.md),
           ],
         ),
       ),
@@ -111,7 +113,7 @@ class AddEntryBottomSheet extends StatelessWidget {
   }
 }
 
-/// Placeholder screen for Add Document flow
+/// F2.2: Entry type decision (Add Document path)
 class AddDocumentScreen extends StatelessWidget {
   const AddDocumentScreen({super.key});
 
@@ -122,41 +124,61 @@ class AddDocumentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Add Document'),
+        title: const Text('Add a document'),
       ),
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(Spacing.xl),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(Spacing.xxl * 2),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppCard(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.document_scanner_outlined,
-                      size: 64,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(height: Spacing.xl),
                     Text(
-                      'Document Scanning',
-                      style: theme.textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
+                      'How would you like to add it?',
+                      style: theme.textTheme.titleMedium,
                     ),
-                    const SizedBox(height: Spacing.sm),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
-                      'Coming next in F2.x',
+                      'Choose the method that matches what you have available right now.',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(height: AppSpacing.md),
+              _ChoiceCard(
+                icon: Icons.document_scanner_outlined,
+                title: 'Scan a document',
+                description: 'Use your camera to capture a paper document and store it here',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ScanDocumentPlaceholderScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _ChoiceCard(
+                icon: Icons.upload_file_outlined,
+                title: 'Upload a file',
+                description: 'Choose a PDF or image already saved on this device',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UploadFilePlaceholderScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -164,7 +186,7 @@ class AddDocumentScreen extends StatelessWidget {
   }
 }
 
-/// Placeholder screen for Manual Entry flow
+/// F2.2: Entry type decision (Manual Entry path)
 class ManualEntryScreen extends StatelessWidget {
   const ManualEntryScreen({super.key});
 
@@ -175,39 +197,382 @@ class ManualEntryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Manual Entry'),
+        title: const Text('Enter details manually'),
       ),
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(Spacing.xl),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(Spacing.xxl * 2),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppCard(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.edit_outlined,
-                      size: 64,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(height: Spacing.xl),
                     Text(
-                      'Manual Data Entry',
-                      style: theme.textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
+                      'What would you like to add?',
+                      style: theme.textTheme.titleMedium,
                     ),
-                    const SizedBox(height: Spacing.sm),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
-                      'Coming next in F2.x',
+                      'Choose the type of record you want to create, then add the important details step by step.',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _ChoiceCard(
+                icon: Icons.receipt_long_outlined,
+                title: 'Bill',
+                description: 'Track a one-off or regular payment and keep due dates visible',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BillEntryPlaceholderScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _ChoiceCard(
+                icon: Icons.subscriptions_outlined,
+                title: 'Subscription',
+                description: 'Record recurring services such as streaming, memberships, or apps',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SubscriptionEntryPlaceholderScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _ChoiceCard(
+                icon: Icons.shield_outlined,
+                title: 'Policy',
+                description: 'Store insurance or protection details with cover and renewal information',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PolicyEntryPlaceholderScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChoiceCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final VoidCallback onTap;
+
+  const _ChoiceCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AppCard(
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                icon,
+                size: 28,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ScanDocumentPlaceholderScreen extends StatelessWidget {
+  const ScanDocumentPlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Scan a document'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Center(
+            child: AppCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.document_scanner_outlined,
+                    size: 56,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Scan a document',
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'This flow will help you capture a paper record and save it as part of your personal archive on this device.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class UploadFilePlaceholderScreen extends StatelessWidget {
+  const UploadFilePlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Upload a file'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Center(
+            child: AppCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.upload_file_outlined,
+                    size: 56,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Upload a file',
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'This flow will let you choose an existing PDF or image, so important records can be kept together in one place.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BillEntryPlaceholderScreen extends StatelessWidget {
+  const BillEntryPlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Add a bill'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Center(
+            child: AppCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.receipt_long_outlined,
+                    size: 56,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Add a bill',
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'This flow will help you record payment details, due dates, and regular household costs in a clear, structured way.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SubscriptionEntryPlaceholderScreen extends StatelessWidget {
+  const SubscriptionEntryPlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Add a subscription'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Center(
+            child: AppCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.subscriptions_outlined,
+                    size: 56,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Add a subscription',
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'This flow will help you record recurring services, renewal timing, and monthly costs so nothing is easy to overlook.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PolicyEntryPlaceholderScreen extends StatelessWidget {
+  const PolicyEntryPlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Add a policy'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Center(
+            child: AppCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.shield_outlined,
+                    size: 56,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Add a policy',
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'This flow will help you keep policy numbers, cover details, and renewal dates organised on this device.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ),

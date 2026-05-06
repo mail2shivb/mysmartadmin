@@ -22,6 +22,62 @@ class $DocumentsTable extends Documents
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _documentTypeIdMeta = const VerificationMeta(
+    'documentTypeId',
+  );
+  @override
+  late final GeneratedColumn<String> documentTypeId = GeneratedColumn<String>(
+    'document_type_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _domainIdMeta = const VerificationMeta(
+    'domainId',
+  );
+  @override
+  late final GeneratedColumn<String> domainId = GeneratedColumn<String>(
+    'domain_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _taxonomyVersionMeta = const VerificationMeta(
+    'taxonomyVersion',
+  );
+  @override
+  late final GeneratedColumn<int> taxonomyVersion = GeneratedColumn<int>(
+    'taxonomy_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _classificationStateMeta =
+      const VerificationMeta('classificationState');
+  @override
+  late final GeneratedColumn<String> classificationState =
+      GeneratedColumn<String>(
+        'classification_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('classification_pending'),
+      );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -46,87 +102,55 @@ class $DocumentsTable extends Documents
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _documentTypeMeta = const VerificationMeta(
-    'documentType',
-  );
+  static const VerificationMeta _issuerMeta = const VerificationMeta('issuer');
   @override
-  late final GeneratedColumn<String> documentType = GeneratedColumn<String>(
-    'document_type',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _categoryMeta = const VerificationMeta(
-    'category',
-  );
-  @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-    'category',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _filePathMeta = const VerificationMeta(
-    'filePath',
-  );
-  @override
-  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
-    'file_path',
+  late final GeneratedColumn<String> issuer = GeneratedColumn<String>(
+    'issuer',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fileTypeMeta = const VerificationMeta(
-    'fileType',
+  static const VerificationMeta _referenceNumberMeta = const VerificationMeta(
+    'referenceNumber',
   );
   @override
-  late final GeneratedColumn<String> fileType = GeneratedColumn<String>(
-    'file_type',
+  late final GeneratedColumn<String> referenceNumber = GeneratedColumn<String>(
+    'reference_number',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fileSizeBytesMeta = const VerificationMeta(
-    'fileSizeBytes',
+  static const VerificationMeta _amountCentsMeta = const VerificationMeta(
+    'amountCents',
   );
   @override
-  late final GeneratedColumn<int> fileSizeBytes = GeneratedColumn<int>(
-    'file_size_bytes',
+  late final GeneratedColumn<int> amountCents = GeneratedColumn<int>(
+    'amount_cents',
     aliasedName,
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _extractedDataMeta = const VerificationMeta(
-    'extractedData',
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
   );
   @override
-  late final GeneratedColumn<String> extractedData = GeneratedColumn<String>(
-    'extracted_data',
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultValue: const Constant('GBP'),
   );
-  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
-  @override
-  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
-    'tags',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _documentDateMeta = const VerificationMeta(
-    'documentDate',
+  static const VerificationMeta _issueDateMeta = const VerificationMeta(
+    'issueDate',
   );
   @override
-  late final GeneratedColumn<DateTime> documentDate = GeneratedColumn<DateTime>(
-    'document_date',
+  late final GeneratedColumn<DateTime> issueDate = GeneratedColumn<DateTime>(
+    'issue_date',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
@@ -143,15 +167,137 @@ class $DocumentsTable extends Documents
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _reminderDateMeta = const VerificationMeta(
-    'reminderDate',
+  static const VerificationMeta _renewalDateMeta = const VerificationMeta(
+    'renewalDate',
   );
   @override
-  late final GeneratedColumn<DateTime> reminderDate = GeneratedColumn<DateTime>(
-    'reminder_date',
+  late final GeneratedColumn<DateTime> renewalDate = GeneratedColumn<DateTime>(
+    'renewal_date',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reviewDateMeta = const VerificationMeta(
+    'reviewDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> reviewDate = GeneratedColumn<DateTime>(
+    'review_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _paymentDueDateMeta = const VerificationMeta(
+    'paymentDueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> paymentDueDate =
+      GeneratedColumn<DateTime>(
+        'payment_due_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _extraFieldsJsonMeta = const VerificationMeta(
+    'extraFieldsJson',
+  );
+  @override
+  late final GeneratedColumn<String> extraFieldsJson = GeneratedColumn<String>(
+    'extra_fields_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('manual'),
+  );
+  static const VerificationMeta _ocrConfidenceMeta = const VerificationMeta(
+    'ocrConfidence',
+  );
+  @override
+  late final GeneratedColumn<double> ocrConfidence = GeneratedColumn<double>(
+    'ocr_confidence',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ocrTextMeta = const VerificationMeta(
+    'ocrText',
+  );
+  @override
+  late final GeneratedColumn<String> ocrText = GeneratedColumn<String>(
+    'ocr_text',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ocrProcessedAtMeta = const VerificationMeta(
+    'ocrProcessedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> ocrProcessedAt =
+      GeneratedColumn<DateTime>(
+        'ocr_processed_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _filePathMeta = const VerificationMeta(
+    'filePath',
+  );
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+    'file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _fileMimeMeta = const VerificationMeta(
+    'fileMime',
+  );
+  @override
+  late final GeneratedColumn<String> fileMime = GeneratedColumn<String>(
+    'file_mime',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _fileSizeBytesMeta = const VerificationMeta(
+    'fileSizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> fileSizeBytes = GeneratedColumn<int>(
+    'file_size_bytes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _fileHashMeta = const VerificationMeta(
+    'fileHash',
+  );
+  @override
+  late final GeneratedColumn<String> fileHash = GeneratedColumn<String>(
+    'file_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _deletedAtMeta = const VerificationMeta(
@@ -218,18 +364,31 @@ class $DocumentsTable extends Documents
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    documentTypeId,
+    categoryId,
+    domainId,
+    taxonomyVersion,
+    classificationState,
     title,
     description,
-    documentType,
-    category,
-    filePath,
-    fileType,
-    fileSizeBytes,
-    extractedData,
-    tags,
-    documentDate,
+    issuer,
+    referenceNumber,
+    amountCents,
+    currency,
+    issueDate,
     expiryDate,
-    reminderDate,
+    renewalDate,
+    reviewDate,
+    paymentDueDate,
+    extraFieldsJson,
+    source,
+    ocrConfidence,
+    ocrText,
+    ocrProcessedAt,
+    filePath,
+    fileMime,
+    fileSizeBytes,
+    fileHash,
     deletedAt,
     version,
     previousVersionId,
@@ -251,6 +410,45 @@ class $DocumentsTable extends Documents
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
+    if (data.containsKey('document_type_id')) {
+      context.handle(
+        _documentTypeIdMeta,
+        documentTypeId.isAcceptableOrUnknown(
+          data['document_type_id']!,
+          _documentTypeIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('domain_id')) {
+      context.handle(
+        _domainIdMeta,
+        domainId.isAcceptableOrUnknown(data['domain_id']!, _domainIdMeta),
+      );
+    }
+    if (data.containsKey('taxonomy_version')) {
+      context.handle(
+        _taxonomyVersionMeta,
+        taxonomyVersion.isAcceptableOrUnknown(
+          data['taxonomy_version']!,
+          _taxonomyVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('classification_state')) {
+      context.handle(
+        _classificationStateMeta,
+        classificationState.isAcceptableOrUnknown(
+          data['classification_state']!,
+          _classificationStateMeta,
+        ),
+      );
+    }
     if (data.containsKey('title')) {
       context.handle(
         _titleMeta,
@@ -268,24 +466,110 @@ class $DocumentsTable extends Documents
         ),
       );
     }
-    if (data.containsKey('document_type')) {
+    if (data.containsKey('issuer')) {
       context.handle(
-        _documentTypeMeta,
-        documentType.isAcceptableOrUnknown(
-          data['document_type']!,
-          _documentTypeMeta,
+        _issuerMeta,
+        issuer.isAcceptableOrUnknown(data['issuer']!, _issuerMeta),
+      );
+    }
+    if (data.containsKey('reference_number')) {
+      context.handle(
+        _referenceNumberMeta,
+        referenceNumber.isAcceptableOrUnknown(
+          data['reference_number']!,
+          _referenceNumberMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_documentTypeMeta);
     }
-    if (data.containsKey('category')) {
+    if (data.containsKey('amount_cents')) {
       context.handle(
-        _categoryMeta,
-        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+        _amountCentsMeta,
+        amountCents.isAcceptableOrUnknown(
+          data['amount_cents']!,
+          _amountCentsMeta,
+        ),
       );
-    } else if (isInserting) {
-      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('issue_date')) {
+      context.handle(
+        _issueDateMeta,
+        issueDate.isAcceptableOrUnknown(data['issue_date']!, _issueDateMeta),
+      );
+    }
+    if (data.containsKey('expiry_date')) {
+      context.handle(
+        _expiryDateMeta,
+        expiryDate.isAcceptableOrUnknown(data['expiry_date']!, _expiryDateMeta),
+      );
+    }
+    if (data.containsKey('renewal_date')) {
+      context.handle(
+        _renewalDateMeta,
+        renewalDate.isAcceptableOrUnknown(
+          data['renewal_date']!,
+          _renewalDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('review_date')) {
+      context.handle(
+        _reviewDateMeta,
+        reviewDate.isAcceptableOrUnknown(data['review_date']!, _reviewDateMeta),
+      );
+    }
+    if (data.containsKey('payment_due_date')) {
+      context.handle(
+        _paymentDueDateMeta,
+        paymentDueDate.isAcceptableOrUnknown(
+          data['payment_due_date']!,
+          _paymentDueDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('extra_fields_json')) {
+      context.handle(
+        _extraFieldsJsonMeta,
+        extraFieldsJson.isAcceptableOrUnknown(
+          data['extra_fields_json']!,
+          _extraFieldsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
+    if (data.containsKey('ocr_confidence')) {
+      context.handle(
+        _ocrConfidenceMeta,
+        ocrConfidence.isAcceptableOrUnknown(
+          data['ocr_confidence']!,
+          _ocrConfidenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ocr_text')) {
+      context.handle(
+        _ocrTextMeta,
+        ocrText.isAcceptableOrUnknown(data['ocr_text']!, _ocrTextMeta),
+      );
+    }
+    if (data.containsKey('ocr_processed_at')) {
+      context.handle(
+        _ocrProcessedAtMeta,
+        ocrProcessedAt.isAcceptableOrUnknown(
+          data['ocr_processed_at']!,
+          _ocrProcessedAtMeta,
+        ),
+      );
     }
     if (data.containsKey('file_path')) {
       context.handle(
@@ -293,10 +577,10 @@ class $DocumentsTable extends Documents
         filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta),
       );
     }
-    if (data.containsKey('file_type')) {
+    if (data.containsKey('file_mime')) {
       context.handle(
-        _fileTypeMeta,
-        fileType.isAcceptableOrUnknown(data['file_type']!, _fileTypeMeta),
+        _fileMimeMeta,
+        fileMime.isAcceptableOrUnknown(data['file_mime']!, _fileMimeMeta),
       );
     }
     if (data.containsKey('file_size_bytes')) {
@@ -308,43 +592,10 @@ class $DocumentsTable extends Documents
         ),
       );
     }
-    if (data.containsKey('extracted_data')) {
+    if (data.containsKey('file_hash')) {
       context.handle(
-        _extractedDataMeta,
-        extractedData.isAcceptableOrUnknown(
-          data['extracted_data']!,
-          _extractedDataMeta,
-        ),
-      );
-    }
-    if (data.containsKey('tags')) {
-      context.handle(
-        _tagsMeta,
-        tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta),
-      );
-    }
-    if (data.containsKey('document_date')) {
-      context.handle(
-        _documentDateMeta,
-        documentDate.isAcceptableOrUnknown(
-          data['document_date']!,
-          _documentDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('expiry_date')) {
-      context.handle(
-        _expiryDateMeta,
-        expiryDate.isAcceptableOrUnknown(data['expiry_date']!, _expiryDateMeta),
-      );
-    }
-    if (data.containsKey('reminder_date')) {
-      context.handle(
-        _reminderDateMeta,
-        reminderDate.isAcceptableOrUnknown(
-          data['reminder_date']!,
-          _reminderDateMeta,
-        ),
+        _fileHashMeta,
+        fileHash.isAcceptableOrUnknown(data['file_hash']!, _fileHashMeta),
       );
     }
     if (data.containsKey('deleted_at')) {
@@ -393,6 +644,26 @@ class $DocumentsTable extends Documents
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      documentTypeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_type_id'],
+      ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      ),
+      domainId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}domain_id'],
+      ),
+      taxonomyVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}taxonomy_version'],
+      ),
+      classificationState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}classification_state'],
+      )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -401,45 +672,77 @@ class $DocumentsTable extends Documents
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
-      documentType: attachedDatabase.typeMapping.read(
+      issuer: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}document_type'],
-      )!,
-      category: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}category'],
-      )!,
-      filePath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}file_path'],
+        data['${effectivePrefix}issuer'],
       ),
-      fileType: attachedDatabase.typeMapping.read(
+      referenceNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}file_type'],
+        data['${effectivePrefix}reference_number'],
       ),
-      fileSizeBytes: attachedDatabase.typeMapping.read(
+      amountCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}file_size_bytes'],
+        data['${effectivePrefix}amount_cents'],
       ),
-      extractedData: attachedDatabase.typeMapping.read(
+      currency: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}extracted_data'],
+        data['${effectivePrefix}currency'],
       ),
-      tags: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tags'],
-      ),
-      documentDate: attachedDatabase.typeMapping.read(
+      issueDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}document_date'],
+        data['${effectivePrefix}issue_date'],
       ),
       expiryDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}expiry_date'],
       ),
-      reminderDate: attachedDatabase.typeMapping.read(
+      renewalDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}reminder_date'],
+        data['${effectivePrefix}renewal_date'],
+      ),
+      reviewDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}review_date'],
+      ),
+      paymentDueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}payment_due_date'],
+      ),
+      extraFieldsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}extra_fields_json'],
+      ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      ocrConfidence: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}ocr_confidence'],
+      ),
+      ocrText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ocr_text'],
+      ),
+      ocrProcessedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ocr_processed_at'],
+      ),
+      filePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_path'],
+      ),
+      fileMime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_mime'],
+      ),
+      fileSizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}file_size_bytes'],
+      ),
+      fileHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_hash'],
       ),
       deletedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -472,18 +775,73 @@ class $DocumentsTable extends Documents
 
 class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   final int id;
+
+  /// Canonical document type ID (e.g. 'passport', 'mot_certificate').
+  /// Null when classificationState is 'classification_pending'.
+  final String? documentTypeId;
+
+  /// Cached category ID (e.g. 'travel_immigration'). Set at classification time.
+  final String? categoryId;
+
+  /// Cached domain ID (e.g. 'identity_legal'). Set at classification time.
+  final String? domainId;
+
+  /// Taxonomy version active when this document was classified.
+  final int? taxonomyVersion;
+
+  /// 'classified' | 'classification_pending'
+  final String classificationState;
   final String title;
   final String? description;
-  final String documentType;
-  final String category;
-  final String? filePath;
-  final String? fileType;
-  final int? fileSizeBytes;
-  final String? extractedData;
-  final String? tags;
-  final DateTime? documentDate;
+
+  /// Issuer, provider, or authority (e.g. 'DVLA', 'Barclays', 'NHS').
+  final String? issuer;
+
+  /// Reference / policy / account / licence number.
+  final String? referenceNumber;
+
+  /// Monetary value in smallest currency unit (pence/cents).
+  final int? amountCents;
+  final String? currency;
+
+  /// Date printed on or associated with the document.
+  final DateTime? issueDate;
+
+  /// Hard expiry date — drives expiry_date reminder trigger.
   final DateTime? expiryDate;
-  final DateTime? reminderDate;
+
+  /// Renewal due date — drives renewal_date reminder trigger.
+  final DateTime? renewalDate;
+
+  /// Scheduled review date — drives review_date reminder trigger.
+  final DateTime? reviewDate;
+
+  /// Next payment due — drives payment_due_date reminder trigger.
+  final DateTime? paymentDueDate;
+
+  /// JSON object keyed by stable taxonomy field IDs. Values are primitives only.
+  /// Unknown keys from future taxonomy versions are preserved untouched.
+  final String? extraFieldsJson;
+
+  /// 'manual' | 'ocr' | 'imported'
+  final String source;
+
+  /// OCR classification confidence 0.0–1.0. Null for manual entries.
+  final double? ocrConfidence;
+
+  /// Raw OCR extracted text — indexed by FTS.
+  final String? ocrText;
+  final DateTime? ocrProcessedAt;
+
+  /// Relative path under the app documents directory.
+  final String? filePath;
+
+  /// MIME type (e.g. 'application/pdf', 'image/jpeg').
+  final String? fileMime;
+  final int? fileSizeBytes;
+
+  /// SHA-256 hash for duplicate detection.
+  final String? fileHash;
   final DateTime? deletedAt;
   final int version;
   final int? previousVersionId;
@@ -491,18 +849,31 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   final DateTime updatedAt;
   const DocumentEntity({
     required this.id,
+    this.documentTypeId,
+    this.categoryId,
+    this.domainId,
+    this.taxonomyVersion,
+    required this.classificationState,
     required this.title,
     this.description,
-    required this.documentType,
-    required this.category,
-    this.filePath,
-    this.fileType,
-    this.fileSizeBytes,
-    this.extractedData,
-    this.tags,
-    this.documentDate,
+    this.issuer,
+    this.referenceNumber,
+    this.amountCents,
+    this.currency,
+    this.issueDate,
     this.expiryDate,
-    this.reminderDate,
+    this.renewalDate,
+    this.reviewDate,
+    this.paymentDueDate,
+    this.extraFieldsJson,
+    required this.source,
+    this.ocrConfidence,
+    this.ocrText,
+    this.ocrProcessedAt,
+    this.filePath,
+    this.fileMime,
+    this.fileSizeBytes,
+    this.fileHash,
     this.deletedAt,
     required this.version,
     this.previousVersionId,
@@ -513,35 +884,74 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    if (!nullToAbsent || documentTypeId != null) {
+      map['document_type_id'] = Variable<String>(documentTypeId);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
+    if (!nullToAbsent || domainId != null) {
+      map['domain_id'] = Variable<String>(domainId);
+    }
+    if (!nullToAbsent || taxonomyVersion != null) {
+      map['taxonomy_version'] = Variable<int>(taxonomyVersion);
+    }
+    map['classification_state'] = Variable<String>(classificationState);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['document_type'] = Variable<String>(documentType);
-    map['category'] = Variable<String>(category);
-    if (!nullToAbsent || filePath != null) {
-      map['file_path'] = Variable<String>(filePath);
+    if (!nullToAbsent || issuer != null) {
+      map['issuer'] = Variable<String>(issuer);
     }
-    if (!nullToAbsent || fileType != null) {
-      map['file_type'] = Variable<String>(fileType);
+    if (!nullToAbsent || referenceNumber != null) {
+      map['reference_number'] = Variable<String>(referenceNumber);
     }
-    if (!nullToAbsent || fileSizeBytes != null) {
-      map['file_size_bytes'] = Variable<int>(fileSizeBytes);
+    if (!nullToAbsent || amountCents != null) {
+      map['amount_cents'] = Variable<int>(amountCents);
     }
-    if (!nullToAbsent || extractedData != null) {
-      map['extracted_data'] = Variable<String>(extractedData);
+    if (!nullToAbsent || currency != null) {
+      map['currency'] = Variable<String>(currency);
     }
-    if (!nullToAbsent || tags != null) {
-      map['tags'] = Variable<String>(tags);
-    }
-    if (!nullToAbsent || documentDate != null) {
-      map['document_date'] = Variable<DateTime>(documentDate);
+    if (!nullToAbsent || issueDate != null) {
+      map['issue_date'] = Variable<DateTime>(issueDate);
     }
     if (!nullToAbsent || expiryDate != null) {
       map['expiry_date'] = Variable<DateTime>(expiryDate);
     }
-    if (!nullToAbsent || reminderDate != null) {
-      map['reminder_date'] = Variable<DateTime>(reminderDate);
+    if (!nullToAbsent || renewalDate != null) {
+      map['renewal_date'] = Variable<DateTime>(renewalDate);
+    }
+    if (!nullToAbsent || reviewDate != null) {
+      map['review_date'] = Variable<DateTime>(reviewDate);
+    }
+    if (!nullToAbsent || paymentDueDate != null) {
+      map['payment_due_date'] = Variable<DateTime>(paymentDueDate);
+    }
+    if (!nullToAbsent || extraFieldsJson != null) {
+      map['extra_fields_json'] = Variable<String>(extraFieldsJson);
+    }
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || ocrConfidence != null) {
+      map['ocr_confidence'] = Variable<double>(ocrConfidence);
+    }
+    if (!nullToAbsent || ocrText != null) {
+      map['ocr_text'] = Variable<String>(ocrText);
+    }
+    if (!nullToAbsent || ocrProcessedAt != null) {
+      map['ocr_processed_at'] = Variable<DateTime>(ocrProcessedAt);
+    }
+    if (!nullToAbsent || filePath != null) {
+      map['file_path'] = Variable<String>(filePath);
+    }
+    if (!nullToAbsent || fileMime != null) {
+      map['file_mime'] = Variable<String>(fileMime);
+    }
+    if (!nullToAbsent || fileSizeBytes != null) {
+      map['file_size_bytes'] = Variable<int>(fileSizeBytes);
+    }
+    if (!nullToAbsent || fileHash != null) {
+      map['file_hash'] = Variable<String>(fileHash);
     }
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -558,34 +968,75 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   DocumentsCompanion toCompanion(bool nullToAbsent) {
     return DocumentsCompanion(
       id: Value(id),
+      documentTypeId: documentTypeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(documentTypeId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      domainId: domainId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(domainId),
+      taxonomyVersion: taxonomyVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(taxonomyVersion),
+      classificationState: Value(classificationState),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      documentType: Value(documentType),
-      category: Value(category),
-      filePath: filePath == null && nullToAbsent
+      issuer: issuer == null && nullToAbsent
           ? const Value.absent()
-          : Value(filePath),
-      fileType: fileType == null && nullToAbsent
+          : Value(issuer),
+      referenceNumber: referenceNumber == null && nullToAbsent
           ? const Value.absent()
-          : Value(fileType),
-      fileSizeBytes: fileSizeBytes == null && nullToAbsent
+          : Value(referenceNumber),
+      amountCents: amountCents == null && nullToAbsent
           ? const Value.absent()
-          : Value(fileSizeBytes),
-      extractedData: extractedData == null && nullToAbsent
+          : Value(amountCents),
+      currency: currency == null && nullToAbsent
           ? const Value.absent()
-          : Value(extractedData),
-      tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
-      documentDate: documentDate == null && nullToAbsent
+          : Value(currency),
+      issueDate: issueDate == null && nullToAbsent
           ? const Value.absent()
-          : Value(documentDate),
+          : Value(issueDate),
       expiryDate: expiryDate == null && nullToAbsent
           ? const Value.absent()
           : Value(expiryDate),
-      reminderDate: reminderDate == null && nullToAbsent
+      renewalDate: renewalDate == null && nullToAbsent
           ? const Value.absent()
-          : Value(reminderDate),
+          : Value(renewalDate),
+      reviewDate: reviewDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reviewDate),
+      paymentDueDate: paymentDueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paymentDueDate),
+      extraFieldsJson: extraFieldsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(extraFieldsJson),
+      source: Value(source),
+      ocrConfidence: ocrConfidence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ocrConfidence),
+      ocrText: ocrText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ocrText),
+      ocrProcessedAt: ocrProcessedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ocrProcessedAt),
+      filePath: filePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(filePath),
+      fileMime: fileMime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileMime),
+      fileSizeBytes: fileSizeBytes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileSizeBytes),
+      fileHash: fileHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileHash),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
@@ -605,18 +1056,33 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DocumentEntity(
       id: serializer.fromJson<int>(json['id']),
+      documentTypeId: serializer.fromJson<String?>(json['documentTypeId']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
+      domainId: serializer.fromJson<String?>(json['domainId']),
+      taxonomyVersion: serializer.fromJson<int?>(json['taxonomyVersion']),
+      classificationState: serializer.fromJson<String>(
+        json['classificationState'],
+      ),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
-      documentType: serializer.fromJson<String>(json['documentType']),
-      category: serializer.fromJson<String>(json['category']),
-      filePath: serializer.fromJson<String?>(json['filePath']),
-      fileType: serializer.fromJson<String?>(json['fileType']),
-      fileSizeBytes: serializer.fromJson<int?>(json['fileSizeBytes']),
-      extractedData: serializer.fromJson<String?>(json['extractedData']),
-      tags: serializer.fromJson<String?>(json['tags']),
-      documentDate: serializer.fromJson<DateTime?>(json['documentDate']),
+      issuer: serializer.fromJson<String?>(json['issuer']),
+      referenceNumber: serializer.fromJson<String?>(json['referenceNumber']),
+      amountCents: serializer.fromJson<int?>(json['amountCents']),
+      currency: serializer.fromJson<String?>(json['currency']),
+      issueDate: serializer.fromJson<DateTime?>(json['issueDate']),
       expiryDate: serializer.fromJson<DateTime?>(json['expiryDate']),
-      reminderDate: serializer.fromJson<DateTime?>(json['reminderDate']),
+      renewalDate: serializer.fromJson<DateTime?>(json['renewalDate']),
+      reviewDate: serializer.fromJson<DateTime?>(json['reviewDate']),
+      paymentDueDate: serializer.fromJson<DateTime?>(json['paymentDueDate']),
+      extraFieldsJson: serializer.fromJson<String?>(json['extraFieldsJson']),
+      source: serializer.fromJson<String>(json['source']),
+      ocrConfidence: serializer.fromJson<double?>(json['ocrConfidence']),
+      ocrText: serializer.fromJson<String?>(json['ocrText']),
+      ocrProcessedAt: serializer.fromJson<DateTime?>(json['ocrProcessedAt']),
+      filePath: serializer.fromJson<String?>(json['filePath']),
+      fileMime: serializer.fromJson<String?>(json['fileMime']),
+      fileSizeBytes: serializer.fromJson<int?>(json['fileSizeBytes']),
+      fileHash: serializer.fromJson<String?>(json['fileHash']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       version: serializer.fromJson<int>(json['version']),
       previousVersionId: serializer.fromJson<int?>(json['previousVersionId']),
@@ -629,18 +1095,31 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'documentTypeId': serializer.toJson<String?>(documentTypeId),
+      'categoryId': serializer.toJson<String?>(categoryId),
+      'domainId': serializer.toJson<String?>(domainId),
+      'taxonomyVersion': serializer.toJson<int?>(taxonomyVersion),
+      'classificationState': serializer.toJson<String>(classificationState),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
-      'documentType': serializer.toJson<String>(documentType),
-      'category': serializer.toJson<String>(category),
-      'filePath': serializer.toJson<String?>(filePath),
-      'fileType': serializer.toJson<String?>(fileType),
-      'fileSizeBytes': serializer.toJson<int?>(fileSizeBytes),
-      'extractedData': serializer.toJson<String?>(extractedData),
-      'tags': serializer.toJson<String?>(tags),
-      'documentDate': serializer.toJson<DateTime?>(documentDate),
+      'issuer': serializer.toJson<String?>(issuer),
+      'referenceNumber': serializer.toJson<String?>(referenceNumber),
+      'amountCents': serializer.toJson<int?>(amountCents),
+      'currency': serializer.toJson<String?>(currency),
+      'issueDate': serializer.toJson<DateTime?>(issueDate),
       'expiryDate': serializer.toJson<DateTime?>(expiryDate),
-      'reminderDate': serializer.toJson<DateTime?>(reminderDate),
+      'renewalDate': serializer.toJson<DateTime?>(renewalDate),
+      'reviewDate': serializer.toJson<DateTime?>(reviewDate),
+      'paymentDueDate': serializer.toJson<DateTime?>(paymentDueDate),
+      'extraFieldsJson': serializer.toJson<String?>(extraFieldsJson),
+      'source': serializer.toJson<String>(source),
+      'ocrConfidence': serializer.toJson<double?>(ocrConfidence),
+      'ocrText': serializer.toJson<String?>(ocrText),
+      'ocrProcessedAt': serializer.toJson<DateTime?>(ocrProcessedAt),
+      'filePath': serializer.toJson<String?>(filePath),
+      'fileMime': serializer.toJson<String?>(fileMime),
+      'fileSizeBytes': serializer.toJson<int?>(fileSizeBytes),
+      'fileHash': serializer.toJson<String?>(fileHash),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'version': serializer.toJson<int>(version),
       'previousVersionId': serializer.toJson<int?>(previousVersionId),
@@ -651,18 +1130,31 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
 
   DocumentEntity copyWith({
     int? id,
+    Value<String?> documentTypeId = const Value.absent(),
+    Value<String?> categoryId = const Value.absent(),
+    Value<String?> domainId = const Value.absent(),
+    Value<int?> taxonomyVersion = const Value.absent(),
+    String? classificationState,
     String? title,
     Value<String?> description = const Value.absent(),
-    String? documentType,
-    String? category,
-    Value<String?> filePath = const Value.absent(),
-    Value<String?> fileType = const Value.absent(),
-    Value<int?> fileSizeBytes = const Value.absent(),
-    Value<String?> extractedData = const Value.absent(),
-    Value<String?> tags = const Value.absent(),
-    Value<DateTime?> documentDate = const Value.absent(),
+    Value<String?> issuer = const Value.absent(),
+    Value<String?> referenceNumber = const Value.absent(),
+    Value<int?> amountCents = const Value.absent(),
+    Value<String?> currency = const Value.absent(),
+    Value<DateTime?> issueDate = const Value.absent(),
     Value<DateTime?> expiryDate = const Value.absent(),
-    Value<DateTime?> reminderDate = const Value.absent(),
+    Value<DateTime?> renewalDate = const Value.absent(),
+    Value<DateTime?> reviewDate = const Value.absent(),
+    Value<DateTime?> paymentDueDate = const Value.absent(),
+    Value<String?> extraFieldsJson = const Value.absent(),
+    String? source,
+    Value<double?> ocrConfidence = const Value.absent(),
+    Value<String?> ocrText = const Value.absent(),
+    Value<DateTime?> ocrProcessedAt = const Value.absent(),
+    Value<String?> filePath = const Value.absent(),
+    Value<String?> fileMime = const Value.absent(),
+    Value<int?> fileSizeBytes = const Value.absent(),
+    Value<String?> fileHash = const Value.absent(),
     Value<DateTime?> deletedAt = const Value.absent(),
     int? version,
     Value<int?> previousVersionId = const Value.absent(),
@@ -670,22 +1162,47 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
     DateTime? updatedAt,
   }) => DocumentEntity(
     id: id ?? this.id,
+    documentTypeId: documentTypeId.present
+        ? documentTypeId.value
+        : this.documentTypeId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    domainId: domainId.present ? domainId.value : this.domainId,
+    taxonomyVersion: taxonomyVersion.present
+        ? taxonomyVersion.value
+        : this.taxonomyVersion,
+    classificationState: classificationState ?? this.classificationState,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
-    documentType: documentType ?? this.documentType,
-    category: category ?? this.category,
+    issuer: issuer.present ? issuer.value : this.issuer,
+    referenceNumber: referenceNumber.present
+        ? referenceNumber.value
+        : this.referenceNumber,
+    amountCents: amountCents.present ? amountCents.value : this.amountCents,
+    currency: currency.present ? currency.value : this.currency,
+    issueDate: issueDate.present ? issueDate.value : this.issueDate,
+    expiryDate: expiryDate.present ? expiryDate.value : this.expiryDate,
+    renewalDate: renewalDate.present ? renewalDate.value : this.renewalDate,
+    reviewDate: reviewDate.present ? reviewDate.value : this.reviewDate,
+    paymentDueDate: paymentDueDate.present
+        ? paymentDueDate.value
+        : this.paymentDueDate,
+    extraFieldsJson: extraFieldsJson.present
+        ? extraFieldsJson.value
+        : this.extraFieldsJson,
+    source: source ?? this.source,
+    ocrConfidence: ocrConfidence.present
+        ? ocrConfidence.value
+        : this.ocrConfidence,
+    ocrText: ocrText.present ? ocrText.value : this.ocrText,
+    ocrProcessedAt: ocrProcessedAt.present
+        ? ocrProcessedAt.value
+        : this.ocrProcessedAt,
     filePath: filePath.present ? filePath.value : this.filePath,
-    fileType: fileType.present ? fileType.value : this.fileType,
+    fileMime: fileMime.present ? fileMime.value : this.fileMime,
     fileSizeBytes: fileSizeBytes.present
         ? fileSizeBytes.value
         : this.fileSizeBytes,
-    extractedData: extractedData.present
-        ? extractedData.value
-        : this.extractedData,
-    tags: tags.present ? tags.value : this.tags,
-    documentDate: documentDate.present ? documentDate.value : this.documentDate,
-    expiryDate: expiryDate.present ? expiryDate.value : this.expiryDate,
-    reminderDate: reminderDate.present ? reminderDate.value : this.reminderDate,
+    fileHash: fileHash.present ? fileHash.value : this.fileHash,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     version: version ?? this.version,
     previousVersionId: previousVersionId.present
@@ -697,32 +1214,61 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   DocumentEntity copyWithCompanion(DocumentsCompanion data) {
     return DocumentEntity(
       id: data.id.present ? data.id.value : this.id,
+      documentTypeId: data.documentTypeId.present
+          ? data.documentTypeId.value
+          : this.documentTypeId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      domainId: data.domainId.present ? data.domainId.value : this.domainId,
+      taxonomyVersion: data.taxonomyVersion.present
+          ? data.taxonomyVersion.value
+          : this.taxonomyVersion,
+      classificationState: data.classificationState.present
+          ? data.classificationState.value
+          : this.classificationState,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
           : this.description,
-      documentType: data.documentType.present
-          ? data.documentType.value
-          : this.documentType,
-      category: data.category.present ? data.category.value : this.category,
-      filePath: data.filePath.present ? data.filePath.value : this.filePath,
-      fileType: data.fileType.present ? data.fileType.value : this.fileType,
-      fileSizeBytes: data.fileSizeBytes.present
-          ? data.fileSizeBytes.value
-          : this.fileSizeBytes,
-      extractedData: data.extractedData.present
-          ? data.extractedData.value
-          : this.extractedData,
-      tags: data.tags.present ? data.tags.value : this.tags,
-      documentDate: data.documentDate.present
-          ? data.documentDate.value
-          : this.documentDate,
+      issuer: data.issuer.present ? data.issuer.value : this.issuer,
+      referenceNumber: data.referenceNumber.present
+          ? data.referenceNumber.value
+          : this.referenceNumber,
+      amountCents: data.amountCents.present
+          ? data.amountCents.value
+          : this.amountCents,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      issueDate: data.issueDate.present ? data.issueDate.value : this.issueDate,
       expiryDate: data.expiryDate.present
           ? data.expiryDate.value
           : this.expiryDate,
-      reminderDate: data.reminderDate.present
-          ? data.reminderDate.value
-          : this.reminderDate,
+      renewalDate: data.renewalDate.present
+          ? data.renewalDate.value
+          : this.renewalDate,
+      reviewDate: data.reviewDate.present
+          ? data.reviewDate.value
+          : this.reviewDate,
+      paymentDueDate: data.paymentDueDate.present
+          ? data.paymentDueDate.value
+          : this.paymentDueDate,
+      extraFieldsJson: data.extraFieldsJson.present
+          ? data.extraFieldsJson.value
+          : this.extraFieldsJson,
+      source: data.source.present ? data.source.value : this.source,
+      ocrConfidence: data.ocrConfidence.present
+          ? data.ocrConfidence.value
+          : this.ocrConfidence,
+      ocrText: data.ocrText.present ? data.ocrText.value : this.ocrText,
+      ocrProcessedAt: data.ocrProcessedAt.present
+          ? data.ocrProcessedAt.value
+          : this.ocrProcessedAt,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      fileMime: data.fileMime.present ? data.fileMime.value : this.fileMime,
+      fileSizeBytes: data.fileSizeBytes.present
+          ? data.fileSizeBytes.value
+          : this.fileSizeBytes,
+      fileHash: data.fileHash.present ? data.fileHash.value : this.fileHash,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
       version: data.version.present ? data.version.value : this.version,
       previousVersionId: data.previousVersionId.present
@@ -737,18 +1283,31 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   String toString() {
     return (StringBuffer('DocumentEntity(')
           ..write('id: $id, ')
+          ..write('documentTypeId: $documentTypeId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('domainId: $domainId, ')
+          ..write('taxonomyVersion: $taxonomyVersion, ')
+          ..write('classificationState: $classificationState, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('documentType: $documentType, ')
-          ..write('category: $category, ')
-          ..write('filePath: $filePath, ')
-          ..write('fileType: $fileType, ')
-          ..write('fileSizeBytes: $fileSizeBytes, ')
-          ..write('extractedData: $extractedData, ')
-          ..write('tags: $tags, ')
-          ..write('documentDate: $documentDate, ')
+          ..write('issuer: $issuer, ')
+          ..write('referenceNumber: $referenceNumber, ')
+          ..write('amountCents: $amountCents, ')
+          ..write('currency: $currency, ')
+          ..write('issueDate: $issueDate, ')
           ..write('expiryDate: $expiryDate, ')
-          ..write('reminderDate: $reminderDate, ')
+          ..write('renewalDate: $renewalDate, ')
+          ..write('reviewDate: $reviewDate, ')
+          ..write('paymentDueDate: $paymentDueDate, ')
+          ..write('extraFieldsJson: $extraFieldsJson, ')
+          ..write('source: $source, ')
+          ..write('ocrConfidence: $ocrConfidence, ')
+          ..write('ocrText: $ocrText, ')
+          ..write('ocrProcessedAt: $ocrProcessedAt, ')
+          ..write('filePath: $filePath, ')
+          ..write('fileMime: $fileMime, ')
+          ..write('fileSizeBytes: $fileSizeBytes, ')
+          ..write('fileHash: $fileHash, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('version: $version, ')
           ..write('previousVersionId: $previousVersionId, ')
@@ -759,43 +1318,69 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
+    documentTypeId,
+    categoryId,
+    domainId,
+    taxonomyVersion,
+    classificationState,
     title,
     description,
-    documentType,
-    category,
-    filePath,
-    fileType,
-    fileSizeBytes,
-    extractedData,
-    tags,
-    documentDate,
+    issuer,
+    referenceNumber,
+    amountCents,
+    currency,
+    issueDate,
     expiryDate,
-    reminderDate,
+    renewalDate,
+    reviewDate,
+    paymentDueDate,
+    extraFieldsJson,
+    source,
+    ocrConfidence,
+    ocrText,
+    ocrProcessedAt,
+    filePath,
+    fileMime,
+    fileSizeBytes,
+    fileHash,
     deletedAt,
     version,
     previousVersionId,
     createdAt,
     updatedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DocumentEntity &&
           other.id == this.id &&
+          other.documentTypeId == this.documentTypeId &&
+          other.categoryId == this.categoryId &&
+          other.domainId == this.domainId &&
+          other.taxonomyVersion == this.taxonomyVersion &&
+          other.classificationState == this.classificationState &&
           other.title == this.title &&
           other.description == this.description &&
-          other.documentType == this.documentType &&
-          other.category == this.category &&
-          other.filePath == this.filePath &&
-          other.fileType == this.fileType &&
-          other.fileSizeBytes == this.fileSizeBytes &&
-          other.extractedData == this.extractedData &&
-          other.tags == this.tags &&
-          other.documentDate == this.documentDate &&
+          other.issuer == this.issuer &&
+          other.referenceNumber == this.referenceNumber &&
+          other.amountCents == this.amountCents &&
+          other.currency == this.currency &&
+          other.issueDate == this.issueDate &&
           other.expiryDate == this.expiryDate &&
-          other.reminderDate == this.reminderDate &&
+          other.renewalDate == this.renewalDate &&
+          other.reviewDate == this.reviewDate &&
+          other.paymentDueDate == this.paymentDueDate &&
+          other.extraFieldsJson == this.extraFieldsJson &&
+          other.source == this.source &&
+          other.ocrConfidence == this.ocrConfidence &&
+          other.ocrText == this.ocrText &&
+          other.ocrProcessedAt == this.ocrProcessedAt &&
+          other.filePath == this.filePath &&
+          other.fileMime == this.fileMime &&
+          other.fileSizeBytes == this.fileSizeBytes &&
+          other.fileHash == this.fileHash &&
           other.deletedAt == this.deletedAt &&
           other.version == this.version &&
           other.previousVersionId == this.previousVersionId &&
@@ -805,18 +1390,31 @@ class DocumentEntity extends DataClass implements Insertable<DocumentEntity> {
 
 class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   final Value<int> id;
+  final Value<String?> documentTypeId;
+  final Value<String?> categoryId;
+  final Value<String?> domainId;
+  final Value<int?> taxonomyVersion;
+  final Value<String> classificationState;
   final Value<String> title;
   final Value<String?> description;
-  final Value<String> documentType;
-  final Value<String> category;
-  final Value<String?> filePath;
-  final Value<String?> fileType;
-  final Value<int?> fileSizeBytes;
-  final Value<String?> extractedData;
-  final Value<String?> tags;
-  final Value<DateTime?> documentDate;
+  final Value<String?> issuer;
+  final Value<String?> referenceNumber;
+  final Value<int?> amountCents;
+  final Value<String?> currency;
+  final Value<DateTime?> issueDate;
   final Value<DateTime?> expiryDate;
-  final Value<DateTime?> reminderDate;
+  final Value<DateTime?> renewalDate;
+  final Value<DateTime?> reviewDate;
+  final Value<DateTime?> paymentDueDate;
+  final Value<String?> extraFieldsJson;
+  final Value<String> source;
+  final Value<double?> ocrConfidence;
+  final Value<String?> ocrText;
+  final Value<DateTime?> ocrProcessedAt;
+  final Value<String?> filePath;
+  final Value<String?> fileMime;
+  final Value<int?> fileSizeBytes;
+  final Value<String?> fileHash;
   final Value<DateTime?> deletedAt;
   final Value<int> version;
   final Value<int?> previousVersionId;
@@ -824,18 +1422,31 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   final Value<DateTime> updatedAt;
   const DocumentsCompanion({
     this.id = const Value.absent(),
+    this.documentTypeId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.domainId = const Value.absent(),
+    this.taxonomyVersion = const Value.absent(),
+    this.classificationState = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
-    this.documentType = const Value.absent(),
-    this.category = const Value.absent(),
-    this.filePath = const Value.absent(),
-    this.fileType = const Value.absent(),
-    this.fileSizeBytes = const Value.absent(),
-    this.extractedData = const Value.absent(),
-    this.tags = const Value.absent(),
-    this.documentDate = const Value.absent(),
+    this.issuer = const Value.absent(),
+    this.referenceNumber = const Value.absent(),
+    this.amountCents = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.issueDate = const Value.absent(),
     this.expiryDate = const Value.absent(),
-    this.reminderDate = const Value.absent(),
+    this.renewalDate = const Value.absent(),
+    this.reviewDate = const Value.absent(),
+    this.paymentDueDate = const Value.absent(),
+    this.extraFieldsJson = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrConfidence = const Value.absent(),
+    this.ocrText = const Value.absent(),
+    this.ocrProcessedAt = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.fileMime = const Value.absent(),
+    this.fileSizeBytes = const Value.absent(),
+    this.fileHash = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.version = const Value.absent(),
     this.previousVersionId = const Value.absent(),
@@ -844,40 +1455,64 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   });
   DocumentsCompanion.insert({
     this.id = const Value.absent(),
+    this.documentTypeId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.domainId = const Value.absent(),
+    this.taxonomyVersion = const Value.absent(),
+    this.classificationState = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
-    required String documentType,
-    required String category,
-    this.filePath = const Value.absent(),
-    this.fileType = const Value.absent(),
-    this.fileSizeBytes = const Value.absent(),
-    this.extractedData = const Value.absent(),
-    this.tags = const Value.absent(),
-    this.documentDate = const Value.absent(),
+    this.issuer = const Value.absent(),
+    this.referenceNumber = const Value.absent(),
+    this.amountCents = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.issueDate = const Value.absent(),
     this.expiryDate = const Value.absent(),
-    this.reminderDate = const Value.absent(),
+    this.renewalDate = const Value.absent(),
+    this.reviewDate = const Value.absent(),
+    this.paymentDueDate = const Value.absent(),
+    this.extraFieldsJson = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrConfidence = const Value.absent(),
+    this.ocrText = const Value.absent(),
+    this.ocrProcessedAt = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.fileMime = const Value.absent(),
+    this.fileSizeBytes = const Value.absent(),
+    this.fileHash = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.version = const Value.absent(),
     this.previousVersionId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : title = Value(title),
-       documentType = Value(documentType),
-       category = Value(category);
+  }) : title = Value(title);
   static Insertable<DocumentEntity> custom({
     Expression<int>? id,
+    Expression<String>? documentTypeId,
+    Expression<String>? categoryId,
+    Expression<String>? domainId,
+    Expression<int>? taxonomyVersion,
+    Expression<String>? classificationState,
     Expression<String>? title,
     Expression<String>? description,
-    Expression<String>? documentType,
-    Expression<String>? category,
-    Expression<String>? filePath,
-    Expression<String>? fileType,
-    Expression<int>? fileSizeBytes,
-    Expression<String>? extractedData,
-    Expression<String>? tags,
-    Expression<DateTime>? documentDate,
+    Expression<String>? issuer,
+    Expression<String>? referenceNumber,
+    Expression<int>? amountCents,
+    Expression<String>? currency,
+    Expression<DateTime>? issueDate,
     Expression<DateTime>? expiryDate,
-    Expression<DateTime>? reminderDate,
+    Expression<DateTime>? renewalDate,
+    Expression<DateTime>? reviewDate,
+    Expression<DateTime>? paymentDueDate,
+    Expression<String>? extraFieldsJson,
+    Expression<String>? source,
+    Expression<double>? ocrConfidence,
+    Expression<String>? ocrText,
+    Expression<DateTime>? ocrProcessedAt,
+    Expression<String>? filePath,
+    Expression<String>? fileMime,
+    Expression<int>? fileSizeBytes,
+    Expression<String>? fileHash,
     Expression<DateTime>? deletedAt,
     Expression<int>? version,
     Expression<int>? previousVersionId,
@@ -886,18 +1521,32 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (documentTypeId != null) 'document_type_id': documentTypeId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (domainId != null) 'domain_id': domainId,
+      if (taxonomyVersion != null) 'taxonomy_version': taxonomyVersion,
+      if (classificationState != null)
+        'classification_state': classificationState,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
-      if (documentType != null) 'document_type': documentType,
-      if (category != null) 'category': category,
-      if (filePath != null) 'file_path': filePath,
-      if (fileType != null) 'file_type': fileType,
-      if (fileSizeBytes != null) 'file_size_bytes': fileSizeBytes,
-      if (extractedData != null) 'extracted_data': extractedData,
-      if (tags != null) 'tags': tags,
-      if (documentDate != null) 'document_date': documentDate,
+      if (issuer != null) 'issuer': issuer,
+      if (referenceNumber != null) 'reference_number': referenceNumber,
+      if (amountCents != null) 'amount_cents': amountCents,
+      if (currency != null) 'currency': currency,
+      if (issueDate != null) 'issue_date': issueDate,
       if (expiryDate != null) 'expiry_date': expiryDate,
-      if (reminderDate != null) 'reminder_date': reminderDate,
+      if (renewalDate != null) 'renewal_date': renewalDate,
+      if (reviewDate != null) 'review_date': reviewDate,
+      if (paymentDueDate != null) 'payment_due_date': paymentDueDate,
+      if (extraFieldsJson != null) 'extra_fields_json': extraFieldsJson,
+      if (source != null) 'source': source,
+      if (ocrConfidence != null) 'ocr_confidence': ocrConfidence,
+      if (ocrText != null) 'ocr_text': ocrText,
+      if (ocrProcessedAt != null) 'ocr_processed_at': ocrProcessedAt,
+      if (filePath != null) 'file_path': filePath,
+      if (fileMime != null) 'file_mime': fileMime,
+      if (fileSizeBytes != null) 'file_size_bytes': fileSizeBytes,
+      if (fileHash != null) 'file_hash': fileHash,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (version != null) 'version': version,
       if (previousVersionId != null) 'previous_version_id': previousVersionId,
@@ -908,18 +1557,31 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
 
   DocumentsCompanion copyWith({
     Value<int>? id,
+    Value<String?>? documentTypeId,
+    Value<String?>? categoryId,
+    Value<String?>? domainId,
+    Value<int?>? taxonomyVersion,
+    Value<String>? classificationState,
     Value<String>? title,
     Value<String?>? description,
-    Value<String>? documentType,
-    Value<String>? category,
-    Value<String?>? filePath,
-    Value<String?>? fileType,
-    Value<int?>? fileSizeBytes,
-    Value<String?>? extractedData,
-    Value<String?>? tags,
-    Value<DateTime?>? documentDate,
+    Value<String?>? issuer,
+    Value<String?>? referenceNumber,
+    Value<int?>? amountCents,
+    Value<String?>? currency,
+    Value<DateTime?>? issueDate,
     Value<DateTime?>? expiryDate,
-    Value<DateTime?>? reminderDate,
+    Value<DateTime?>? renewalDate,
+    Value<DateTime?>? reviewDate,
+    Value<DateTime?>? paymentDueDate,
+    Value<String?>? extraFieldsJson,
+    Value<String>? source,
+    Value<double?>? ocrConfidence,
+    Value<String?>? ocrText,
+    Value<DateTime?>? ocrProcessedAt,
+    Value<String?>? filePath,
+    Value<String?>? fileMime,
+    Value<int?>? fileSizeBytes,
+    Value<String?>? fileHash,
     Value<DateTime?>? deletedAt,
     Value<int>? version,
     Value<int?>? previousVersionId,
@@ -928,18 +1590,31 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   }) {
     return DocumentsCompanion(
       id: id ?? this.id,
+      documentTypeId: documentTypeId ?? this.documentTypeId,
+      categoryId: categoryId ?? this.categoryId,
+      domainId: domainId ?? this.domainId,
+      taxonomyVersion: taxonomyVersion ?? this.taxonomyVersion,
+      classificationState: classificationState ?? this.classificationState,
       title: title ?? this.title,
       description: description ?? this.description,
-      documentType: documentType ?? this.documentType,
-      category: category ?? this.category,
-      filePath: filePath ?? this.filePath,
-      fileType: fileType ?? this.fileType,
-      fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
-      extractedData: extractedData ?? this.extractedData,
-      tags: tags ?? this.tags,
-      documentDate: documentDate ?? this.documentDate,
+      issuer: issuer ?? this.issuer,
+      referenceNumber: referenceNumber ?? this.referenceNumber,
+      amountCents: amountCents ?? this.amountCents,
+      currency: currency ?? this.currency,
+      issueDate: issueDate ?? this.issueDate,
       expiryDate: expiryDate ?? this.expiryDate,
-      reminderDate: reminderDate ?? this.reminderDate,
+      renewalDate: renewalDate ?? this.renewalDate,
+      reviewDate: reviewDate ?? this.reviewDate,
+      paymentDueDate: paymentDueDate ?? this.paymentDueDate,
+      extraFieldsJson: extraFieldsJson ?? this.extraFieldsJson,
+      source: source ?? this.source,
+      ocrConfidence: ocrConfidence ?? this.ocrConfidence,
+      ocrText: ocrText ?? this.ocrText,
+      ocrProcessedAt: ocrProcessedAt ?? this.ocrProcessedAt,
+      filePath: filePath ?? this.filePath,
+      fileMime: fileMime ?? this.fileMime,
+      fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
+      fileHash: fileHash ?? this.fileHash,
       deletedAt: deletedAt ?? this.deletedAt,
       version: version ?? this.version,
       previousVersionId: previousVersionId ?? this.previousVersionId,
@@ -954,41 +1629,80 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (documentTypeId.present) {
+      map['document_type_id'] = Variable<String>(documentTypeId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (domainId.present) {
+      map['domain_id'] = Variable<String>(domainId.value);
+    }
+    if (taxonomyVersion.present) {
+      map['taxonomy_version'] = Variable<int>(taxonomyVersion.value);
+    }
+    if (classificationState.present) {
+      map['classification_state'] = Variable<String>(classificationState.value);
+    }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (documentType.present) {
-      map['document_type'] = Variable<String>(documentType.value);
+    if (issuer.present) {
+      map['issuer'] = Variable<String>(issuer.value);
     }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
+    if (referenceNumber.present) {
+      map['reference_number'] = Variable<String>(referenceNumber.value);
     }
-    if (filePath.present) {
-      map['file_path'] = Variable<String>(filePath.value);
+    if (amountCents.present) {
+      map['amount_cents'] = Variable<int>(amountCents.value);
     }
-    if (fileType.present) {
-      map['file_type'] = Variable<String>(fileType.value);
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
     }
-    if (fileSizeBytes.present) {
-      map['file_size_bytes'] = Variable<int>(fileSizeBytes.value);
-    }
-    if (extractedData.present) {
-      map['extracted_data'] = Variable<String>(extractedData.value);
-    }
-    if (tags.present) {
-      map['tags'] = Variable<String>(tags.value);
-    }
-    if (documentDate.present) {
-      map['document_date'] = Variable<DateTime>(documentDate.value);
+    if (issueDate.present) {
+      map['issue_date'] = Variable<DateTime>(issueDate.value);
     }
     if (expiryDate.present) {
       map['expiry_date'] = Variable<DateTime>(expiryDate.value);
     }
-    if (reminderDate.present) {
-      map['reminder_date'] = Variable<DateTime>(reminderDate.value);
+    if (renewalDate.present) {
+      map['renewal_date'] = Variable<DateTime>(renewalDate.value);
+    }
+    if (reviewDate.present) {
+      map['review_date'] = Variable<DateTime>(reviewDate.value);
+    }
+    if (paymentDueDate.present) {
+      map['payment_due_date'] = Variable<DateTime>(paymentDueDate.value);
+    }
+    if (extraFieldsJson.present) {
+      map['extra_fields_json'] = Variable<String>(extraFieldsJson.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (ocrConfidence.present) {
+      map['ocr_confidence'] = Variable<double>(ocrConfidence.value);
+    }
+    if (ocrText.present) {
+      map['ocr_text'] = Variable<String>(ocrText.value);
+    }
+    if (ocrProcessedAt.present) {
+      map['ocr_processed_at'] = Variable<DateTime>(ocrProcessedAt.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (fileMime.present) {
+      map['file_mime'] = Variable<String>(fileMime.value);
+    }
+    if (fileSizeBytes.present) {
+      map['file_size_bytes'] = Variable<int>(fileSizeBytes.value);
+    }
+    if (fileHash.present) {
+      map['file_hash'] = Variable<String>(fileHash.value);
     }
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
@@ -1012,22 +1726,309 @@ class DocumentsCompanion extends UpdateCompanion<DocumentEntity> {
   String toString() {
     return (StringBuffer('DocumentsCompanion(')
           ..write('id: $id, ')
+          ..write('documentTypeId: $documentTypeId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('domainId: $domainId, ')
+          ..write('taxonomyVersion: $taxonomyVersion, ')
+          ..write('classificationState: $classificationState, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('documentType: $documentType, ')
-          ..write('category: $category, ')
-          ..write('filePath: $filePath, ')
-          ..write('fileType: $fileType, ')
-          ..write('fileSizeBytes: $fileSizeBytes, ')
-          ..write('extractedData: $extractedData, ')
-          ..write('tags: $tags, ')
-          ..write('documentDate: $documentDate, ')
+          ..write('issuer: $issuer, ')
+          ..write('referenceNumber: $referenceNumber, ')
+          ..write('amountCents: $amountCents, ')
+          ..write('currency: $currency, ')
+          ..write('issueDate: $issueDate, ')
           ..write('expiryDate: $expiryDate, ')
-          ..write('reminderDate: $reminderDate, ')
+          ..write('renewalDate: $renewalDate, ')
+          ..write('reviewDate: $reviewDate, ')
+          ..write('paymentDueDate: $paymentDueDate, ')
+          ..write('extraFieldsJson: $extraFieldsJson, ')
+          ..write('source: $source, ')
+          ..write('ocrConfidence: $ocrConfidence, ')
+          ..write('ocrText: $ocrText, ')
+          ..write('ocrProcessedAt: $ocrProcessedAt, ')
+          ..write('filePath: $filePath, ')
+          ..write('fileMime: $fileMime, ')
+          ..write('fileSizeBytes: $fileSizeBytes, ')
+          ..write('fileHash: $fileHash, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('version: $version, ')
           ..write('previousVersionId: $previousVersionId, ')
           ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DocumentFieldsMetaTable extends DocumentFieldsMeta
+    with TableInfo<$DocumentFieldsMetaTable, DocumentFieldsMetaEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DocumentFieldsMetaTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _documentIdMeta = const VerificationMeta(
+    'documentId',
+  );
+  @override
+  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
+    'document_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES documents (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _confirmationsJsonMeta = const VerificationMeta(
+    'confirmationsJson',
+  );
+  @override
+  late final GeneratedColumn<String> confirmationsJson =
+      GeneratedColumn<String>(
+        'confirmations_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    documentId,
+    confirmationsJson,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'document_fields_meta';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DocumentFieldsMetaEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('document_id')) {
+      context.handle(
+        _documentIdMeta,
+        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
+      );
+    }
+    if (data.containsKey('confirmations_json')) {
+      context.handle(
+        _confirmationsJsonMeta,
+        confirmationsJson.isAcceptableOrUnknown(
+          data['confirmations_json']!,
+          _confirmationsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {documentId};
+  @override
+  DocumentFieldsMetaEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DocumentFieldsMetaEntity(
+      documentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}document_id'],
+      )!,
+      confirmationsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}confirmations_json'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DocumentFieldsMetaTable createAlias(String alias) {
+    return $DocumentFieldsMetaTable(attachedDatabase, alias);
+  }
+}
+
+class DocumentFieldsMetaEntity extends DataClass
+    implements Insertable<DocumentFieldsMetaEntity> {
+  final int documentId;
+
+  /// JSON map keyed by stable taxonomy field IDs.
+  final String confirmationsJson;
+  final DateTime updatedAt;
+  const DocumentFieldsMetaEntity({
+    required this.documentId,
+    required this.confirmationsJson,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['document_id'] = Variable<int>(documentId);
+    map['confirmations_json'] = Variable<String>(confirmationsJson);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  DocumentFieldsMetaCompanion toCompanion(bool nullToAbsent) {
+    return DocumentFieldsMetaCompanion(
+      documentId: Value(documentId),
+      confirmationsJson: Value(confirmationsJson),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory DocumentFieldsMetaEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DocumentFieldsMetaEntity(
+      documentId: serializer.fromJson<int>(json['documentId']),
+      confirmationsJson: serializer.fromJson<String>(json['confirmationsJson']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'documentId': serializer.toJson<int>(documentId),
+      'confirmationsJson': serializer.toJson<String>(confirmationsJson),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  DocumentFieldsMetaEntity copyWith({
+    int? documentId,
+    String? confirmationsJson,
+    DateTime? updatedAt,
+  }) => DocumentFieldsMetaEntity(
+    documentId: documentId ?? this.documentId,
+    confirmationsJson: confirmationsJson ?? this.confirmationsJson,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  DocumentFieldsMetaEntity copyWithCompanion(DocumentFieldsMetaCompanion data) {
+    return DocumentFieldsMetaEntity(
+      documentId: data.documentId.present
+          ? data.documentId.value
+          : this.documentId,
+      confirmationsJson: data.confirmationsJson.present
+          ? data.confirmationsJson.value
+          : this.confirmationsJson,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentFieldsMetaEntity(')
+          ..write('documentId: $documentId, ')
+          ..write('confirmationsJson: $confirmationsJson, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(documentId, confirmationsJson, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DocumentFieldsMetaEntity &&
+          other.documentId == this.documentId &&
+          other.confirmationsJson == this.confirmationsJson &&
+          other.updatedAt == this.updatedAt);
+}
+
+class DocumentFieldsMetaCompanion
+    extends UpdateCompanion<DocumentFieldsMetaEntity> {
+  final Value<int> documentId;
+  final Value<String> confirmationsJson;
+  final Value<DateTime> updatedAt;
+  const DocumentFieldsMetaCompanion({
+    this.documentId = const Value.absent(),
+    this.confirmationsJson = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  DocumentFieldsMetaCompanion.insert({
+    this.documentId = const Value.absent(),
+    this.confirmationsJson = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  static Insertable<DocumentFieldsMetaEntity> custom({
+    Expression<int>? documentId,
+    Expression<String>? confirmationsJson,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (documentId != null) 'document_id': documentId,
+      if (confirmationsJson != null) 'confirmations_json': confirmationsJson,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  DocumentFieldsMetaCompanion copyWith({
+    Value<int>? documentId,
+    Value<String>? confirmationsJson,
+    Value<DateTime>? updatedAt,
+  }) {
+    return DocumentFieldsMetaCompanion(
+      documentId: documentId ?? this.documentId,
+      confirmationsJson: confirmationsJson ?? this.confirmationsJson,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (documentId.present) {
+      map['document_id'] = Variable<int>(documentId.value);
+    }
+    if (confirmationsJson.present) {
+      map['confirmations_json'] = Variable<String>(confirmationsJson.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentFieldsMetaCompanion(')
+          ..write('documentId: $documentId, ')
+          ..write('confirmationsJson: $confirmationsJson, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
@@ -1553,12 +2554,12 @@ class DocumentLinksCompanion extends UpdateCompanion<DocumentLinkEntity> {
   }
 }
 
-class $RemindersTable extends Reminders
-    with TableInfo<$RemindersTable, ReminderEntity> {
+class $RelationshipsTable extends Relationships
+    with TableInfo<$RelationshipsTable, RelationshipEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $RemindersTable(this.attachedDatabase, [this._alias]);
+  $RelationshipsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1572,145 +2573,70 @@ class $RemindersTable extends Reminders
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _documentIdMeta = const VerificationMeta(
-    'documentId',
+  static const VerificationMeta _sourceEntityKindMeta = const VerificationMeta(
+    'sourceEntityKind',
   );
   @override
-  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
-    'document_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES documents (id) ON DELETE CASCADE',
-    ),
-  );
-  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
-    'entityType',
-  );
-  @override
-  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
-    'entity_type',
+  late final GeneratedColumn<String> sourceEntityKind = GeneratedColumn<String>(
+    'source_entity_kind',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _entityIdMeta = const VerificationMeta(
-    'entityId',
+  static const VerificationMeta _sourceEntityIdMeta = const VerificationMeta(
+    'sourceEntityId',
   );
   @override
-  late final GeneratedColumn<int> entityId = GeneratedColumn<int>(
-    'entity_id',
+  late final GeneratedColumn<int> sourceEntityId = GeneratedColumn<int>(
+    'source_entity_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _titleMeta = const VerificationMeta('title');
-  @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-    'title',
-    aliasedName,
-    false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 255,
-    ),
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _descriptionMeta = const VerificationMeta(
-    'description',
+  static const VerificationMeta _targetEntityKindMeta = const VerificationMeta(
+    'targetEntityKind',
   );
   @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-    'description',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _reminderTypeMeta = const VerificationMeta(
-    'reminderType',
-  );
-  @override
-  late final GeneratedColumn<String> reminderType = GeneratedColumn<String>(
-    'reminder_type',
+  late final GeneratedColumn<String> targetEntityKind = GeneratedColumn<String>(
+    'target_entity_kind',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _reminderDateMeta = const VerificationMeta(
-    'reminderDate',
+  static const VerificationMeta _targetEntityIdMeta = const VerificationMeta(
+    'targetEntityId',
   );
   @override
-  late final GeneratedColumn<DateTime> reminderDate = GeneratedColumn<DateTime>(
-    'reminder_date',
+  late final GeneratedColumn<int> targetEntityId = GeneratedColumn<int>(
+    'target_entity_id',
     aliasedName,
     false,
-    type: DriftSqlType.dateTime,
+    type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _snoozeUntilMeta = const VerificationMeta(
-    'snoozeUntil',
-  );
+  static const VerificationMeta _relationshipTypeIdMeta =
+      const VerificationMeta('relationshipTypeId');
   @override
-  late final GeneratedColumn<DateTime> snoozeUntil = GeneratedColumn<DateTime>(
-    'snooze_until',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _isRecurringMeta = const VerificationMeta(
-    'isRecurring',
-  );
-  @override
-  late final GeneratedColumn<bool> isRecurring = GeneratedColumn<bool>(
-    'is_recurring',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_recurring" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _recurrencePatternMeta = const VerificationMeta(
-    'recurrencePattern',
-  );
-  @override
-  late final GeneratedColumn<String> recurrencePattern =
+  late final GeneratedColumn<String> relationshipTypeId =
       GeneratedColumn<String>(
-        'recurrence_pattern',
+        'relationship_type_id',
         aliasedName,
-        true,
+        false,
         type: DriftSqlType.string,
-        requiredDuringInsert: false,
+        requiredDuringInsert: true,
       );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('pending'),
-  );
-  static const VerificationMeta _completedAtMeta = const VerificationMeta(
-    'completedAt',
+  static const VerificationMeta _metadataJsonMeta = const VerificationMeta(
+    'metadataJson',
   );
   @override
-  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
-    'completed_at',
+  late final GeneratedColumn<String> metadataJson = GeneratedColumn<String>(
+    'metadata_json',
     aliasedName,
     true,
-    type: DriftSqlType.dateTime,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _deletedAtMeta = const VerificationMeta(
@@ -1751,18 +2677,704 @@ class $RemindersTable extends Reminders
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    documentId,
-    entityType,
-    entityId,
-    title,
-    description,
-    reminderType,
-    reminderDate,
-    snoozeUntil,
-    isRecurring,
-    recurrencePattern,
-    status,
+    sourceEntityKind,
+    sourceEntityId,
+    targetEntityKind,
+    targetEntityId,
+    relationshipTypeId,
+    metadataJson,
+    deletedAt,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'relationships';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RelationshipEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('source_entity_kind')) {
+      context.handle(
+        _sourceEntityKindMeta,
+        sourceEntityKind.isAcceptableOrUnknown(
+          data['source_entity_kind']!,
+          _sourceEntityKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceEntityKindMeta);
+    }
+    if (data.containsKey('source_entity_id')) {
+      context.handle(
+        _sourceEntityIdMeta,
+        sourceEntityId.isAcceptableOrUnknown(
+          data['source_entity_id']!,
+          _sourceEntityIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceEntityIdMeta);
+    }
+    if (data.containsKey('target_entity_kind')) {
+      context.handle(
+        _targetEntityKindMeta,
+        targetEntityKind.isAcceptableOrUnknown(
+          data['target_entity_kind']!,
+          _targetEntityKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_targetEntityKindMeta);
+    }
+    if (data.containsKey('target_entity_id')) {
+      context.handle(
+        _targetEntityIdMeta,
+        targetEntityId.isAcceptableOrUnknown(
+          data['target_entity_id']!,
+          _targetEntityIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_targetEntityIdMeta);
+    }
+    if (data.containsKey('relationship_type_id')) {
+      context.handle(
+        _relationshipTypeIdMeta,
+        relationshipTypeId.isAcceptableOrUnknown(
+          data['relationship_type_id']!,
+          _relationshipTypeIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_relationshipTypeIdMeta);
+    }
+    if (data.containsKey('metadata_json')) {
+      context.handle(
+        _metadataJsonMeta,
+        metadataJson.isAcceptableOrUnknown(
+          data['metadata_json']!,
+          _metadataJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {
+      sourceEntityKind,
+      sourceEntityId,
+      targetEntityKind,
+      targetEntityId,
+      relationshipTypeId,
+    },
+  ];
+  @override
+  RelationshipEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RelationshipEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      sourceEntityKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_entity_kind'],
+      )!,
+      sourceEntityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}source_entity_id'],
+      )!,
+      targetEntityKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_entity_kind'],
+      )!,
+      targetEntityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_entity_id'],
+      )!,
+      relationshipTypeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relationship_type_id'],
+      )!,
+      metadataJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata_json'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $RelationshipsTable createAlias(String alias) {
+    return $RelationshipsTable(attachedDatabase, alias);
+  }
+}
+
+class RelationshipEntity extends DataClass
+    implements Insertable<RelationshipEntity> {
+  final int id;
+  final String sourceEntityKind;
+  final int sourceEntityId;
+  final String targetEntityKind;
+  final int targetEntityId;
+
+  /// Canonical relationship type from the allowed list.
+  final String relationshipTypeId;
+
+  /// Small optional JSON object for additional context
+  /// (e.g. {"role": "primary_insured_vehicle"}).
+  final String? metadataJson;
+  final DateTime? deletedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const RelationshipEntity({
+    required this.id,
+    required this.sourceEntityKind,
+    required this.sourceEntityId,
+    required this.targetEntityKind,
+    required this.targetEntityId,
+    required this.relationshipTypeId,
+    this.metadataJson,
+    this.deletedAt,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['source_entity_kind'] = Variable<String>(sourceEntityKind);
+    map['source_entity_id'] = Variable<int>(sourceEntityId);
+    map['target_entity_kind'] = Variable<String>(targetEntityKind);
+    map['target_entity_id'] = Variable<int>(targetEntityId);
+    map['relationship_type_id'] = Variable<String>(relationshipTypeId);
+    if (!nullToAbsent || metadataJson != null) {
+      map['metadata_json'] = Variable<String>(metadataJson);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  RelationshipsCompanion toCompanion(bool nullToAbsent) {
+    return RelationshipsCompanion(
+      id: Value(id),
+      sourceEntityKind: Value(sourceEntityKind),
+      sourceEntityId: Value(sourceEntityId),
+      targetEntityKind: Value(targetEntityKind),
+      targetEntityId: Value(targetEntityId),
+      relationshipTypeId: Value(relationshipTypeId),
+      metadataJson: metadataJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(metadataJson),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory RelationshipEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RelationshipEntity(
+      id: serializer.fromJson<int>(json['id']),
+      sourceEntityKind: serializer.fromJson<String>(json['sourceEntityKind']),
+      sourceEntityId: serializer.fromJson<int>(json['sourceEntityId']),
+      targetEntityKind: serializer.fromJson<String>(json['targetEntityKind']),
+      targetEntityId: serializer.fromJson<int>(json['targetEntityId']),
+      relationshipTypeId: serializer.fromJson<String>(
+        json['relationshipTypeId'],
+      ),
+      metadataJson: serializer.fromJson<String?>(json['metadataJson']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'sourceEntityKind': serializer.toJson<String>(sourceEntityKind),
+      'sourceEntityId': serializer.toJson<int>(sourceEntityId),
+      'targetEntityKind': serializer.toJson<String>(targetEntityKind),
+      'targetEntityId': serializer.toJson<int>(targetEntityId),
+      'relationshipTypeId': serializer.toJson<String>(relationshipTypeId),
+      'metadataJson': serializer.toJson<String?>(metadataJson),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  RelationshipEntity copyWith({
+    int? id,
+    String? sourceEntityKind,
+    int? sourceEntityId,
+    String? targetEntityKind,
+    int? targetEntityId,
+    String? relationshipTypeId,
+    Value<String?> metadataJson = const Value.absent(),
+    Value<DateTime?> deletedAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => RelationshipEntity(
+    id: id ?? this.id,
+    sourceEntityKind: sourceEntityKind ?? this.sourceEntityKind,
+    sourceEntityId: sourceEntityId ?? this.sourceEntityId,
+    targetEntityKind: targetEntityKind ?? this.targetEntityKind,
+    targetEntityId: targetEntityId ?? this.targetEntityId,
+    relationshipTypeId: relationshipTypeId ?? this.relationshipTypeId,
+    metadataJson: metadataJson.present ? metadataJson.value : this.metadataJson,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  RelationshipEntity copyWithCompanion(RelationshipsCompanion data) {
+    return RelationshipEntity(
+      id: data.id.present ? data.id.value : this.id,
+      sourceEntityKind: data.sourceEntityKind.present
+          ? data.sourceEntityKind.value
+          : this.sourceEntityKind,
+      sourceEntityId: data.sourceEntityId.present
+          ? data.sourceEntityId.value
+          : this.sourceEntityId,
+      targetEntityKind: data.targetEntityKind.present
+          ? data.targetEntityKind.value
+          : this.targetEntityKind,
+      targetEntityId: data.targetEntityId.present
+          ? data.targetEntityId.value
+          : this.targetEntityId,
+      relationshipTypeId: data.relationshipTypeId.present
+          ? data.relationshipTypeId.value
+          : this.relationshipTypeId,
+      metadataJson: data.metadataJson.present
+          ? data.metadataJson.value
+          : this.metadataJson,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RelationshipEntity(')
+          ..write('id: $id, ')
+          ..write('sourceEntityKind: $sourceEntityKind, ')
+          ..write('sourceEntityId: $sourceEntityId, ')
+          ..write('targetEntityKind: $targetEntityKind, ')
+          ..write('targetEntityId: $targetEntityId, ')
+          ..write('relationshipTypeId: $relationshipTypeId, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    sourceEntityKind,
+    sourceEntityId,
+    targetEntityKind,
+    targetEntityId,
+    relationshipTypeId,
+    metadataJson,
+    deletedAt,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RelationshipEntity &&
+          other.id == this.id &&
+          other.sourceEntityKind == this.sourceEntityKind &&
+          other.sourceEntityId == this.sourceEntityId &&
+          other.targetEntityKind == this.targetEntityKind &&
+          other.targetEntityId == this.targetEntityId &&
+          other.relationshipTypeId == this.relationshipTypeId &&
+          other.metadataJson == this.metadataJson &&
+          other.deletedAt == this.deletedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class RelationshipsCompanion extends UpdateCompanion<RelationshipEntity> {
+  final Value<int> id;
+  final Value<String> sourceEntityKind;
+  final Value<int> sourceEntityId;
+  final Value<String> targetEntityKind;
+  final Value<int> targetEntityId;
+  final Value<String> relationshipTypeId;
+  final Value<String?> metadataJson;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const RelationshipsCompanion({
+    this.id = const Value.absent(),
+    this.sourceEntityKind = const Value.absent(),
+    this.sourceEntityId = const Value.absent(),
+    this.targetEntityKind = const Value.absent(),
+    this.targetEntityId = const Value.absent(),
+    this.relationshipTypeId = const Value.absent(),
+    this.metadataJson = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  RelationshipsCompanion.insert({
+    this.id = const Value.absent(),
+    required String sourceEntityKind,
+    required int sourceEntityId,
+    required String targetEntityKind,
+    required int targetEntityId,
+    required String relationshipTypeId,
+    this.metadataJson = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : sourceEntityKind = Value(sourceEntityKind),
+       sourceEntityId = Value(sourceEntityId),
+       targetEntityKind = Value(targetEntityKind),
+       targetEntityId = Value(targetEntityId),
+       relationshipTypeId = Value(relationshipTypeId);
+  static Insertable<RelationshipEntity> custom({
+    Expression<int>? id,
+    Expression<String>? sourceEntityKind,
+    Expression<int>? sourceEntityId,
+    Expression<String>? targetEntityKind,
+    Expression<int>? targetEntityId,
+    Expression<String>? relationshipTypeId,
+    Expression<String>? metadataJson,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sourceEntityKind != null) 'source_entity_kind': sourceEntityKind,
+      if (sourceEntityId != null) 'source_entity_id': sourceEntityId,
+      if (targetEntityKind != null) 'target_entity_kind': targetEntityKind,
+      if (targetEntityId != null) 'target_entity_id': targetEntityId,
+      if (relationshipTypeId != null)
+        'relationship_type_id': relationshipTypeId,
+      if (metadataJson != null) 'metadata_json': metadataJson,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  RelationshipsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? sourceEntityKind,
+    Value<int>? sourceEntityId,
+    Value<String>? targetEntityKind,
+    Value<int>? targetEntityId,
+    Value<String>? relationshipTypeId,
+    Value<String?>? metadataJson,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return RelationshipsCompanion(
+      id: id ?? this.id,
+      sourceEntityKind: sourceEntityKind ?? this.sourceEntityKind,
+      sourceEntityId: sourceEntityId ?? this.sourceEntityId,
+      targetEntityKind: targetEntityKind ?? this.targetEntityKind,
+      targetEntityId: targetEntityId ?? this.targetEntityId,
+      relationshipTypeId: relationshipTypeId ?? this.relationshipTypeId,
+      metadataJson: metadataJson ?? this.metadataJson,
+      deletedAt: deletedAt ?? this.deletedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (sourceEntityKind.present) {
+      map['source_entity_kind'] = Variable<String>(sourceEntityKind.value);
+    }
+    if (sourceEntityId.present) {
+      map['source_entity_id'] = Variable<int>(sourceEntityId.value);
+    }
+    if (targetEntityKind.present) {
+      map['target_entity_kind'] = Variable<String>(targetEntityKind.value);
+    }
+    if (targetEntityId.present) {
+      map['target_entity_id'] = Variable<int>(targetEntityId.value);
+    }
+    if (relationshipTypeId.present) {
+      map['relationship_type_id'] = Variable<String>(relationshipTypeId.value);
+    }
+    if (metadataJson.present) {
+      map['metadata_json'] = Variable<String>(metadataJson.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RelationshipsCompanion(')
+          ..write('id: $id, ')
+          ..write('sourceEntityKind: $sourceEntityKind, ')
+          ..write('sourceEntityId: $sourceEntityId, ')
+          ..write('targetEntityKind: $targetEntityKind, ')
+          ..write('targetEntityId: $targetEntityId, ')
+          ..write('relationshipTypeId: $relationshipTypeId, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RemindersTable extends Reminders
+    with TableInfo<$RemindersTable, ReminderEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RemindersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _sourceEntityKindMeta = const VerificationMeta(
+    'sourceEntityKind',
+  );
+  @override
+  late final GeneratedColumn<String> sourceEntityKind = GeneratedColumn<String>(
+    'source_entity_kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceEntityIdMeta = const VerificationMeta(
+    'sourceEntityId',
+  );
+  @override
+  late final GeneratedColumn<int> sourceEntityId = GeneratedColumn<int>(
+    'source_entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _triggerTypeIdMeta = const VerificationMeta(
+    'triggerTypeId',
+  );
+  @override
+  late final GeneratedColumn<String> triggerTypeId = GeneratedColumn<String>(
+    'trigger_type_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetDateMeta = const VerificationMeta(
+    'targetDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> targetDate = GeneratedColumn<DateTime>(
+    'target_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _leadInDaysSnapshotMeta =
+      const VerificationMeta('leadInDaysSnapshot');
+  @override
+  late final GeneratedColumn<int> leadInDaysSnapshot = GeneratedColumn<int>(
+    'lead_in_days_snapshot',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _firesAtMeta = const VerificationMeta(
+    'firesAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> firesAt = GeneratedColumn<DateTime>(
+    'fires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stateMeta = const VerificationMeta('state');
+  @override
+  late final GeneratedColumn<String> state = GeneratedColumn<String>(
+    'state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _snoozedUntilMeta = const VerificationMeta(
+    'snoozedUntil',
+  );
+  @override
+  late final GeneratedColumn<DateTime> snoozedUntil = GeneratedColumn<DateTime>(
+    'snoozed_until',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _userNoteMeta = const VerificationMeta(
+    'userNote',
+  );
+  @override
+  late final GeneratedColumn<String> userNote = GeneratedColumn<String>(
+    'user_note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    sourceEntityKind,
+    sourceEntityId,
+    triggerTypeId,
+    targetDate,
+    leadInDaysSnapshot,
+    firesAt,
+    state,
+    snoozedUntil,
     completedAt,
+    userNote,
     deletedAt,
     createdAt,
     updatedAt,
@@ -1782,98 +3394,77 @@ class $RemindersTable extends Reminders
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('document_id')) {
+    if (data.containsKey('source_entity_kind')) {
       context.handle(
-        _documentIdMeta,
-        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
-      );
-    }
-    if (data.containsKey('entity_type')) {
-      context.handle(
-        _entityTypeMeta,
-        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_entityTypeMeta);
-    }
-    if (data.containsKey('entity_id')) {
-      context.handle(
-        _entityIdMeta,
-        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_entityIdMeta);
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-        _titleMeta,
-        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_titleMeta);
-    }
-    if (data.containsKey('description')) {
-      context.handle(
-        _descriptionMeta,
-        description.isAcceptableOrUnknown(
-          data['description']!,
-          _descriptionMeta,
-        ),
-      );
-    }
-    if (data.containsKey('reminder_type')) {
-      context.handle(
-        _reminderTypeMeta,
-        reminderType.isAcceptableOrUnknown(
-          data['reminder_type']!,
-          _reminderTypeMeta,
+        _sourceEntityKindMeta,
+        sourceEntityKind.isAcceptableOrUnknown(
+          data['source_entity_kind']!,
+          _sourceEntityKindMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_reminderTypeMeta);
+      context.missing(_sourceEntityKindMeta);
     }
-    if (data.containsKey('reminder_date')) {
+    if (data.containsKey('source_entity_id')) {
       context.handle(
-        _reminderDateMeta,
-        reminderDate.isAcceptableOrUnknown(
-          data['reminder_date']!,
-          _reminderDateMeta,
+        _sourceEntityIdMeta,
+        sourceEntityId.isAcceptableOrUnknown(
+          data['source_entity_id']!,
+          _sourceEntityIdMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_reminderDateMeta);
+      context.missing(_sourceEntityIdMeta);
     }
-    if (data.containsKey('snooze_until')) {
+    if (data.containsKey('trigger_type_id')) {
       context.handle(
-        _snoozeUntilMeta,
-        snoozeUntil.isAcceptableOrUnknown(
-          data['snooze_until']!,
-          _snoozeUntilMeta,
+        _triggerTypeIdMeta,
+        triggerTypeId.isAcceptableOrUnknown(
+          data['trigger_type_id']!,
+          _triggerTypeIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_triggerTypeIdMeta);
+    }
+    if (data.containsKey('target_date')) {
+      context.handle(
+        _targetDateMeta,
+        targetDate.isAcceptableOrUnknown(data['target_date']!, _targetDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_targetDateMeta);
+    }
+    if (data.containsKey('lead_in_days_snapshot')) {
+      context.handle(
+        _leadInDaysSnapshotMeta,
+        leadInDaysSnapshot.isAcceptableOrUnknown(
+          data['lead_in_days_snapshot']!,
+          _leadInDaysSnapshotMeta,
         ),
       );
     }
-    if (data.containsKey('is_recurring')) {
+    if (data.containsKey('fires_at')) {
       context.handle(
-        _isRecurringMeta,
-        isRecurring.isAcceptableOrUnknown(
-          data['is_recurring']!,
-          _isRecurringMeta,
-        ),
+        _firesAtMeta,
+        firesAt.isAcceptableOrUnknown(data['fires_at']!, _firesAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_firesAtMeta);
+    }
+    if (data.containsKey('state')) {
+      context.handle(
+        _stateMeta,
+        state.isAcceptableOrUnknown(data['state']!, _stateMeta),
       );
     }
-    if (data.containsKey('recurrence_pattern')) {
+    if (data.containsKey('snoozed_until')) {
       context.handle(
-        _recurrencePatternMeta,
-        recurrencePattern.isAcceptableOrUnknown(
-          data['recurrence_pattern']!,
-          _recurrencePatternMeta,
+        _snoozedUntilMeta,
+        snoozedUntil.isAcceptableOrUnknown(
+          data['snoozed_until']!,
+          _snoozedUntilMeta,
         ),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
       );
     }
     if (data.containsKey('completed_at')) {
@@ -1883,6 +3474,12 @@ class $RemindersTable extends Reminders
           data['completed_at']!,
           _completedAtMeta,
         ),
+      );
+    }
+    if (data.containsKey('user_note')) {
+      context.handle(
+        _userNoteMeta,
+        userNote.isAcceptableOrUnknown(data['user_note']!, _userNoteMeta),
       );
     }
     if (data.containsKey('deleted_at')) {
@@ -1916,53 +3513,45 @@ class $RemindersTable extends Reminders
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      documentId: attachedDatabase.typeMapping.read(
+      sourceEntityKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_entity_kind'],
+      )!,
+      sourceEntityId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}document_id'],
-      ),
-      entityType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}entity_type'],
+        data['${effectivePrefix}source_entity_id'],
       )!,
-      entityId: attachedDatabase.typeMapping.read(
+      triggerTypeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_type_id'],
+      )!,
+      targetDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}target_date'],
+      )!,
+      leadInDaysSnapshot: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}entity_id'],
+        data['${effectivePrefix}lead_in_days_snapshot'],
       )!,
-      title: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}title'],
-      )!,
-      description: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}description'],
-      ),
-      reminderType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}reminder_type'],
-      )!,
-      reminderDate: attachedDatabase.typeMapping.read(
+      firesAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}reminder_date'],
+        data['${effectivePrefix}fires_at'],
       )!,
-      snoozeUntil: attachedDatabase.typeMapping.read(
+      state: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}state'],
+      )!,
+      snoozedUntil: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}snooze_until'],
+        data['${effectivePrefix}snoozed_until'],
       ),
-      isRecurring: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_recurring'],
-      )!,
-      recurrencePattern: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}recurrence_pattern'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
       completedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
+      ),
+      userNote: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_note'],
       ),
       deletedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -1987,35 +3576,50 @@ class $RemindersTable extends Reminders
 
 class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   final int id;
-  final int? documentId;
-  final String entityType;
-  final int entityId;
-  final String title;
-  final String? description;
-  final String reminderType;
-  final DateTime reminderDate;
-  final DateTime? snoozeUntil;
-  final bool isRecurring;
-  final String? recurrencePattern;
-  final String status;
+
+  /// Entity kind of the source record.
+  /// 'document' | 'property' | 'vehicle' | 'account' | 'home_asset'
+  final String sourceEntityKind;
+
+  /// Primary key of the source record within its table.
+  final int sourceEntityId;
+
+  /// Canonical trigger type from the taxonomy vocabulary.
+  final String triggerTypeId;
+
+  /// The actual date on the source record (e.g. expiry_date value).
+  final DateTime targetDate;
+
+  /// Lead-in days captured at creation time. Insulates existing reminders
+  /// from future changes to the global lead-in configuration.
+  final int leadInDaysSnapshot;
+
+  /// Precomputed fire datetime = targetDate − leadInDaysSnapshot.
+  /// Indexed for efficient "what fires today / this week" queries.
+  final DateTime firesAt;
+
+  /// 'pending' | 'due' | 'snoozed' | 'completed' | 'dismissed' | 'cancelled'
+  final String state;
+  final DateTime? snoozedUntil;
   final DateTime? completedAt;
+
+  /// Optional user note attached to this reminder.
+  final String? userNote;
   final DateTime? deletedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   const ReminderEntity({
     required this.id,
-    this.documentId,
-    required this.entityType,
-    required this.entityId,
-    required this.title,
-    this.description,
-    required this.reminderType,
-    required this.reminderDate,
-    this.snoozeUntil,
-    required this.isRecurring,
-    this.recurrencePattern,
-    required this.status,
+    required this.sourceEntityKind,
+    required this.sourceEntityId,
+    required this.triggerTypeId,
+    required this.targetDate,
+    required this.leadInDaysSnapshot,
+    required this.firesAt,
+    required this.state,
+    this.snoozedUntil,
     this.completedAt,
+    this.userNote,
     this.deletedAt,
     required this.createdAt,
     required this.updatedAt,
@@ -2024,27 +3628,21 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || documentId != null) {
-      map['document_id'] = Variable<int>(documentId);
+    map['source_entity_kind'] = Variable<String>(sourceEntityKind);
+    map['source_entity_id'] = Variable<int>(sourceEntityId);
+    map['trigger_type_id'] = Variable<String>(triggerTypeId);
+    map['target_date'] = Variable<DateTime>(targetDate);
+    map['lead_in_days_snapshot'] = Variable<int>(leadInDaysSnapshot);
+    map['fires_at'] = Variable<DateTime>(firesAt);
+    map['state'] = Variable<String>(state);
+    if (!nullToAbsent || snoozedUntil != null) {
+      map['snoozed_until'] = Variable<DateTime>(snoozedUntil);
     }
-    map['entity_type'] = Variable<String>(entityType);
-    map['entity_id'] = Variable<int>(entityId);
-    map['title'] = Variable<String>(title);
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
-    }
-    map['reminder_type'] = Variable<String>(reminderType);
-    map['reminder_date'] = Variable<DateTime>(reminderDate);
-    if (!nullToAbsent || snoozeUntil != null) {
-      map['snooze_until'] = Variable<DateTime>(snoozeUntil);
-    }
-    map['is_recurring'] = Variable<bool>(isRecurring);
-    if (!nullToAbsent || recurrencePattern != null) {
-      map['recurrence_pattern'] = Variable<String>(recurrencePattern);
-    }
-    map['status'] = Variable<String>(status);
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || userNote != null) {
+      map['user_note'] = Variable<String>(userNote);
     }
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -2057,28 +3655,22 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   RemindersCompanion toCompanion(bool nullToAbsent) {
     return RemindersCompanion(
       id: Value(id),
-      documentId: documentId == null && nullToAbsent
+      sourceEntityKind: Value(sourceEntityKind),
+      sourceEntityId: Value(sourceEntityId),
+      triggerTypeId: Value(triggerTypeId),
+      targetDate: Value(targetDate),
+      leadInDaysSnapshot: Value(leadInDaysSnapshot),
+      firesAt: Value(firesAt),
+      state: Value(state),
+      snoozedUntil: snoozedUntil == null && nullToAbsent
           ? const Value.absent()
-          : Value(documentId),
-      entityType: Value(entityType),
-      entityId: Value(entityId),
-      title: Value(title),
-      description: description == null && nullToAbsent
-          ? const Value.absent()
-          : Value(description),
-      reminderType: Value(reminderType),
-      reminderDate: Value(reminderDate),
-      snoozeUntil: snoozeUntil == null && nullToAbsent
-          ? const Value.absent()
-          : Value(snoozeUntil),
-      isRecurring: Value(isRecurring),
-      recurrencePattern: recurrencePattern == null && nullToAbsent
-          ? const Value.absent()
-          : Value(recurrencePattern),
-      status: Value(status),
+          : Value(snoozedUntil),
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
+      userNote: userNote == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userNote),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
@@ -2094,20 +3686,16 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ReminderEntity(
       id: serializer.fromJson<int>(json['id']),
-      documentId: serializer.fromJson<int?>(json['documentId']),
-      entityType: serializer.fromJson<String>(json['entityType']),
-      entityId: serializer.fromJson<int>(json['entityId']),
-      title: serializer.fromJson<String>(json['title']),
-      description: serializer.fromJson<String?>(json['description']),
-      reminderType: serializer.fromJson<String>(json['reminderType']),
-      reminderDate: serializer.fromJson<DateTime>(json['reminderDate']),
-      snoozeUntil: serializer.fromJson<DateTime?>(json['snoozeUntil']),
-      isRecurring: serializer.fromJson<bool>(json['isRecurring']),
-      recurrencePattern: serializer.fromJson<String?>(
-        json['recurrencePattern'],
-      ),
-      status: serializer.fromJson<String>(json['status']),
+      sourceEntityKind: serializer.fromJson<String>(json['sourceEntityKind']),
+      sourceEntityId: serializer.fromJson<int>(json['sourceEntityId']),
+      triggerTypeId: serializer.fromJson<String>(json['triggerTypeId']),
+      targetDate: serializer.fromJson<DateTime>(json['targetDate']),
+      leadInDaysSnapshot: serializer.fromJson<int>(json['leadInDaysSnapshot']),
+      firesAt: serializer.fromJson<DateTime>(json['firesAt']),
+      state: serializer.fromJson<String>(json['state']),
+      snoozedUntil: serializer.fromJson<DateTime?>(json['snoozedUntil']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      userNote: serializer.fromJson<String?>(json['userNote']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -2118,18 +3706,16 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'documentId': serializer.toJson<int?>(documentId),
-      'entityType': serializer.toJson<String>(entityType),
-      'entityId': serializer.toJson<int>(entityId),
-      'title': serializer.toJson<String>(title),
-      'description': serializer.toJson<String?>(description),
-      'reminderType': serializer.toJson<String>(reminderType),
-      'reminderDate': serializer.toJson<DateTime>(reminderDate),
-      'snoozeUntil': serializer.toJson<DateTime?>(snoozeUntil),
-      'isRecurring': serializer.toJson<bool>(isRecurring),
-      'recurrencePattern': serializer.toJson<String?>(recurrencePattern),
-      'status': serializer.toJson<String>(status),
+      'sourceEntityKind': serializer.toJson<String>(sourceEntityKind),
+      'sourceEntityId': serializer.toJson<int>(sourceEntityId),
+      'triggerTypeId': serializer.toJson<String>(triggerTypeId),
+      'targetDate': serializer.toJson<DateTime>(targetDate),
+      'leadInDaysSnapshot': serializer.toJson<int>(leadInDaysSnapshot),
+      'firesAt': serializer.toJson<DateTime>(firesAt),
+      'state': serializer.toJson<String>(state),
+      'snoozedUntil': serializer.toJson<DateTime?>(snoozedUntil),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'userNote': serializer.toJson<String?>(userNote),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -2138,37 +3724,31 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
 
   ReminderEntity copyWith({
     int? id,
-    Value<int?> documentId = const Value.absent(),
-    String? entityType,
-    int? entityId,
-    String? title,
-    Value<String?> description = const Value.absent(),
-    String? reminderType,
-    DateTime? reminderDate,
-    Value<DateTime?> snoozeUntil = const Value.absent(),
-    bool? isRecurring,
-    Value<String?> recurrencePattern = const Value.absent(),
-    String? status,
+    String? sourceEntityKind,
+    int? sourceEntityId,
+    String? triggerTypeId,
+    DateTime? targetDate,
+    int? leadInDaysSnapshot,
+    DateTime? firesAt,
+    String? state,
+    Value<DateTime?> snoozedUntil = const Value.absent(),
     Value<DateTime?> completedAt = const Value.absent(),
+    Value<String?> userNote = const Value.absent(),
     Value<DateTime?> deletedAt = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => ReminderEntity(
     id: id ?? this.id,
-    documentId: documentId.present ? documentId.value : this.documentId,
-    entityType: entityType ?? this.entityType,
-    entityId: entityId ?? this.entityId,
-    title: title ?? this.title,
-    description: description.present ? description.value : this.description,
-    reminderType: reminderType ?? this.reminderType,
-    reminderDate: reminderDate ?? this.reminderDate,
-    snoozeUntil: snoozeUntil.present ? snoozeUntil.value : this.snoozeUntil,
-    isRecurring: isRecurring ?? this.isRecurring,
-    recurrencePattern: recurrencePattern.present
-        ? recurrencePattern.value
-        : this.recurrencePattern,
-    status: status ?? this.status,
+    sourceEntityKind: sourceEntityKind ?? this.sourceEntityKind,
+    sourceEntityId: sourceEntityId ?? this.sourceEntityId,
+    triggerTypeId: triggerTypeId ?? this.triggerTypeId,
+    targetDate: targetDate ?? this.targetDate,
+    leadInDaysSnapshot: leadInDaysSnapshot ?? this.leadInDaysSnapshot,
+    firesAt: firesAt ?? this.firesAt,
+    state: state ?? this.state,
+    snoozedUntil: snoozedUntil.present ? snoozedUntil.value : this.snoozedUntil,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    userNote: userNote.present ? userNote.value : this.userNote,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -2176,36 +3756,30 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   ReminderEntity copyWithCompanion(RemindersCompanion data) {
     return ReminderEntity(
       id: data.id.present ? data.id.value : this.id,
-      documentId: data.documentId.present
-          ? data.documentId.value
-          : this.documentId,
-      entityType: data.entityType.present
-          ? data.entityType.value
-          : this.entityType,
-      entityId: data.entityId.present ? data.entityId.value : this.entityId,
-      title: data.title.present ? data.title.value : this.title,
-      description: data.description.present
-          ? data.description.value
-          : this.description,
-      reminderType: data.reminderType.present
-          ? data.reminderType.value
-          : this.reminderType,
-      reminderDate: data.reminderDate.present
-          ? data.reminderDate.value
-          : this.reminderDate,
-      snoozeUntil: data.snoozeUntil.present
-          ? data.snoozeUntil.value
-          : this.snoozeUntil,
-      isRecurring: data.isRecurring.present
-          ? data.isRecurring.value
-          : this.isRecurring,
-      recurrencePattern: data.recurrencePattern.present
-          ? data.recurrencePattern.value
-          : this.recurrencePattern,
-      status: data.status.present ? data.status.value : this.status,
+      sourceEntityKind: data.sourceEntityKind.present
+          ? data.sourceEntityKind.value
+          : this.sourceEntityKind,
+      sourceEntityId: data.sourceEntityId.present
+          ? data.sourceEntityId.value
+          : this.sourceEntityId,
+      triggerTypeId: data.triggerTypeId.present
+          ? data.triggerTypeId.value
+          : this.triggerTypeId,
+      targetDate: data.targetDate.present
+          ? data.targetDate.value
+          : this.targetDate,
+      leadInDaysSnapshot: data.leadInDaysSnapshot.present
+          ? data.leadInDaysSnapshot.value
+          : this.leadInDaysSnapshot,
+      firesAt: data.firesAt.present ? data.firesAt.value : this.firesAt,
+      state: data.state.present ? data.state.value : this.state,
+      snoozedUntil: data.snoozedUntil.present
+          ? data.snoozedUntil.value
+          : this.snoozedUntil,
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
+      userNote: data.userNote.present ? data.userNote.value : this.userNote,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -2216,18 +3790,16 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   String toString() {
     return (StringBuffer('ReminderEntity(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
-          ..write('entityType: $entityType, ')
-          ..write('entityId: $entityId, ')
-          ..write('title: $title, ')
-          ..write('description: $description, ')
-          ..write('reminderType: $reminderType, ')
-          ..write('reminderDate: $reminderDate, ')
-          ..write('snoozeUntil: $snoozeUntil, ')
-          ..write('isRecurring: $isRecurring, ')
-          ..write('recurrencePattern: $recurrencePattern, ')
-          ..write('status: $status, ')
+          ..write('sourceEntityKind: $sourceEntityKind, ')
+          ..write('sourceEntityId: $sourceEntityId, ')
+          ..write('triggerTypeId: $triggerTypeId, ')
+          ..write('targetDate: $targetDate, ')
+          ..write('leadInDaysSnapshot: $leadInDaysSnapshot, ')
+          ..write('firesAt: $firesAt, ')
+          ..write('state: $state, ')
+          ..write('snoozedUntil: $snoozedUntil, ')
           ..write('completedAt: $completedAt, ')
+          ..write('userNote: $userNote, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -2238,18 +3810,16 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
   @override
   int get hashCode => Object.hash(
     id,
-    documentId,
-    entityType,
-    entityId,
-    title,
-    description,
-    reminderType,
-    reminderDate,
-    snoozeUntil,
-    isRecurring,
-    recurrencePattern,
-    status,
+    sourceEntityKind,
+    sourceEntityId,
+    triggerTypeId,
+    targetDate,
+    leadInDaysSnapshot,
+    firesAt,
+    state,
+    snoozedUntil,
     completedAt,
+    userNote,
     deletedAt,
     createdAt,
     updatedAt,
@@ -2259,18 +3829,16 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
       identical(this, other) ||
       (other is ReminderEntity &&
           other.id == this.id &&
-          other.documentId == this.documentId &&
-          other.entityType == this.entityType &&
-          other.entityId == this.entityId &&
-          other.title == this.title &&
-          other.description == this.description &&
-          other.reminderType == this.reminderType &&
-          other.reminderDate == this.reminderDate &&
-          other.snoozeUntil == this.snoozeUntil &&
-          other.isRecurring == this.isRecurring &&
-          other.recurrencePattern == this.recurrencePattern &&
-          other.status == this.status &&
+          other.sourceEntityKind == this.sourceEntityKind &&
+          other.sourceEntityId == this.sourceEntityId &&
+          other.triggerTypeId == this.triggerTypeId &&
+          other.targetDate == this.targetDate &&
+          other.leadInDaysSnapshot == this.leadInDaysSnapshot &&
+          other.firesAt == this.firesAt &&
+          other.state == this.state &&
+          other.snoozedUntil == this.snoozedUntil &&
           other.completedAt == this.completedAt &&
+          other.userNote == this.userNote &&
           other.deletedAt == this.deletedAt &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -2278,93 +3846,84 @@ class ReminderEntity extends DataClass implements Insertable<ReminderEntity> {
 
 class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   final Value<int> id;
-  final Value<int?> documentId;
-  final Value<String> entityType;
-  final Value<int> entityId;
-  final Value<String> title;
-  final Value<String?> description;
-  final Value<String> reminderType;
-  final Value<DateTime> reminderDate;
-  final Value<DateTime?> snoozeUntil;
-  final Value<bool> isRecurring;
-  final Value<String?> recurrencePattern;
-  final Value<String> status;
+  final Value<String> sourceEntityKind;
+  final Value<int> sourceEntityId;
+  final Value<String> triggerTypeId;
+  final Value<DateTime> targetDate;
+  final Value<int> leadInDaysSnapshot;
+  final Value<DateTime> firesAt;
+  final Value<String> state;
+  final Value<DateTime?> snoozedUntil;
   final Value<DateTime?> completedAt;
+  final Value<String?> userNote;
   final Value<DateTime?> deletedAt;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const RemindersCompanion({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
-    this.entityType = const Value.absent(),
-    this.entityId = const Value.absent(),
-    this.title = const Value.absent(),
-    this.description = const Value.absent(),
-    this.reminderType = const Value.absent(),
-    this.reminderDate = const Value.absent(),
-    this.snoozeUntil = const Value.absent(),
-    this.isRecurring = const Value.absent(),
-    this.recurrencePattern = const Value.absent(),
-    this.status = const Value.absent(),
+    this.sourceEntityKind = const Value.absent(),
+    this.sourceEntityId = const Value.absent(),
+    this.triggerTypeId = const Value.absent(),
+    this.targetDate = const Value.absent(),
+    this.leadInDaysSnapshot = const Value.absent(),
+    this.firesAt = const Value.absent(),
+    this.state = const Value.absent(),
+    this.snoozedUntil = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.userNote = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
   RemindersCompanion.insert({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
-    required String entityType,
-    required int entityId,
-    required String title,
-    this.description = const Value.absent(),
-    required String reminderType,
-    required DateTime reminderDate,
-    this.snoozeUntil = const Value.absent(),
-    this.isRecurring = const Value.absent(),
-    this.recurrencePattern = const Value.absent(),
-    this.status = const Value.absent(),
+    required String sourceEntityKind,
+    required int sourceEntityId,
+    required String triggerTypeId,
+    required DateTime targetDate,
+    this.leadInDaysSnapshot = const Value.absent(),
+    required DateTime firesAt,
+    this.state = const Value.absent(),
+    this.snoozedUntil = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.userNote = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : entityType = Value(entityType),
-       entityId = Value(entityId),
-       title = Value(title),
-       reminderType = Value(reminderType),
-       reminderDate = Value(reminderDate);
+  }) : sourceEntityKind = Value(sourceEntityKind),
+       sourceEntityId = Value(sourceEntityId),
+       triggerTypeId = Value(triggerTypeId),
+       targetDate = Value(targetDate),
+       firesAt = Value(firesAt);
   static Insertable<ReminderEntity> custom({
     Expression<int>? id,
-    Expression<int>? documentId,
-    Expression<String>? entityType,
-    Expression<int>? entityId,
-    Expression<String>? title,
-    Expression<String>? description,
-    Expression<String>? reminderType,
-    Expression<DateTime>? reminderDate,
-    Expression<DateTime>? snoozeUntil,
-    Expression<bool>? isRecurring,
-    Expression<String>? recurrencePattern,
-    Expression<String>? status,
+    Expression<String>? sourceEntityKind,
+    Expression<int>? sourceEntityId,
+    Expression<String>? triggerTypeId,
+    Expression<DateTime>? targetDate,
+    Expression<int>? leadInDaysSnapshot,
+    Expression<DateTime>? firesAt,
+    Expression<String>? state,
+    Expression<DateTime>? snoozedUntil,
     Expression<DateTime>? completedAt,
+    Expression<String>? userNote,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (documentId != null) 'document_id': documentId,
-      if (entityType != null) 'entity_type': entityType,
-      if (entityId != null) 'entity_id': entityId,
-      if (title != null) 'title': title,
-      if (description != null) 'description': description,
-      if (reminderType != null) 'reminder_type': reminderType,
-      if (reminderDate != null) 'reminder_date': reminderDate,
-      if (snoozeUntil != null) 'snooze_until': snoozeUntil,
-      if (isRecurring != null) 'is_recurring': isRecurring,
-      if (recurrencePattern != null) 'recurrence_pattern': recurrencePattern,
-      if (status != null) 'status': status,
+      if (sourceEntityKind != null) 'source_entity_kind': sourceEntityKind,
+      if (sourceEntityId != null) 'source_entity_id': sourceEntityId,
+      if (triggerTypeId != null) 'trigger_type_id': triggerTypeId,
+      if (targetDate != null) 'target_date': targetDate,
+      if (leadInDaysSnapshot != null)
+        'lead_in_days_snapshot': leadInDaysSnapshot,
+      if (firesAt != null) 'fires_at': firesAt,
+      if (state != null) 'state': state,
+      if (snoozedUntil != null) 'snoozed_until': snoozedUntil,
       if (completedAt != null) 'completed_at': completedAt,
+      if (userNote != null) 'user_note': userNote,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -2373,36 +3932,32 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
 
   RemindersCompanion copyWith({
     Value<int>? id,
-    Value<int?>? documentId,
-    Value<String>? entityType,
-    Value<int>? entityId,
-    Value<String>? title,
-    Value<String?>? description,
-    Value<String>? reminderType,
-    Value<DateTime>? reminderDate,
-    Value<DateTime?>? snoozeUntil,
-    Value<bool>? isRecurring,
-    Value<String?>? recurrencePattern,
-    Value<String>? status,
+    Value<String>? sourceEntityKind,
+    Value<int>? sourceEntityId,
+    Value<String>? triggerTypeId,
+    Value<DateTime>? targetDate,
+    Value<int>? leadInDaysSnapshot,
+    Value<DateTime>? firesAt,
+    Value<String>? state,
+    Value<DateTime?>? snoozedUntil,
     Value<DateTime?>? completedAt,
+    Value<String?>? userNote,
     Value<DateTime?>? deletedAt,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
     return RemindersCompanion(
       id: id ?? this.id,
-      documentId: documentId ?? this.documentId,
-      entityType: entityType ?? this.entityType,
-      entityId: entityId ?? this.entityId,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      reminderType: reminderType ?? this.reminderType,
-      reminderDate: reminderDate ?? this.reminderDate,
-      snoozeUntil: snoozeUntil ?? this.snoozeUntil,
-      isRecurring: isRecurring ?? this.isRecurring,
-      recurrencePattern: recurrencePattern ?? this.recurrencePattern,
-      status: status ?? this.status,
+      sourceEntityKind: sourceEntityKind ?? this.sourceEntityKind,
+      sourceEntityId: sourceEntityId ?? this.sourceEntityId,
+      triggerTypeId: triggerTypeId ?? this.triggerTypeId,
+      targetDate: targetDate ?? this.targetDate,
+      leadInDaysSnapshot: leadInDaysSnapshot ?? this.leadInDaysSnapshot,
+      firesAt: firesAt ?? this.firesAt,
+      state: state ?? this.state,
+      snoozedUntil: snoozedUntil ?? this.snoozedUntil,
       completedAt: completedAt ?? this.completedAt,
+      userNote: userNote ?? this.userNote,
       deletedAt: deletedAt ?? this.deletedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -2415,41 +3970,35 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (documentId.present) {
-      map['document_id'] = Variable<int>(documentId.value);
+    if (sourceEntityKind.present) {
+      map['source_entity_kind'] = Variable<String>(sourceEntityKind.value);
     }
-    if (entityType.present) {
-      map['entity_type'] = Variable<String>(entityType.value);
+    if (sourceEntityId.present) {
+      map['source_entity_id'] = Variable<int>(sourceEntityId.value);
     }
-    if (entityId.present) {
-      map['entity_id'] = Variable<int>(entityId.value);
+    if (triggerTypeId.present) {
+      map['trigger_type_id'] = Variable<String>(triggerTypeId.value);
     }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
+    if (targetDate.present) {
+      map['target_date'] = Variable<DateTime>(targetDate.value);
     }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
+    if (leadInDaysSnapshot.present) {
+      map['lead_in_days_snapshot'] = Variable<int>(leadInDaysSnapshot.value);
     }
-    if (reminderType.present) {
-      map['reminder_type'] = Variable<String>(reminderType.value);
+    if (firesAt.present) {
+      map['fires_at'] = Variable<DateTime>(firesAt.value);
     }
-    if (reminderDate.present) {
-      map['reminder_date'] = Variable<DateTime>(reminderDate.value);
+    if (state.present) {
+      map['state'] = Variable<String>(state.value);
     }
-    if (snoozeUntil.present) {
-      map['snooze_until'] = Variable<DateTime>(snoozeUntil.value);
-    }
-    if (isRecurring.present) {
-      map['is_recurring'] = Variable<bool>(isRecurring.value);
-    }
-    if (recurrencePattern.present) {
-      map['recurrence_pattern'] = Variable<String>(recurrencePattern.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
+    if (snoozedUntil.present) {
+      map['snoozed_until'] = Variable<DateTime>(snoozedUntil.value);
     }
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (userNote.present) {
+      map['user_note'] = Variable<String>(userNote.value);
     }
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
@@ -2467,18 +4016,16 @@ class RemindersCompanion extends UpdateCompanion<ReminderEntity> {
   String toString() {
     return (StringBuffer('RemindersCompanion(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
-          ..write('entityType: $entityType, ')
-          ..write('entityId: $entityId, ')
-          ..write('title: $title, ')
-          ..write('description: $description, ')
-          ..write('reminderType: $reminderType, ')
-          ..write('reminderDate: $reminderDate, ')
-          ..write('snoozeUntil: $snoozeUntil, ')
-          ..write('isRecurring: $isRecurring, ')
-          ..write('recurrencePattern: $recurrencePattern, ')
-          ..write('status: $status, ')
+          ..write('sourceEntityKind: $sourceEntityKind, ')
+          ..write('sourceEntityId: $sourceEntityId, ')
+          ..write('triggerTypeId: $triggerTypeId, ')
+          ..write('targetDate: $targetDate, ')
+          ..write('leadInDaysSnapshot: $leadInDaysSnapshot, ')
+          ..write('firesAt: $firesAt, ')
+          ..write('state: $state, ')
+          ..write('snoozedUntil: $snoozedUntil, ')
           ..write('completedAt: $completedAt, ')
+          ..write('userNote: $userNote, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -6785,20 +8332,6 @@ class $PropertiesTable extends Properties
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _documentIdMeta = const VerificationMeta(
-    'documentId',
-  );
-  @override
-  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
-    'document_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES documents (id) ON DELETE SET NULL',
-    ),
-  );
   static const VerificationMeta _propertyNameMeta = const VerificationMeta(
     'propertyName',
   );
@@ -7218,7 +8751,6 @@ class $PropertiesTable extends Properties
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    documentId,
     propertyName,
     propertyType,
     ownership,
@@ -7271,12 +8803,6 @@ class $PropertiesTable extends Properties
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('document_id')) {
-      context.handle(
-        _documentIdMeta,
-        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
-      );
     }
     if (data.containsKey('property_name')) {
       context.handle(
@@ -7594,10 +9120,6 @@ class $PropertiesTable extends Properties
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      documentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}document_id'],
-      ),
       propertyName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}property_name'],
@@ -7757,7 +9279,6 @@ class $PropertiesTable extends Properties
 
 class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   final int id;
-  final int? documentId;
   final String propertyName;
   final String propertyType;
   final String ownership;
@@ -7797,7 +9318,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   final DateTime updatedAt;
   const PropertyEntity({
     required this.id,
-    this.documentId,
     required this.propertyName,
     required this.propertyType,
     required this.ownership,
@@ -7840,9 +9360,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || documentId != null) {
-      map['document_id'] = Variable<int>(documentId);
-    }
     map['property_name'] = Variable<String>(propertyName);
     map['property_type'] = Variable<String>(propertyType);
     map['ownership'] = Variable<String>(ownership);
@@ -7934,9 +9451,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   PropertiesCompanion toCompanion(bool nullToAbsent) {
     return PropertiesCompanion(
       id: Value(id),
-      documentId: documentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(documentId),
       propertyName: Value(propertyName),
       propertyType: Value(propertyType),
       ownership: Value(ownership),
@@ -8032,7 +9546,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PropertyEntity(
       id: serializer.fromJson<int>(json['id']),
-      documentId: serializer.fromJson<int?>(json['documentId']),
       propertyName: serializer.fromJson<String>(json['propertyName']),
       propertyType: serializer.fromJson<String>(json['propertyType']),
       ownership: serializer.fromJson<String>(json['ownership']),
@@ -8083,7 +9596,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'documentId': serializer.toJson<int?>(documentId),
       'propertyName': serializer.toJson<String>(propertyName),
       'propertyType': serializer.toJson<String>(propertyType),
       'ownership': serializer.toJson<String>(ownership),
@@ -8126,7 +9638,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
 
   PropertyEntity copyWith({
     int? id,
-    Value<int?> documentId = const Value.absent(),
     String? propertyName,
     String? propertyType,
     String? ownership,
@@ -8166,7 +9677,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
     DateTime? updatedAt,
   }) => PropertyEntity(
     id: id ?? this.id,
-    documentId: documentId.present ? documentId.value : this.documentId,
     propertyName: propertyName ?? this.propertyName,
     propertyType: propertyType ?? this.propertyType,
     ownership: ownership ?? this.ownership,
@@ -8232,9 +9742,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   PropertyEntity copyWithCompanion(PropertiesCompanion data) {
     return PropertyEntity(
       id: data.id.present ? data.id.value : this.id,
-      documentId: data.documentId.present
-          ? data.documentId.value
-          : this.documentId,
       propertyName: data.propertyName.present
           ? data.propertyName.value
           : this.propertyName,
@@ -8325,7 +9832,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   String toString() {
     return (StringBuffer('PropertyEntity(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('propertyName: $propertyName, ')
           ..write('propertyType: $propertyType, ')
           ..write('ownership: $ownership, ')
@@ -8370,7 +9876,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
   @override
   int get hashCode => Object.hashAll([
     id,
-    documentId,
     propertyName,
     propertyType,
     ownership,
@@ -8414,7 +9919,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
       identical(this, other) ||
       (other is PropertyEntity &&
           other.id == this.id &&
-          other.documentId == this.documentId &&
           other.propertyName == this.propertyName &&
           other.propertyType == this.propertyType &&
           other.ownership == this.ownership &&
@@ -8456,7 +9960,6 @@ class PropertyEntity extends DataClass implements Insertable<PropertyEntity> {
 
 class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   final Value<int> id;
-  final Value<int?> documentId;
   final Value<String> propertyName;
   final Value<String> propertyType;
   final Value<String> ownership;
@@ -8496,7 +9999,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   final Value<DateTime> updatedAt;
   const PropertiesCompanion({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     this.propertyName = const Value.absent(),
     this.propertyType = const Value.absent(),
     this.ownership = const Value.absent(),
@@ -8537,7 +10039,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   });
   PropertiesCompanion.insert({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     required String propertyName,
     required String propertyType,
     required String ownership,
@@ -8583,7 +10084,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
        postcode = Value(postcode);
   static Insertable<PropertyEntity> custom({
     Expression<int>? id,
-    Expression<int>? documentId,
     Expression<String>? propertyName,
     Expression<String>? propertyType,
     Expression<String>? ownership,
@@ -8624,7 +10124,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (documentId != null) 'document_id': documentId,
       if (propertyName != null) 'property_name': propertyName,
       if (propertyType != null) 'property_type': propertyType,
       if (ownership != null) 'ownership': ownership,
@@ -8671,7 +10170,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
 
   PropertiesCompanion copyWith({
     Value<int>? id,
-    Value<int?>? documentId,
     Value<String>? propertyName,
     Value<String>? propertyType,
     Value<String>? ownership,
@@ -8712,7 +10210,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   }) {
     return PropertiesCompanion(
       id: id ?? this.id,
-      documentId: documentId ?? this.documentId,
       propertyName: propertyName ?? this.propertyName,
       propertyType: propertyType ?? this.propertyType,
       ownership: ownership ?? this.ownership,
@@ -8758,9 +10255,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (documentId.present) {
-      map['document_id'] = Variable<int>(documentId.value);
     }
     if (propertyName.present) {
       map['property_name'] = Variable<String>(propertyName.value);
@@ -8880,7 +10374,6 @@ class PropertiesCompanion extends UpdateCompanion<PropertyEntity> {
   String toString() {
     return (StringBuffer('PropertiesCompanion(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('propertyName: $propertyName, ')
           ..write('propertyType: $propertyType, ')
           ..write('ownership: $ownership, ')
@@ -8940,20 +10433,6 @@ class $VehiclesTable extends Vehicles
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _documentIdMeta = const VerificationMeta(
-    'documentId',
-  );
-  @override
-  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
-    'document_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES documents (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _vehicleNameMeta = const VerificationMeta(
@@ -9427,7 +10906,6 @@ class $VehiclesTable extends Vehicles
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    documentId,
     vehicleName,
     vehicleType,
     registrationNumber,
@@ -9485,12 +10963,6 @@ class $VehiclesTable extends Vehicles
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('document_id')) {
-      context.handle(
-        _documentIdMeta,
-        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
-      );
     }
     if (data.containsKey('vehicle_name')) {
       context.handle(
@@ -9845,10 +11317,6 @@ class $VehiclesTable extends Vehicles
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      documentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}document_id'],
-      ),
       vehicleName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}vehicle_name'],
@@ -10028,7 +11496,6 @@ class $VehiclesTable extends Vehicles
 
 class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   final int id;
-  final int? documentId;
   final String vehicleName;
   final String vehicleType;
   final String? registrationNumber;
@@ -10073,7 +11540,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   final DateTime updatedAt;
   const VehicleEntity({
     required this.id,
-    this.documentId,
     required this.vehicleName,
     required this.vehicleType,
     this.registrationNumber,
@@ -10121,9 +11587,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || documentId != null) {
-      map['document_id'] = Variable<int>(documentId);
-    }
     map['vehicle_name'] = Variable<String>(vehicleName);
     map['vehicle_type'] = Variable<String>(vehicleType);
     if (!nullToAbsent || registrationNumber != null) {
@@ -10234,9 +11697,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   VehiclesCompanion toCompanion(bool nullToAbsent) {
     return VehiclesCompanion(
       id: Value(id),
-      documentId: documentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(documentId),
       vehicleName: Value(vehicleName),
       vehicleType: Value(vehicleType),
       registrationNumber: registrationNumber == null && nullToAbsent
@@ -10349,7 +11809,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return VehicleEntity(
       id: serializer.fromJson<int>(json['id']),
-      documentId: serializer.fromJson<int?>(json['documentId']),
       vehicleName: serializer.fromJson<String>(json['vehicleName']),
       vehicleType: serializer.fromJson<String>(json['vehicleType']),
       registrationNumber: serializer.fromJson<String?>(
@@ -10411,7 +11870,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'documentId': serializer.toJson<int?>(documentId),
       'vehicleName': serializer.toJson<String>(vehicleName),
       'vehicleType': serializer.toJson<String>(vehicleType),
       'registrationNumber': serializer.toJson<String?>(registrationNumber),
@@ -10459,7 +11917,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
 
   VehicleEntity copyWith({
     int? id,
-    Value<int?> documentId = const Value.absent(),
     String? vehicleName,
     String? vehicleType,
     Value<String?> registrationNumber = const Value.absent(),
@@ -10504,7 +11961,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
     DateTime? updatedAt,
   }) => VehicleEntity(
     id: id ?? this.id,
-    documentId: documentId.present ? documentId.value : this.documentId,
     vehicleName: vehicleName ?? this.vehicleName,
     vehicleType: vehicleType ?? this.vehicleType,
     registrationNumber: registrationNumber.present
@@ -10591,9 +12047,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   VehicleEntity copyWithCompanion(VehiclesCompanion data) {
     return VehicleEntity(
       id: data.id.present ? data.id.value : this.id,
-      documentId: data.documentId.present
-          ? data.documentId.value
-          : this.documentId,
       vehicleName: data.vehicleName.present
           ? data.vehicleName.value
           : this.vehicleName,
@@ -10697,7 +12150,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   String toString() {
     return (StringBuffer('VehicleEntity(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('vehicleName: $vehicleName, ')
           ..write('vehicleType: $vehicleType, ')
           ..write('registrationNumber: $registrationNumber, ')
@@ -10747,7 +12199,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
   @override
   int get hashCode => Object.hashAll([
     id,
-    documentId,
     vehicleName,
     vehicleType,
     registrationNumber,
@@ -10796,7 +12247,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
       identical(this, other) ||
       (other is VehicleEntity &&
           other.id == this.id &&
-          other.documentId == this.documentId &&
           other.vehicleName == this.vehicleName &&
           other.vehicleType == this.vehicleType &&
           other.registrationNumber == this.registrationNumber &&
@@ -10843,7 +12293,6 @@ class VehicleEntity extends DataClass implements Insertable<VehicleEntity> {
 
 class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   final Value<int> id;
-  final Value<int?> documentId;
   final Value<String> vehicleName;
   final Value<String> vehicleType;
   final Value<String?> registrationNumber;
@@ -10888,7 +12337,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   final Value<DateTime> updatedAt;
   const VehiclesCompanion({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     this.vehicleName = const Value.absent(),
     this.vehicleType = const Value.absent(),
     this.registrationNumber = const Value.absent(),
@@ -10934,7 +12382,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   });
   VehiclesCompanion.insert({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     required String vehicleName,
     required String vehicleType,
     this.registrationNumber = const Value.absent(),
@@ -10984,7 +12431,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
        ownership = Value(ownership);
   static Insertable<VehicleEntity> custom({
     Expression<int>? id,
-    Expression<int>? documentId,
     Expression<String>? vehicleName,
     Expression<String>? vehicleType,
     Expression<String>? registrationNumber,
@@ -11030,7 +12476,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (documentId != null) 'document_id': documentId,
       if (vehicleName != null) 'vehicle_name': vehicleName,
       if (vehicleType != null) 'vehicle_type': vehicleType,
       if (registrationNumber != null) 'registration_number': registrationNumber,
@@ -11085,7 +12530,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
 
   VehiclesCompanion copyWith({
     Value<int>? id,
-    Value<int?>? documentId,
     Value<String>? vehicleName,
     Value<String>? vehicleType,
     Value<String?>? registrationNumber,
@@ -11131,7 +12575,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   }) {
     return VehiclesCompanion(
       id: id ?? this.id,
-      documentId: documentId ?? this.documentId,
       vehicleName: vehicleName ?? this.vehicleName,
       vehicleType: vehicleType ?? this.vehicleType,
       registrationNumber: registrationNumber ?? this.registrationNumber,
@@ -11183,9 +12626,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (documentId.present) {
-      map['document_id'] = Variable<int>(documentId.value);
     }
     if (vehicleName.present) {
       map['vehicle_name'] = Variable<String>(vehicleName.value);
@@ -11324,7 +12764,6 @@ class VehiclesCompanion extends UpdateCompanion<VehicleEntity> {
   String toString() {
     return (StringBuffer('VehiclesCompanion(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('vehicleName: $vehicleName, ')
           ..write('vehicleType: $vehicleType, ')
           ..write('registrationNumber: $registrationNumber, ')
@@ -11389,20 +12828,6 @@ class $AccountsTable extends Accounts
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _documentIdMeta = const VerificationMeta(
-    'documentId',
-  );
-  @override
-  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
-    'document_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES documents (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _accountNameMeta = const VerificationMeta(
@@ -11866,7 +13291,6 @@ class $AccountsTable extends Accounts
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    documentId,
     accountName,
     accountType,
     provider,
@@ -11922,12 +13346,6 @@ class $AccountsTable extends Accounts
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('document_id')) {
-      context.handle(
-        _documentIdMeta,
-        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
-      );
     }
     if (data.containsKey('account_name')) {
       context.handle(
@@ -12269,10 +13687,6 @@ class $AccountsTable extends Accounts
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      documentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}document_id'],
-      ),
       accountName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}account_name'],
@@ -12444,7 +13858,6 @@ class $AccountsTable extends Accounts
 
 class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   final int id;
-  final int? documentId;
   final String accountName;
   final String accountType;
   final String provider;
@@ -12487,7 +13900,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   final DateTime updatedAt;
   const AccountEntity({
     required this.id,
-    this.documentId,
     required this.accountName,
     required this.accountType,
     required this.provider,
@@ -12533,9 +13945,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || documentId != null) {
-      map['document_id'] = Variable<int>(documentId);
-    }
     map['account_name'] = Variable<String>(accountName);
     map['account_type'] = Variable<String>(accountType);
     map['provider'] = Variable<String>(provider);
@@ -12638,9 +14047,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   AccountsCompanion toCompanion(bool nullToAbsent) {
     return AccountsCompanion(
       id: Value(id),
-      documentId: documentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(documentId),
       accountName: Value(accountName),
       accountType: Value(accountType),
       provider: Value(provider),
@@ -12742,7 +14148,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AccountEntity(
       id: serializer.fromJson<int>(json['id']),
-      documentId: serializer.fromJson<int?>(json['documentId']),
       accountName: serializer.fromJson<String>(json['accountName']),
       accountType: serializer.fromJson<String>(json['accountType']),
       provider: serializer.fromJson<String>(json['provider']),
@@ -12810,7 +14215,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'documentId': serializer.toJson<int?>(documentId),
       'accountName': serializer.toJson<String>(accountName),
       'accountType': serializer.toJson<String>(accountType),
       'provider': serializer.toJson<String>(provider),
@@ -12862,7 +14266,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
 
   AccountEntity copyWith({
     int? id,
-    Value<int?> documentId = const Value.absent(),
     String? accountName,
     String? accountType,
     String? provider,
@@ -12905,7 +14308,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
     DateTime? updatedAt,
   }) => AccountEntity(
     id: id ?? this.id,
-    documentId: documentId.present ? documentId.value : this.documentId,
     accountName: accountName ?? this.accountName,
     accountType: accountType ?? this.accountType,
     provider: provider ?? this.provider,
@@ -12984,9 +14386,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   AccountEntity copyWithCompanion(AccountsCompanion data) {
     return AccountEntity(
       id: data.id.present ? data.id.value : this.id,
-      documentId: data.documentId.present
-          ? data.documentId.value
-          : this.documentId,
       accountName: data.accountName.present
           ? data.accountName.value
           : this.accountName,
@@ -13092,7 +14491,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   String toString() {
     return (StringBuffer('AccountEntity(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('accountName: $accountName, ')
           ..write('accountType: $accountType, ')
           ..write('provider: $provider, ')
@@ -13140,7 +14538,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
   @override
   int get hashCode => Object.hashAll([
     id,
-    documentId,
     accountName,
     accountType,
     provider,
@@ -13187,7 +14584,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
       identical(this, other) ||
       (other is AccountEntity &&
           other.id == this.id &&
-          other.documentId == this.documentId &&
           other.accountName == this.accountName &&
           other.accountType == this.accountType &&
           other.provider == this.provider &&
@@ -13232,7 +14628,6 @@ class AccountEntity extends DataClass implements Insertable<AccountEntity> {
 
 class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   final Value<int> id;
-  final Value<int?> documentId;
   final Value<String> accountName;
   final Value<String> accountType;
   final Value<String> provider;
@@ -13275,7 +14670,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   final Value<DateTime> updatedAt;
   const AccountsCompanion({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     this.accountName = const Value.absent(),
     this.accountType = const Value.absent(),
     this.provider = const Value.absent(),
@@ -13319,7 +14713,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   });
   AccountsCompanion.insert({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     required String accountName,
     required String accountType,
     required String provider,
@@ -13365,7 +14758,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
        provider = Value(provider);
   static Insertable<AccountEntity> custom({
     Expression<int>? id,
-    Expression<int>? documentId,
     Expression<String>? accountName,
     Expression<String>? accountType,
     Expression<String>? provider,
@@ -13409,7 +14801,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (documentId != null) 'document_id': documentId,
       if (accountName != null) 'account_name': accountName,
       if (accountType != null) 'account_type': accountType,
       if (provider != null) 'provider': provider,
@@ -13466,7 +14857,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
 
   AccountsCompanion copyWith({
     Value<int>? id,
-    Value<int?>? documentId,
     Value<String>? accountName,
     Value<String>? accountType,
     Value<String>? provider,
@@ -13510,7 +14900,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   }) {
     return AccountsCompanion(
       id: id ?? this.id,
-      documentId: documentId ?? this.documentId,
       accountName: accountName ?? this.accountName,
       accountType: accountType ?? this.accountType,
       provider: provider ?? this.provider,
@@ -13564,9 +14953,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (documentId.present) {
-      map['document_id'] = Variable<int>(documentId.value);
     }
     if (accountName.present) {
       map['account_name'] = Variable<String>(accountName.value);
@@ -13707,7 +15093,6 @@ class AccountsCompanion extends UpdateCompanion<AccountEntity> {
   String toString() {
     return (StringBuffer('AccountsCompanion(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('accountName: $accountName, ')
           ..write('accountType: $accountType, ')
           ..write('provider: $provider, ')
@@ -13770,20 +15155,6 @@ class $HomeAssetsTable extends HomeAssets
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _documentIdMeta = const VerificationMeta(
-    'documentId',
-  );
-  @override
-  late final GeneratedColumn<int> documentId = GeneratedColumn<int>(
-    'document_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES documents (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _assetNameMeta = const VerificationMeta(
@@ -14198,7 +15569,6 @@ class $HomeAssetsTable extends HomeAssets
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    documentId,
     assetName,
     assetType,
     category,
@@ -14250,12 +15620,6 @@ class $HomeAssetsTable extends HomeAssets
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('document_id')) {
-      context.handle(
-        _documentIdMeta,
-        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
-      );
     }
     if (data.containsKey('asset_name')) {
       context.handle(
@@ -14555,10 +15919,6 @@ class $HomeAssetsTable extends HomeAssets
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      documentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}document_id'],
-      ),
       assetName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}asset_name'],
@@ -14714,7 +16074,6 @@ class $HomeAssetsTable extends HomeAssets
 
 class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   final int id;
-  final int? documentId;
   final String assetName;
   final String assetType;
   final String category;
@@ -14753,7 +16112,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   final DateTime updatedAt;
   const HomeAssetEntity({
     required this.id,
-    this.documentId,
     required this.assetName,
     required this.assetType,
     required this.category,
@@ -14795,9 +16153,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || documentId != null) {
-      map['document_id'] = Variable<int>(documentId);
-    }
     map['asset_name'] = Variable<String>(assetName);
     map['asset_type'] = Variable<String>(assetType);
     map['category'] = Variable<String>(category);
@@ -14892,9 +16247,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   HomeAssetsCompanion toCompanion(bool nullToAbsent) {
     return HomeAssetsCompanion(
       id: Value(id),
-      documentId: documentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(documentId),
       assetName: Value(assetName),
       assetType: Value(assetType),
       category: Value(category),
@@ -14991,7 +16343,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return HomeAssetEntity(
       id: serializer.fromJson<int>(json['id']),
-      documentId: serializer.fromJson<int?>(json['documentId']),
       assetName: serializer.fromJson<String>(json['assetName']),
       assetType: serializer.fromJson<String>(json['assetType']),
       category: serializer.fromJson<String>(json['category']),
@@ -15047,7 +16398,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'documentId': serializer.toJson<int?>(documentId),
       'assetName': serializer.toJson<String>(assetName),
       'assetType': serializer.toJson<String>(assetType),
       'category': serializer.toJson<String>(category),
@@ -15089,7 +16439,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
 
   HomeAssetEntity copyWith({
     int? id,
-    Value<int?> documentId = const Value.absent(),
     String? assetName,
     String? assetType,
     String? category,
@@ -15128,7 +16477,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
     DateTime? updatedAt,
   }) => HomeAssetEntity(
     id: id ?? this.id,
-    documentId: documentId.present ? documentId.value : this.documentId,
     assetName: assetName ?? this.assetName,
     assetType: assetType ?? this.assetType,
     category: category ?? this.category,
@@ -15199,9 +16547,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   HomeAssetEntity copyWithCompanion(HomeAssetsCompanion data) {
     return HomeAssetEntity(
       id: data.id.present ? data.id.value : this.id,
-      documentId: data.documentId.present
-          ? data.documentId.value
-          : this.documentId,
       assetName: data.assetName.present ? data.assetName.value : this.assetName,
       assetType: data.assetType.present ? data.assetType.value : this.assetType,
       category: data.category.present ? data.category.value : this.category,
@@ -15287,7 +16632,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   String toString() {
     return (StringBuffer('HomeAssetEntity(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('assetName: $assetName, ')
           ..write('assetType: $assetType, ')
           ..write('category: $category, ')
@@ -15331,7 +16675,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
   @override
   int get hashCode => Object.hashAll([
     id,
-    documentId,
     assetName,
     assetType,
     category,
@@ -15374,7 +16717,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
       identical(this, other) ||
       (other is HomeAssetEntity &&
           other.id == this.id &&
-          other.documentId == this.documentId &&
           other.assetName == this.assetName &&
           other.assetType == this.assetType &&
           other.category == this.category &&
@@ -15415,7 +16757,6 @@ class HomeAssetEntity extends DataClass implements Insertable<HomeAssetEntity> {
 
 class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   final Value<int> id;
-  final Value<int?> documentId;
   final Value<String> assetName;
   final Value<String> assetType;
   final Value<String> category;
@@ -15454,7 +16795,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   final Value<DateTime> updatedAt;
   const HomeAssetsCompanion({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     this.assetName = const Value.absent(),
     this.assetType = const Value.absent(),
     this.category = const Value.absent(),
@@ -15494,7 +16834,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   });
   HomeAssetsCompanion.insert({
     this.id = const Value.absent(),
-    this.documentId = const Value.absent(),
     required String assetName,
     required String assetType,
     required String category,
@@ -15536,7 +16875,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
        category = Value(category);
   static Insertable<HomeAssetEntity> custom({
     Expression<int>? id,
-    Expression<int>? documentId,
     Expression<String>? assetName,
     Expression<String>? assetType,
     Expression<String>? category,
@@ -15576,7 +16914,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (documentId != null) 'document_id': documentId,
       if (assetName != null) 'asset_name': assetName,
       if (assetType != null) 'asset_type': assetType,
       if (category != null) 'category': category,
@@ -15623,7 +16960,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
 
   HomeAssetsCompanion copyWith({
     Value<int>? id,
-    Value<int?>? documentId,
     Value<String>? assetName,
     Value<String>? assetType,
     Value<String>? category,
@@ -15663,7 +16999,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   }) {
     return HomeAssetsCompanion(
       id: id ?? this.id,
-      documentId: documentId ?? this.documentId,
       assetName: assetName ?? this.assetName,
       assetType: assetType ?? this.assetType,
       category: category ?? this.category,
@@ -15710,9 +17045,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (documentId.present) {
-      map['document_id'] = Variable<int>(documentId.value);
     }
     if (assetName.present) {
       map['asset_name'] = Variable<String>(assetName.value);
@@ -15835,7 +17167,6 @@ class HomeAssetsCompanion extends UpdateCompanion<HomeAssetEntity> {
   String toString() {
     return (StringBuffer('HomeAssetsCompanion(')
           ..write('id: $id, ')
-          ..write('documentId: $documentId, ')
           ..write('assetName: $assetName, ')
           ..write('assetType: $assetType, ')
           ..write('category: $category, ')
@@ -22260,7 +23591,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $DocumentsTable documents = $DocumentsTable(this);
+  late final $DocumentFieldsMetaTable documentFieldsMeta =
+      $DocumentFieldsMetaTable(this);
   late final $DocumentLinksTable documentLinks = $DocumentLinksTable(this);
+  late final $RelationshipsTable relationships = $RelationshipsTable(this);
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $BillsTable bills = $BillsTable(this);
   late final $SubscriptionsTable subscriptions = $SubscriptionsTable(this);
@@ -22275,7 +23609,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ClaimsTable claims = $ClaimsTable(this);
   late final $TasksTable tasks = $TasksTable(this);
   late final DocumentsDao documentsDao = DocumentsDao(this as AppDatabase);
+  late final DocumentFieldsMetaDao documentFieldsMetaDao =
+      DocumentFieldsMetaDao(this as AppDatabase);
   late final DocumentLinksDao documentLinksDao = DocumentLinksDao(
+    this as AppDatabase,
+  );
+  late final RelationshipsDao relationshipsDao = RelationshipsDao(
     this as AppDatabase,
   );
   late final RemindersDao remindersDao = RemindersDao(this as AppDatabase);
@@ -22302,7 +23641,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     documents,
+    documentFieldsMeta,
     documentLinks,
+    relationships,
     reminders,
     bills,
     subscriptions,
@@ -22323,7 +23664,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         'documents',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('document_links', kind: UpdateKind.delete)],
+      result: [TableUpdate('document_fields_meta', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -22337,7 +23678,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         'documents',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('reminders', kind: UpdateKind.delete)],
+      result: [TableUpdate('document_links', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -22359,34 +23700,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('policies', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'documents',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('properties', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'documents',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('vehicles', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'documents',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('accounts', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'documents',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('home_assets', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -22499,18 +23812,31 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$DocumentsTableCreateCompanionBuilder =
     DocumentsCompanion Function({
       Value<int> id,
+      Value<String?> documentTypeId,
+      Value<String?> categoryId,
+      Value<String?> domainId,
+      Value<int?> taxonomyVersion,
+      Value<String> classificationState,
       required String title,
       Value<String?> description,
-      required String documentType,
-      required String category,
-      Value<String?> filePath,
-      Value<String?> fileType,
-      Value<int?> fileSizeBytes,
-      Value<String?> extractedData,
-      Value<String?> tags,
-      Value<DateTime?> documentDate,
+      Value<String?> issuer,
+      Value<String?> referenceNumber,
+      Value<int?> amountCents,
+      Value<String?> currency,
+      Value<DateTime?> issueDate,
       Value<DateTime?> expiryDate,
-      Value<DateTime?> reminderDate,
+      Value<DateTime?> renewalDate,
+      Value<DateTime?> reviewDate,
+      Value<DateTime?> paymentDueDate,
+      Value<String?> extraFieldsJson,
+      Value<String> source,
+      Value<double?> ocrConfidence,
+      Value<String?> ocrText,
+      Value<DateTime?> ocrProcessedAt,
+      Value<String?> filePath,
+      Value<String?> fileMime,
+      Value<int?> fileSizeBytes,
+      Value<String?> fileHash,
       Value<DateTime?> deletedAt,
       Value<int> version,
       Value<int?> previousVersionId,
@@ -22520,18 +23846,31 @@ typedef $$DocumentsTableCreateCompanionBuilder =
 typedef $$DocumentsTableUpdateCompanionBuilder =
     DocumentsCompanion Function({
       Value<int> id,
+      Value<String?> documentTypeId,
+      Value<String?> categoryId,
+      Value<String?> domainId,
+      Value<int?> taxonomyVersion,
+      Value<String> classificationState,
       Value<String> title,
       Value<String?> description,
-      Value<String> documentType,
-      Value<String> category,
-      Value<String?> filePath,
-      Value<String?> fileType,
-      Value<int?> fileSizeBytes,
-      Value<String?> extractedData,
-      Value<String?> tags,
-      Value<DateTime?> documentDate,
+      Value<String?> issuer,
+      Value<String?> referenceNumber,
+      Value<int?> amountCents,
+      Value<String?> currency,
+      Value<DateTime?> issueDate,
       Value<DateTime?> expiryDate,
-      Value<DateTime?> reminderDate,
+      Value<DateTime?> renewalDate,
+      Value<DateTime?> reviewDate,
+      Value<DateTime?> paymentDueDate,
+      Value<String?> extraFieldsJson,
+      Value<String> source,
+      Value<double?> ocrConfidence,
+      Value<String?> ocrText,
+      Value<DateTime?> ocrProcessedAt,
+      Value<String?> filePath,
+      Value<String?> fileMime,
+      Value<int?> fileSizeBytes,
+      Value<String?> fileHash,
       Value<DateTime?> deletedAt,
       Value<int> version,
       Value<int?> previousVersionId,
@@ -22562,19 +23901,28 @@ final class $$DocumentsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$RemindersTable, List<ReminderEntity>>
-  _remindersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.reminders,
-    aliasName: $_aliasNameGenerator(db.documents.id, db.reminders.documentId),
-  );
+  static MultiTypedResultKey<
+    $DocumentFieldsMetaTable,
+    List<DocumentFieldsMetaEntity>
+  >
+  _documentFieldsMetaRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.documentFieldsMeta,
+        aliasName: $_aliasNameGenerator(
+          db.documents.id,
+          db.documentFieldsMeta.documentId,
+        ),
+      );
 
-  $$RemindersTableProcessedTableManager get remindersRefs {
-    final manager = $$RemindersTableTableManager(
+  $$DocumentFieldsMetaTableProcessedTableManager get documentFieldsMetaRefs {
+    final manager = $$DocumentFieldsMetaTableTableManager(
       $_db,
-      $_db.reminders,
+      $_db.documentFieldsMeta,
     ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_remindersRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _documentFieldsMetaRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -22633,78 +23981,6 @@ final class $$DocumentsTableReferences
     ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_policiesRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$PropertiesTable, List<PropertyEntity>>
-  _propertiesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.properties,
-    aliasName: $_aliasNameGenerator(db.documents.id, db.properties.documentId),
-  );
-
-  $$PropertiesTableProcessedTableManager get propertiesRefs {
-    final manager = $$PropertiesTableTableManager(
-      $_db,
-      $_db.properties,
-    ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_propertiesRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$VehiclesTable, List<VehicleEntity>>
-  _vehiclesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.vehicles,
-    aliasName: $_aliasNameGenerator(db.documents.id, db.vehicles.documentId),
-  );
-
-  $$VehiclesTableProcessedTableManager get vehiclesRefs {
-    final manager = $$VehiclesTableTableManager(
-      $_db,
-      $_db.vehicles,
-    ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_vehiclesRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$AccountsTable, List<AccountEntity>>
-  _accountsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.accounts,
-    aliasName: $_aliasNameGenerator(db.documents.id, db.accounts.documentId),
-  );
-
-  $$AccountsTableProcessedTableManager get accountsRefs {
-    final manager = $$AccountsTableTableManager(
-      $_db,
-      $_db.accounts,
-    ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_accountsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$HomeAssetsTable, List<HomeAssetEntity>>
-  _homeAssetsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.homeAssets,
-    aliasName: $_aliasNameGenerator(db.documents.id, db.homeAssets.documentId),
-  );
-
-  $$HomeAssetsTableProcessedTableManager get homeAssetsRefs {
-    final manager = $$HomeAssetsTableTableManager(
-      $_db,
-      $_db.homeAssets,
-    ).filter((f) => f.documentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_homeAssetsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -22811,6 +24087,31 @@ class $$DocumentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get documentTypeId => $composableBuilder(
+    column: $table.documentTypeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get domainId => $composableBuilder(
+    column: $table.domainId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get taxonomyVersion => $composableBuilder(
+    column: $table.taxonomyVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get classificationState => $composableBuilder(
+    column: $table.classificationState,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnFilters(column),
@@ -22821,43 +24122,28 @@ class $$DocumentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get documentType => $composableBuilder(
-    column: $table.documentType,
+  ColumnFilters<String> get issuer => $composableBuilder(
+    column: $table.issuer,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get category => $composableBuilder(
-    column: $table.category,
+  ColumnFilters<String> get referenceNumber => $composableBuilder(
+    column: $table.referenceNumber,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get filePath => $composableBuilder(
-    column: $table.filePath,
+  ColumnFilters<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get fileType => $composableBuilder(
-    column: $table.fileType,
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get fileSizeBytes => $composableBuilder(
-    column: $table.fileSizeBytes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get extractedData => $composableBuilder(
-    column: $table.extractedData,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tags => $composableBuilder(
-    column: $table.tags,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get documentDate => $composableBuilder(
-    column: $table.documentDate,
+  ColumnFilters<DateTime> get issueDate => $composableBuilder(
+    column: $table.issueDate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -22866,8 +24152,63 @@ class $$DocumentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
+  ColumnFilters<DateTime> get renewalDate => $composableBuilder(
+    column: $table.renewalDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get reviewDate => $composableBuilder(
+    column: $table.reviewDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get paymentDueDate => $composableBuilder(
+    column: $table.paymentDueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get extraFieldsJson => $composableBuilder(
+    column: $table.extraFieldsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get ocrConfidence => $composableBuilder(
+    column: $table.ocrConfidence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ocrText => $composableBuilder(
+    column: $table.ocrText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get ocrProcessedAt => $composableBuilder(
+    column: $table.ocrProcessedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fileMime => $composableBuilder(
+    column: $table.fileMime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fileHash => $composableBuilder(
+    column: $table.fileHash,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -22914,22 +24255,22 @@ class $$DocumentsTableFilterComposer
     return composer;
   }
 
-  Expression<bool> remindersRefs(
-    Expression<bool> Function($$RemindersTableFilterComposer f) f,
+  Expression<bool> documentFieldsMetaRefs(
+    Expression<bool> Function($$DocumentFieldsMetaTableFilterComposer f) f,
   ) {
-    final $$RemindersTableFilterComposer composer = $composerBuilder(
+    final $$DocumentFieldsMetaTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.reminders,
+      referencedTable: $db.documentFieldsMeta,
       getReferencedColumn: (t) => t.documentId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$RemindersTableFilterComposer(
+          }) => $$DocumentFieldsMetaTableFilterComposer(
             $db: $db,
-            $table: $db.reminders,
+            $table: $db.documentFieldsMeta,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -23005,106 +24346,6 @@ class $$DocumentsTableFilterComposer
           }) => $$PoliciesTableFilterComposer(
             $db: $db,
             $table: $db.policies,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> propertiesRefs(
-    Expression<bool> Function($$PropertiesTableFilterComposer f) f,
-  ) {
-    final $$PropertiesTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.properties,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PropertiesTableFilterComposer(
-            $db: $db,
-            $table: $db.properties,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> vehiclesRefs(
-    Expression<bool> Function($$VehiclesTableFilterComposer f) f,
-  ) {
-    final $$VehiclesTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.vehicles,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$VehiclesTableFilterComposer(
-            $db: $db,
-            $table: $db.vehicles,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> accountsRefs(
-    Expression<bool> Function($$AccountsTableFilterComposer f) f,
-  ) {
-    final $$AccountsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.accounts,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$AccountsTableFilterComposer(
-            $db: $db,
-            $table: $db.accounts,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> homeAssetsRefs(
-    Expression<bool> Function($$HomeAssetsTableFilterComposer f) f,
-  ) {
-    final $$HomeAssetsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.homeAssets,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HomeAssetsTableFilterComposer(
-            $db: $db,
-            $table: $db.homeAssets,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -23229,6 +24470,31 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get documentTypeId => $composableBuilder(
+    column: $table.documentTypeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get domainId => $composableBuilder(
+    column: $table.domainId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get taxonomyVersion => $composableBuilder(
+    column: $table.taxonomyVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get classificationState => $composableBuilder(
+    column: $table.classificationState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -23239,43 +24505,28 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get documentType => $composableBuilder(
-    column: $table.documentType,
+  ColumnOrderings<String> get issuer => $composableBuilder(
+    column: $table.issuer,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get category => $composableBuilder(
-    column: $table.category,
+  ColumnOrderings<String> get referenceNumber => $composableBuilder(
+    column: $table.referenceNumber,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get filePath => $composableBuilder(
-    column: $table.filePath,
+  ColumnOrderings<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get fileType => $composableBuilder(
-    column: $table.fileType,
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get fileSizeBytes => $composableBuilder(
-    column: $table.fileSizeBytes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get extractedData => $composableBuilder(
-    column: $table.extractedData,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tags => $composableBuilder(
-    column: $table.tags,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get documentDate => $composableBuilder(
-    column: $table.documentDate,
+  ColumnOrderings<DateTime> get issueDate => $composableBuilder(
+    column: $table.issueDate,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23284,8 +24535,63 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
+  ColumnOrderings<DateTime> get renewalDate => $composableBuilder(
+    column: $table.renewalDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get reviewDate => $composableBuilder(
+    column: $table.reviewDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get paymentDueDate => $composableBuilder(
+    column: $table.paymentDueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get extraFieldsJson => $composableBuilder(
+    column: $table.extraFieldsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get ocrConfidence => $composableBuilder(
+    column: $table.ocrConfidence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ocrText => $composableBuilder(
+    column: $table.ocrText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get ocrProcessedAt => $composableBuilder(
+    column: $table.ocrProcessedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fileMime => $composableBuilder(
+    column: $table.fileMime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fileHash => $composableBuilder(
+    column: $table.fileHash,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23345,6 +24651,29 @@ class $$DocumentsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get documentTypeId => $composableBuilder(
+    column: $table.documentTypeId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get domainId =>
+      $composableBuilder(column: $table.domainId, builder: (column) => column);
+
+  GeneratedColumn<int> get taxonomyVersion => $composableBuilder(
+    column: $table.taxonomyVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get classificationState => $composableBuilder(
+    column: $table.classificationState,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -23353,47 +24682,79 @@ class $$DocumentsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get documentType => $composableBuilder(
-    column: $table.documentType,
+  GeneratedColumn<String> get issuer =>
+      $composableBuilder(column: $table.issuer, builder: (column) => column);
+
+  GeneratedColumn<String> get referenceNumber => $composableBuilder(
+    column: $table.referenceNumber,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get category =>
-      $composableBuilder(column: $table.category, builder: (column) => column);
-
-  GeneratedColumn<String> get filePath =>
-      $composableBuilder(column: $table.filePath, builder: (column) => column);
-
-  GeneratedColumn<String> get fileType =>
-      $composableBuilder(column: $table.fileType, builder: (column) => column);
-
-  GeneratedColumn<int> get fileSizeBytes => $composableBuilder(
-    column: $table.fileSizeBytes,
+  GeneratedColumn<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get extractedData => $composableBuilder(
-    column: $table.extractedData,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
 
-  GeneratedColumn<String> get tags =>
-      $composableBuilder(column: $table.tags, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get documentDate => $composableBuilder(
-    column: $table.documentDate,
-    builder: (column) => column,
-  );
+  GeneratedColumn<DateTime> get issueDate =>
+      $composableBuilder(column: $table.issueDate, builder: (column) => column);
 
   GeneratedColumn<DateTime> get expiryDate => $composableBuilder(
     column: $table.expiryDate,
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
+  GeneratedColumn<DateTime> get renewalDate => $composableBuilder(
+    column: $table.renewalDate,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get reviewDate => $composableBuilder(
+    column: $table.reviewDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get paymentDueDate => $composableBuilder(
+    column: $table.paymentDueDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get extraFieldsJson => $composableBuilder(
+    column: $table.extraFieldsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<double> get ocrConfidence => $composableBuilder(
+    column: $table.ocrConfidence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get ocrText =>
+      $composableBuilder(column: $table.ocrText, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get ocrProcessedAt => $composableBuilder(
+    column: $table.ocrProcessedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get filePath =>
+      $composableBuilder(column: $table.filePath, builder: (column) => column);
+
+  GeneratedColumn<String> get fileMime =>
+      $composableBuilder(column: $table.fileMime, builder: (column) => column);
+
+  GeneratedColumn<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get fileHash =>
+      $composableBuilder(column: $table.fileHash, builder: (column) => column);
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
@@ -23430,28 +24791,29 @@ class $$DocumentsTableAnnotationComposer
     return composer;
   }
 
-  Expression<T> remindersRefs<T extends Object>(
-    Expression<T> Function($$RemindersTableAnnotationComposer a) f,
+  Expression<T> documentFieldsMetaRefs<T extends Object>(
+    Expression<T> Function($$DocumentFieldsMetaTableAnnotationComposer a) f,
   ) {
-    final $$RemindersTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.reminders,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$RemindersTableAnnotationComposer(
-            $db: $db,
-            $table: $db.reminders,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
+    final $$DocumentFieldsMetaTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.documentFieldsMeta,
+          getReferencedColumn: (t) => t.documentId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-          ),
-    );
+              }) => $$DocumentFieldsMetaTableAnnotationComposer(
+                $db: $db,
+                $table: $db.documentFieldsMeta,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
@@ -23521,106 +24883,6 @@ class $$DocumentsTableAnnotationComposer
           }) => $$PoliciesTableAnnotationComposer(
             $db: $db,
             $table: $db.policies,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> propertiesRefs<T extends Object>(
-    Expression<T> Function($$PropertiesTableAnnotationComposer a) f,
-  ) {
-    final $$PropertiesTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.properties,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PropertiesTableAnnotationComposer(
-            $db: $db,
-            $table: $db.properties,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> vehiclesRefs<T extends Object>(
-    Expression<T> Function($$VehiclesTableAnnotationComposer a) f,
-  ) {
-    final $$VehiclesTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.vehicles,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$VehiclesTableAnnotationComposer(
-            $db: $db,
-            $table: $db.vehicles,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> accountsRefs<T extends Object>(
-    Expression<T> Function($$AccountsTableAnnotationComposer a) f,
-  ) {
-    final $$AccountsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.accounts,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$AccountsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.accounts,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> homeAssetsRefs<T extends Object>(
-    Expression<T> Function($$HomeAssetsTableAnnotationComposer a) f,
-  ) {
-    final $$HomeAssetsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.homeAssets,
-      getReferencedColumn: (t) => t.documentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HomeAssetsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.homeAssets,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -23747,14 +25009,10 @@ class $$DocumentsTableTableManager
           DocumentEntity,
           PrefetchHooks Function({
             bool previousVersionId,
-            bool remindersRefs,
+            bool documentFieldsMetaRefs,
             bool billsRefs,
             bool subscriptionsRefs,
             bool policiesRefs,
-            bool propertiesRefs,
-            bool vehiclesRefs,
-            bool accountsRefs,
-            bool homeAssetsRefs,
             bool complianceRecordsRefs,
             bool serviceRecordsRefs,
             bool claimsRefs,
@@ -23775,18 +25033,31 @@ class $$DocumentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String?> documentTypeId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<String?> domainId = const Value.absent(),
+                Value<int?> taxonomyVersion = const Value.absent(),
+                Value<String> classificationState = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
-                Value<String> documentType = const Value.absent(),
-                Value<String> category = const Value.absent(),
-                Value<String?> filePath = const Value.absent(),
-                Value<String?> fileType = const Value.absent(),
-                Value<int?> fileSizeBytes = const Value.absent(),
-                Value<String?> extractedData = const Value.absent(),
-                Value<String?> tags = const Value.absent(),
-                Value<DateTime?> documentDate = const Value.absent(),
+                Value<String?> issuer = const Value.absent(),
+                Value<String?> referenceNumber = const Value.absent(),
+                Value<int?> amountCents = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<DateTime?> issueDate = const Value.absent(),
                 Value<DateTime?> expiryDate = const Value.absent(),
-                Value<DateTime?> reminderDate = const Value.absent(),
+                Value<DateTime?> renewalDate = const Value.absent(),
+                Value<DateTime?> reviewDate = const Value.absent(),
+                Value<DateTime?> paymentDueDate = const Value.absent(),
+                Value<String?> extraFieldsJson = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<double?> ocrConfidence = const Value.absent(),
+                Value<String?> ocrText = const Value.absent(),
+                Value<DateTime?> ocrProcessedAt = const Value.absent(),
+                Value<String?> filePath = const Value.absent(),
+                Value<String?> fileMime = const Value.absent(),
+                Value<int?> fileSizeBytes = const Value.absent(),
+                Value<String?> fileHash = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<int?> previousVersionId = const Value.absent(),
@@ -23794,18 +25065,31 @@ class $$DocumentsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => DocumentsCompanion(
                 id: id,
+                documentTypeId: documentTypeId,
+                categoryId: categoryId,
+                domainId: domainId,
+                taxonomyVersion: taxonomyVersion,
+                classificationState: classificationState,
                 title: title,
                 description: description,
-                documentType: documentType,
-                category: category,
-                filePath: filePath,
-                fileType: fileType,
-                fileSizeBytes: fileSizeBytes,
-                extractedData: extractedData,
-                tags: tags,
-                documentDate: documentDate,
+                issuer: issuer,
+                referenceNumber: referenceNumber,
+                amountCents: amountCents,
+                currency: currency,
+                issueDate: issueDate,
                 expiryDate: expiryDate,
-                reminderDate: reminderDate,
+                renewalDate: renewalDate,
+                reviewDate: reviewDate,
+                paymentDueDate: paymentDueDate,
+                extraFieldsJson: extraFieldsJson,
+                source: source,
+                ocrConfidence: ocrConfidence,
+                ocrText: ocrText,
+                ocrProcessedAt: ocrProcessedAt,
+                filePath: filePath,
+                fileMime: fileMime,
+                fileSizeBytes: fileSizeBytes,
+                fileHash: fileHash,
                 deletedAt: deletedAt,
                 version: version,
                 previousVersionId: previousVersionId,
@@ -23815,18 +25099,31 @@ class $$DocumentsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String?> documentTypeId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<String?> domainId = const Value.absent(),
+                Value<int?> taxonomyVersion = const Value.absent(),
+                Value<String> classificationState = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
-                required String documentType,
-                required String category,
-                Value<String?> filePath = const Value.absent(),
-                Value<String?> fileType = const Value.absent(),
-                Value<int?> fileSizeBytes = const Value.absent(),
-                Value<String?> extractedData = const Value.absent(),
-                Value<String?> tags = const Value.absent(),
-                Value<DateTime?> documentDate = const Value.absent(),
+                Value<String?> issuer = const Value.absent(),
+                Value<String?> referenceNumber = const Value.absent(),
+                Value<int?> amountCents = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<DateTime?> issueDate = const Value.absent(),
                 Value<DateTime?> expiryDate = const Value.absent(),
-                Value<DateTime?> reminderDate = const Value.absent(),
+                Value<DateTime?> renewalDate = const Value.absent(),
+                Value<DateTime?> reviewDate = const Value.absent(),
+                Value<DateTime?> paymentDueDate = const Value.absent(),
+                Value<String?> extraFieldsJson = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<double?> ocrConfidence = const Value.absent(),
+                Value<String?> ocrText = const Value.absent(),
+                Value<DateTime?> ocrProcessedAt = const Value.absent(),
+                Value<String?> filePath = const Value.absent(),
+                Value<String?> fileMime = const Value.absent(),
+                Value<int?> fileSizeBytes = const Value.absent(),
+                Value<String?> fileHash = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<int?> previousVersionId = const Value.absent(),
@@ -23834,18 +25131,31 @@ class $$DocumentsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => DocumentsCompanion.insert(
                 id: id,
+                documentTypeId: documentTypeId,
+                categoryId: categoryId,
+                domainId: domainId,
+                taxonomyVersion: taxonomyVersion,
+                classificationState: classificationState,
                 title: title,
                 description: description,
-                documentType: documentType,
-                category: category,
-                filePath: filePath,
-                fileType: fileType,
-                fileSizeBytes: fileSizeBytes,
-                extractedData: extractedData,
-                tags: tags,
-                documentDate: documentDate,
+                issuer: issuer,
+                referenceNumber: referenceNumber,
+                amountCents: amountCents,
+                currency: currency,
+                issueDate: issueDate,
                 expiryDate: expiryDate,
-                reminderDate: reminderDate,
+                renewalDate: renewalDate,
+                reviewDate: reviewDate,
+                paymentDueDate: paymentDueDate,
+                extraFieldsJson: extraFieldsJson,
+                source: source,
+                ocrConfidence: ocrConfidence,
+                ocrText: ocrText,
+                ocrProcessedAt: ocrProcessedAt,
+                filePath: filePath,
+                fileMime: fileMime,
+                fileSizeBytes: fileSizeBytes,
+                fileHash: fileHash,
                 deletedAt: deletedAt,
                 version: version,
                 previousVersionId: previousVersionId,
@@ -23863,14 +25173,10 @@ class $$DocumentsTableTableManager
           prefetchHooksCallback:
               ({
                 previousVersionId = false,
-                remindersRefs = false,
+                documentFieldsMetaRefs = false,
                 billsRefs = false,
                 subscriptionsRefs = false,
                 policiesRefs = false,
-                propertiesRefs = false,
-                vehiclesRefs = false,
-                accountsRefs = false,
-                homeAssetsRefs = false,
                 complianceRecordsRefs = false,
                 serviceRecordsRefs = false,
                 claimsRefs = false,
@@ -23879,14 +25185,10 @@ class $$DocumentsTableTableManager
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
-                    if (remindersRefs) db.reminders,
+                    if (documentFieldsMetaRefs) db.documentFieldsMeta,
                     if (billsRefs) db.bills,
                     if (subscriptionsRefs) db.subscriptions,
                     if (policiesRefs) db.policies,
-                    if (propertiesRefs) db.properties,
-                    if (vehiclesRefs) db.vehicles,
-                    if (accountsRefs) db.accounts,
-                    if (homeAssetsRefs) db.homeAssets,
                     if (complianceRecordsRefs) db.complianceRecords,
                     if (serviceRecordsRefs) db.serviceRecords,
                     if (claimsRefs) db.claims,
@@ -23926,21 +25228,21 @@ class $$DocumentsTableTableManager
                       },
                   getPrefetchedDataCallback: (items) async {
                     return [
-                      if (remindersRefs)
+                      if (documentFieldsMetaRefs)
                         await $_getPrefetchedData<
                           DocumentEntity,
                           $DocumentsTable,
-                          ReminderEntity
+                          DocumentFieldsMetaEntity
                         >(
                           currentTable: table,
                           referencedTable: $$DocumentsTableReferences
-                              ._remindersRefsTable(db),
+                              ._documentFieldsMetaRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$DocumentsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).remindersRefs,
+                              ).documentFieldsMetaRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.documentId == item.id,
@@ -24004,90 +25306,6 @@ class $$DocumentsTableTableManager
                                 table,
                                 p0,
                               ).policiesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.documentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (propertiesRefs)
-                        await $_getPrefetchedData<
-                          DocumentEntity,
-                          $DocumentsTable,
-                          PropertyEntity
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DocumentsTableReferences
-                              ._propertiesRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DocumentsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).propertiesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.documentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (vehiclesRefs)
-                        await $_getPrefetchedData<
-                          DocumentEntity,
-                          $DocumentsTable,
-                          VehicleEntity
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DocumentsTableReferences
-                              ._vehiclesRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DocumentsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).vehiclesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.documentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (accountsRefs)
-                        await $_getPrefetchedData<
-                          DocumentEntity,
-                          $DocumentsTable,
-                          AccountEntity
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DocumentsTableReferences
-                              ._accountsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DocumentsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).accountsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.documentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (homeAssetsRefs)
-                        await $_getPrefetchedData<
-                          DocumentEntity,
-                          $DocumentsTable,
-                          HomeAssetEntity
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DocumentsTableReferences
-                              ._homeAssetsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DocumentsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).homeAssetsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.documentId == item.id,
@@ -24200,19 +25418,308 @@ typedef $$DocumentsTableProcessedTableManager =
       DocumentEntity,
       PrefetchHooks Function({
         bool previousVersionId,
-        bool remindersRefs,
+        bool documentFieldsMetaRefs,
         bool billsRefs,
         bool subscriptionsRefs,
         bool policiesRefs,
-        bool propertiesRefs,
-        bool vehiclesRefs,
-        bool accountsRefs,
-        bool homeAssetsRefs,
         bool complianceRecordsRefs,
         bool serviceRecordsRefs,
         bool claimsRefs,
         bool tasksRefs,
       })
+    >;
+typedef $$DocumentFieldsMetaTableCreateCompanionBuilder =
+    DocumentFieldsMetaCompanion Function({
+      Value<int> documentId,
+      Value<String> confirmationsJson,
+      Value<DateTime> updatedAt,
+    });
+typedef $$DocumentFieldsMetaTableUpdateCompanionBuilder =
+    DocumentFieldsMetaCompanion Function({
+      Value<int> documentId,
+      Value<String> confirmationsJson,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$DocumentFieldsMetaTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DocumentFieldsMetaTable,
+          DocumentFieldsMetaEntity
+        > {
+  $$DocumentFieldsMetaTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
+      db.documents.createAlias(
+        $_aliasNameGenerator(db.documentFieldsMeta.documentId, db.documents.id),
+      );
+
+  $$DocumentsTableProcessedTableManager get documentId {
+    final $_column = $_itemColumn<int>('document_id')!;
+
+    final manager = $$DocumentsTableTableManager(
+      $_db,
+      $_db.documents,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$DocumentFieldsMetaTableFilterComposer
+    extends Composer<_$AppDatabase, $DocumentFieldsMetaTable> {
+  $$DocumentFieldsMetaTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get confirmationsJson => $composableBuilder(
+    column: $table.confirmationsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$DocumentsTableFilterComposer get documentId {
+    final $$DocumentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.documentId,
+      referencedTable: $db.documents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DocumentsTableFilterComposer(
+            $db: $db,
+            $table: $db.documents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DocumentFieldsMetaTableOrderingComposer
+    extends Composer<_$AppDatabase, $DocumentFieldsMetaTable> {
+  $$DocumentFieldsMetaTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get confirmationsJson => $composableBuilder(
+    column: $table.confirmationsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$DocumentsTableOrderingComposer get documentId {
+    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.documentId,
+      referencedTable: $db.documents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DocumentsTableOrderingComposer(
+            $db: $db,
+            $table: $db.documents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DocumentFieldsMetaTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DocumentFieldsMetaTable> {
+  $$DocumentFieldsMetaTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get confirmationsJson => $composableBuilder(
+    column: $table.confirmationsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$DocumentsTableAnnotationComposer get documentId {
+    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.documentId,
+      referencedTable: $db.documents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DocumentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.documents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DocumentFieldsMetaTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DocumentFieldsMetaTable,
+          DocumentFieldsMetaEntity,
+          $$DocumentFieldsMetaTableFilterComposer,
+          $$DocumentFieldsMetaTableOrderingComposer,
+          $$DocumentFieldsMetaTableAnnotationComposer,
+          $$DocumentFieldsMetaTableCreateCompanionBuilder,
+          $$DocumentFieldsMetaTableUpdateCompanionBuilder,
+          (DocumentFieldsMetaEntity, $$DocumentFieldsMetaTableReferences),
+          DocumentFieldsMetaEntity,
+          PrefetchHooks Function({bool documentId})
+        > {
+  $$DocumentFieldsMetaTableTableManager(
+    _$AppDatabase db,
+    $DocumentFieldsMetaTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DocumentFieldsMetaTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DocumentFieldsMetaTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DocumentFieldsMetaTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> documentId = const Value.absent(),
+                Value<String> confirmationsJson = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => DocumentFieldsMetaCompanion(
+                documentId: documentId,
+                confirmationsJson: confirmationsJson,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> documentId = const Value.absent(),
+                Value<String> confirmationsJson = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => DocumentFieldsMetaCompanion.insert(
+                documentId: documentId,
+                confirmationsJson: confirmationsJson,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$DocumentFieldsMetaTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({documentId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (documentId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.documentId,
+                                referencedTable:
+                                    $$DocumentFieldsMetaTableReferences
+                                        ._documentIdTable(db),
+                                referencedColumn:
+                                    $$DocumentFieldsMetaTableReferences
+                                        ._documentIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$DocumentFieldsMetaTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DocumentFieldsMetaTable,
+      DocumentFieldsMetaEntity,
+      $$DocumentFieldsMetaTableFilterComposer,
+      $$DocumentFieldsMetaTableOrderingComposer,
+      $$DocumentFieldsMetaTableAnnotationComposer,
+      $$DocumentFieldsMetaTableCreateCompanionBuilder,
+      $$DocumentFieldsMetaTableUpdateCompanionBuilder,
+      (DocumentFieldsMetaEntity, $$DocumentFieldsMetaTableReferences),
+      DocumentFieldsMetaEntity,
+      PrefetchHooks Function({bool documentId})
     >;
 typedef $$DocumentLinksTableCreateCompanionBuilder =
     DocumentLinksCompanion Function({
@@ -24688,72 +26195,36 @@ typedef $$DocumentLinksTableProcessedTableManager =
       DocumentLinkEntity,
       PrefetchHooks Function({bool sourceDocumentId, bool targetDocumentId})
     >;
-typedef $$RemindersTableCreateCompanionBuilder =
-    RemindersCompanion Function({
+typedef $$RelationshipsTableCreateCompanionBuilder =
+    RelationshipsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
-      required String entityType,
-      required int entityId,
-      required String title,
-      Value<String?> description,
-      required String reminderType,
-      required DateTime reminderDate,
-      Value<DateTime?> snoozeUntil,
-      Value<bool> isRecurring,
-      Value<String?> recurrencePattern,
-      Value<String> status,
-      Value<DateTime?> completedAt,
+      required String sourceEntityKind,
+      required int sourceEntityId,
+      required String targetEntityKind,
+      required int targetEntityId,
+      required String relationshipTypeId,
+      Value<String?> metadataJson,
       Value<DateTime?> deletedAt,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
-typedef $$RemindersTableUpdateCompanionBuilder =
-    RemindersCompanion Function({
+typedef $$RelationshipsTableUpdateCompanionBuilder =
+    RelationshipsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
-      Value<String> entityType,
-      Value<int> entityId,
-      Value<String> title,
-      Value<String?> description,
-      Value<String> reminderType,
-      Value<DateTime> reminderDate,
-      Value<DateTime?> snoozeUntil,
-      Value<bool> isRecurring,
-      Value<String?> recurrencePattern,
-      Value<String> status,
-      Value<DateTime?> completedAt,
+      Value<String> sourceEntityKind,
+      Value<int> sourceEntityId,
+      Value<String> targetEntityKind,
+      Value<int> targetEntityId,
+      Value<String> relationshipTypeId,
+      Value<String?> metadataJson,
       Value<DateTime?> deletedAt,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
 
-final class $$RemindersTableReferences
-    extends BaseReferences<_$AppDatabase, $RemindersTable, ReminderEntity> {
-  $$RemindersTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
-      db.documents.createAlias(
-        $_aliasNameGenerator(db.reminders.documentId, db.documents.id),
-      );
-
-  $$DocumentsTableProcessedTableManager? get documentId {
-    final $_column = $_itemColumn<int>('document_id');
-    if ($_column == null) return null;
-    final manager = $$DocumentsTableTableManager(
-      $_db,
-      $_db.documents,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $$RemindersTableFilterComposer
-    extends Composer<_$AppDatabase, $RemindersTable> {
-  $$RemindersTableFilterComposer({
+class $$RelationshipsTableFilterComposer
+    extends Composer<_$AppDatabase, $RelationshipsTable> {
+  $$RelationshipsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -24765,58 +26236,33 @@ class $$RemindersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get entityType => $composableBuilder(
-    column: $table.entityType,
+  ColumnFilters<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get entityId => $composableBuilder(
-    column: $table.entityId,
+  ColumnFilters<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
+  ColumnFilters<String> get targetEntityKind => $composableBuilder(
+    column: $table.targetEntityKind,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get description => $composableBuilder(
-    column: $table.description,
+  ColumnFilters<int> get targetEntityId => $composableBuilder(
+    column: $table.targetEntityId,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get reminderType => $composableBuilder(
-    column: $table.reminderType,
+  ColumnFilters<String> get relationshipTypeId => $composableBuilder(
+    column: $table.relationshipTypeId,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get snoozeUntil => $composableBuilder(
-    column: $table.snoozeUntil,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isRecurring => $composableBuilder(
-    column: $table.isRecurring,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get recurrencePattern => $composableBuilder(
-    column: $table.recurrencePattern,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnFilters<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24834,34 +26280,11 @@ class $$RemindersTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$DocumentsTableFilterComposer get documentId {
-    final $$DocumentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableFilterComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
-class $$RemindersTableOrderingComposer
-    extends Composer<_$AppDatabase, $RemindersTable> {
-  $$RemindersTableOrderingComposer({
+class $$RelationshipsTableOrderingComposer
+    extends Composer<_$AppDatabase, $RelationshipsTable> {
+  $$RelationshipsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -24873,58 +26296,33 @@ class $$RemindersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get entityType => $composableBuilder(
-    column: $table.entityType,
+  ColumnOrderings<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get entityId => $composableBuilder(
-    column: $table.entityId,
+  ColumnOrderings<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
+  ColumnOrderings<String> get targetEntityKind => $composableBuilder(
+    column: $table.targetEntityKind,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get description => $composableBuilder(
-    column: $table.description,
+  ColumnOrderings<int> get targetEntityId => $composableBuilder(
+    column: $table.targetEntityId,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get reminderType => $composableBuilder(
-    column: $table.reminderType,
+  ColumnOrderings<String> get relationshipTypeId => $composableBuilder(
+    column: $table.relationshipTypeId,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get snoozeUntil => $composableBuilder(
-    column: $table.snoozeUntil,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isRecurring => $composableBuilder(
-    column: $table.isRecurring,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get recurrencePattern => $composableBuilder(
-    column: $table.recurrencePattern,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnOrderings<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24942,29 +26340,359 @@ class $$RemindersTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+}
 
-  $$DocumentsTableOrderingComposer get documentId {
-    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
+class $$RelationshipsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RelationshipsTable> {
+  $$RelationshipsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get targetEntityKind => $composableBuilder(
+    column: $table.targetEntityKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetEntityId => $composableBuilder(
+    column: $table.targetEntityId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get relationshipTypeId => $composableBuilder(
+    column: $table.relationshipTypeId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$RelationshipsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RelationshipsTable,
+          RelationshipEntity,
+          $$RelationshipsTableFilterComposer,
+          $$RelationshipsTableOrderingComposer,
+          $$RelationshipsTableAnnotationComposer,
+          $$RelationshipsTableCreateCompanionBuilder,
+          $$RelationshipsTableUpdateCompanionBuilder,
           (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableOrderingComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            RelationshipEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $RelationshipsTable,
+              RelationshipEntity
+            >,
           ),
-    );
-    return composer;
-  }
+          RelationshipEntity,
+          PrefetchHooks Function()
+        > {
+  $$RelationshipsTableTableManager(_$AppDatabase db, $RelationshipsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RelationshipsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RelationshipsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RelationshipsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> sourceEntityKind = const Value.absent(),
+                Value<int> sourceEntityId = const Value.absent(),
+                Value<String> targetEntityKind = const Value.absent(),
+                Value<int> targetEntityId = const Value.absent(),
+                Value<String> relationshipTypeId = const Value.absent(),
+                Value<String?> metadataJson = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => RelationshipsCompanion(
+                id: id,
+                sourceEntityKind: sourceEntityKind,
+                sourceEntityId: sourceEntityId,
+                targetEntityKind: targetEntityKind,
+                targetEntityId: targetEntityId,
+                relationshipTypeId: relationshipTypeId,
+                metadataJson: metadataJson,
+                deletedAt: deletedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String sourceEntityKind,
+                required int sourceEntityId,
+                required String targetEntityKind,
+                required int targetEntityId,
+                required String relationshipTypeId,
+                Value<String?> metadataJson = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => RelationshipsCompanion.insert(
+                id: id,
+                sourceEntityKind: sourceEntityKind,
+                sourceEntityId: sourceEntityId,
+                targetEntityKind: targetEntityKind,
+                targetEntityId: targetEntityId,
+                relationshipTypeId: relationshipTypeId,
+                metadataJson: metadataJson,
+                deletedAt: deletedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RelationshipsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RelationshipsTable,
+      RelationshipEntity,
+      $$RelationshipsTableFilterComposer,
+      $$RelationshipsTableOrderingComposer,
+      $$RelationshipsTableAnnotationComposer,
+      $$RelationshipsTableCreateCompanionBuilder,
+      $$RelationshipsTableUpdateCompanionBuilder,
+      (
+        RelationshipEntity,
+        BaseReferences<_$AppDatabase, $RelationshipsTable, RelationshipEntity>,
+      ),
+      RelationshipEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$RemindersTableCreateCompanionBuilder =
+    RemindersCompanion Function({
+      Value<int> id,
+      required String sourceEntityKind,
+      required int sourceEntityId,
+      required String triggerTypeId,
+      required DateTime targetDate,
+      Value<int> leadInDaysSnapshot,
+      required DateTime firesAt,
+      Value<String> state,
+      Value<DateTime?> snoozedUntil,
+      Value<DateTime?> completedAt,
+      Value<String?> userNote,
+      Value<DateTime?> deletedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$RemindersTableUpdateCompanionBuilder =
+    RemindersCompanion Function({
+      Value<int> id,
+      Value<String> sourceEntityKind,
+      Value<int> sourceEntityId,
+      Value<String> triggerTypeId,
+      Value<DateTime> targetDate,
+      Value<int> leadInDaysSnapshot,
+      Value<DateTime> firesAt,
+      Value<String> state,
+      Value<DateTime?> snoozedUntil,
+      Value<DateTime?> completedAt,
+      Value<String?> userNote,
+      Value<DateTime?> deletedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+class $$RemindersTableFilterComposer
+    extends Composer<_$AppDatabase, $RemindersTable> {
+  $$RemindersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerTypeId => $composableBuilder(
+    column: $table.triggerTypeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get targetDate => $composableBuilder(
+    column: $table.targetDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get leadInDaysSnapshot => $composableBuilder(
+    column: $table.leadInDaysSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get firesAt => $composableBuilder(
+    column: $table.firesAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get snoozedUntil => $composableBuilder(
+    column: $table.snoozedUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userNote => $composableBuilder(
+    column: $table.userNote,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RemindersTableOrderingComposer
+    extends Composer<_$AppDatabase, $RemindersTable> {
+  $$RemindersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerTypeId => $composableBuilder(
+    column: $table.triggerTypeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get targetDate => $composableBuilder(
+    column: $table.targetDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get leadInDaysSnapshot => $composableBuilder(
+    column: $table.leadInDaysSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get firesAt => $composableBuilder(
+    column: $table.firesAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get snoozedUntil => $composableBuilder(
+    column: $table.snoozedUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userNote => $composableBuilder(
+    column: $table.userNote,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$RemindersTableAnnotationComposer
@@ -24979,54 +26707,49 @@ class $$RemindersTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get entityType => $composableBuilder(
-    column: $table.entityType,
+  GeneratedColumn<String> get sourceEntityKind => $composableBuilder(
+    column: $table.sourceEntityKind,
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get entityId =>
-      $composableBuilder(column: $table.entityId, builder: (column) => column);
-
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get description => $composableBuilder(
-    column: $table.description,
+  GeneratedColumn<int> get sourceEntityId => $composableBuilder(
+    column: $table.sourceEntityId,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get reminderType => $composableBuilder(
-    column: $table.reminderType,
+  GeneratedColumn<String> get triggerTypeId => $composableBuilder(
+    column: $table.triggerTypeId,
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get reminderDate => $composableBuilder(
-    column: $table.reminderDate,
+  GeneratedColumn<DateTime> get targetDate => $composableBuilder(
+    column: $table.targetDate,
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get snoozeUntil => $composableBuilder(
-    column: $table.snoozeUntil,
+  GeneratedColumn<int> get leadInDaysSnapshot => $composableBuilder(
+    column: $table.leadInDaysSnapshot,
     builder: (column) => column,
   );
 
-  GeneratedColumn<bool> get isRecurring => $composableBuilder(
-    column: $table.isRecurring,
+  GeneratedColumn<DateTime> get firesAt =>
+      $composableBuilder(column: $table.firesAt, builder: (column) => column);
+
+  GeneratedColumn<String> get state =>
+      $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get snoozedUntil => $composableBuilder(
+    column: $table.snoozedUntil,
     builder: (column) => column,
   );
-
-  GeneratedColumn<String> get recurrencePattern => $composableBuilder(
-    column: $table.recurrencePattern,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get userNote =>
+      $composableBuilder(column: $table.userNote, builder: (column) => column);
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
@@ -25036,29 +26759,6 @@ class $$RemindersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  $$DocumentsTableAnnotationComposer get documentId {
-    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
 class $$RemindersTableTableManager
@@ -25072,9 +26772,12 @@ class $$RemindersTableTableManager
           $$RemindersTableAnnotationComposer,
           $$RemindersTableCreateCompanionBuilder,
           $$RemindersTableUpdateCompanionBuilder,
-          (ReminderEntity, $$RemindersTableReferences),
+          (
+            ReminderEntity,
+            BaseReferences<_$AppDatabase, $RemindersTable, ReminderEntity>,
+          ),
           ReminderEntity,
-          PrefetchHooks Function({bool documentId})
+          PrefetchHooks Function()
         > {
   $$RemindersTableTableManager(_$AppDatabase db, $RemindersTable table)
     : super(
@@ -25090,35 +26793,31 @@ class $$RemindersTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
-                Value<String> entityType = const Value.absent(),
-                Value<int> entityId = const Value.absent(),
-                Value<String> title = const Value.absent(),
-                Value<String?> description = const Value.absent(),
-                Value<String> reminderType = const Value.absent(),
-                Value<DateTime> reminderDate = const Value.absent(),
-                Value<DateTime?> snoozeUntil = const Value.absent(),
-                Value<bool> isRecurring = const Value.absent(),
-                Value<String?> recurrencePattern = const Value.absent(),
-                Value<String> status = const Value.absent(),
+                Value<String> sourceEntityKind = const Value.absent(),
+                Value<int> sourceEntityId = const Value.absent(),
+                Value<String> triggerTypeId = const Value.absent(),
+                Value<DateTime> targetDate = const Value.absent(),
+                Value<int> leadInDaysSnapshot = const Value.absent(),
+                Value<DateTime> firesAt = const Value.absent(),
+                Value<String> state = const Value.absent(),
+                Value<DateTime?> snoozedUntil = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> userNote = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => RemindersCompanion(
                 id: id,
-                documentId: documentId,
-                entityType: entityType,
-                entityId: entityId,
-                title: title,
-                description: description,
-                reminderType: reminderType,
-                reminderDate: reminderDate,
-                snoozeUntil: snoozeUntil,
-                isRecurring: isRecurring,
-                recurrencePattern: recurrencePattern,
-                status: status,
+                sourceEntityKind: sourceEntityKind,
+                sourceEntityId: sourceEntityId,
+                triggerTypeId: triggerTypeId,
+                targetDate: targetDate,
+                leadInDaysSnapshot: leadInDaysSnapshot,
+                firesAt: firesAt,
+                state: state,
+                snoozedUntil: snoozedUntil,
                 completedAt: completedAt,
+                userNote: userNote,
                 deletedAt: deletedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -25126,88 +26825,39 @@ class $$RemindersTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
-                required String entityType,
-                required int entityId,
-                required String title,
-                Value<String?> description = const Value.absent(),
-                required String reminderType,
-                required DateTime reminderDate,
-                Value<DateTime?> snoozeUntil = const Value.absent(),
-                Value<bool> isRecurring = const Value.absent(),
-                Value<String?> recurrencePattern = const Value.absent(),
-                Value<String> status = const Value.absent(),
+                required String sourceEntityKind,
+                required int sourceEntityId,
+                required String triggerTypeId,
+                required DateTime targetDate,
+                Value<int> leadInDaysSnapshot = const Value.absent(),
+                required DateTime firesAt,
+                Value<String> state = const Value.absent(),
+                Value<DateTime?> snoozedUntil = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> userNote = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => RemindersCompanion.insert(
                 id: id,
-                documentId: documentId,
-                entityType: entityType,
-                entityId: entityId,
-                title: title,
-                description: description,
-                reminderType: reminderType,
-                reminderDate: reminderDate,
-                snoozeUntil: snoozeUntil,
-                isRecurring: isRecurring,
-                recurrencePattern: recurrencePattern,
-                status: status,
+                sourceEntityKind: sourceEntityKind,
+                sourceEntityId: sourceEntityId,
+                triggerTypeId: triggerTypeId,
+                targetDate: targetDate,
+                leadInDaysSnapshot: leadInDaysSnapshot,
+                firesAt: firesAt,
+                state: state,
+                snoozedUntil: snoozedUntil,
                 completedAt: completedAt,
+                userNote: userNote,
                 deletedAt: deletedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable(table),
-                  $$RemindersTableReferences(db, table, e),
-                ),
-              )
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({documentId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (documentId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.documentId,
-                                referencedTable: $$RemindersTableReferences
-                                    ._documentIdTable(db),
-                                referencedColumn: $$RemindersTableReferences
-                                    ._documentIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-
-                    return state;
-                  },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ),
       );
 }
@@ -25222,9 +26872,12 @@ typedef $$RemindersTableProcessedTableManager =
       $$RemindersTableAnnotationComposer,
       $$RemindersTableCreateCompanionBuilder,
       $$RemindersTableUpdateCompanionBuilder,
-      (ReminderEntity, $$RemindersTableReferences),
+      (
+        ReminderEntity,
+        BaseReferences<_$AppDatabase, $RemindersTable, ReminderEntity>,
+      ),
       ReminderEntity,
-      PrefetchHooks Function({bool documentId})
+      PrefetchHooks Function()
     >;
 typedef $$BillsTableCreateCompanionBuilder =
     BillsCompanion Function({
@@ -27787,7 +29440,6 @@ typedef $$PoliciesTableProcessedTableManager =
 typedef $$PropertiesTableCreateCompanionBuilder =
     PropertiesCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       required String propertyName,
       required String propertyType,
       required String ownership,
@@ -27829,7 +29481,6 @@ typedef $$PropertiesTableCreateCompanionBuilder =
 typedef $$PropertiesTableUpdateCompanionBuilder =
     PropertiesCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       Value<String> propertyName,
       Value<String> propertyType,
       Value<String> ownership,
@@ -27872,25 +29523,6 @@ typedef $$PropertiesTableUpdateCompanionBuilder =
 final class $$PropertiesTableReferences
     extends BaseReferences<_$AppDatabase, $PropertiesTable, PropertyEntity> {
   $$PropertiesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
-      db.documents.createAlias(
-        $_aliasNameGenerator(db.properties.documentId, db.documents.id),
-      );
-
-  $$DocumentsTableProcessedTableManager? get documentId {
-    final $_column = $_itemColumn<int>('document_id');
-    if ($_column == null) return null;
-    final manager = $$DocumentsTableTableManager(
-      $_db,
-      $_db.documents,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
 
   static $PropertiesTable _previousVersionIdTable(_$AppDatabase db) =>
       db.properties.createAlias(
@@ -28191,29 +29823,6 @@ class $$PropertiesTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$DocumentsTableFilterComposer get documentId {
-    final $$DocumentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableFilterComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$PropertiesTableFilterComposer get previousVersionId {
     final $$PropertiesTableFilterComposer composer = $composerBuilder(
@@ -28533,29 +30142,6 @@ class $$PropertiesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$DocumentsTableOrderingComposer get documentId {
-    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableOrderingComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$PropertiesTableOrderingComposer get previousVersionId {
     final $$PropertiesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -28744,29 +30330,6 @@ class $$PropertiesTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  $$DocumentsTableAnnotationComposer get documentId {
-    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$PropertiesTableAnnotationComposer get previousVersionId {
     final $$PropertiesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -28906,7 +30469,6 @@ class $$PropertiesTableTableManager
           (PropertyEntity, $$PropertiesTableReferences),
           PropertyEntity,
           PrefetchHooks Function({
-            bool documentId,
             bool previousVersionId,
             bool complianceRecordsRefs,
             bool serviceRecordsRefs,
@@ -28928,7 +30490,6 @@ class $$PropertiesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 Value<String> propertyName = const Value.absent(),
                 Value<String> propertyType = const Value.absent(),
                 Value<String> ownership = const Value.absent(),
@@ -28968,7 +30529,6 @@ class $$PropertiesTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => PropertiesCompanion(
                 id: id,
-                documentId: documentId,
                 propertyName: propertyName,
                 propertyType: propertyType,
                 ownership: ownership,
@@ -29010,7 +30570,6 @@ class $$PropertiesTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 required String propertyName,
                 required String propertyType,
                 required String ownership,
@@ -29050,7 +30609,6 @@ class $$PropertiesTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => PropertiesCompanion.insert(
                 id: id,
-                documentId: documentId,
                 propertyName: propertyName,
                 propertyType: propertyType,
                 ownership: ownership,
@@ -29099,7 +30657,6 @@ class $$PropertiesTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
-                documentId = false,
                 previousVersionId = false,
                 complianceRecordsRefs = false,
                 serviceRecordsRefs = false,
@@ -29130,20 +30687,6 @@ class $$PropertiesTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (documentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.documentId,
-                                    referencedTable: $$PropertiesTableReferences
-                                        ._documentIdTable(db),
-                                    referencedColumn:
-                                        $$PropertiesTableReferences
-                                            ._documentIdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
                         if (previousVersionId) {
                           state =
                               state.withJoin(
@@ -29268,7 +30811,6 @@ typedef $$PropertiesTableProcessedTableManager =
       (PropertyEntity, $$PropertiesTableReferences),
       PropertyEntity,
       PrefetchHooks Function({
-        bool documentId,
         bool previousVersionId,
         bool complianceRecordsRefs,
         bool serviceRecordsRefs,
@@ -29279,7 +30821,6 @@ typedef $$PropertiesTableProcessedTableManager =
 typedef $$VehiclesTableCreateCompanionBuilder =
     VehiclesCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       required String vehicleName,
       required String vehicleType,
       Value<String?> registrationNumber,
@@ -29326,7 +30867,6 @@ typedef $$VehiclesTableCreateCompanionBuilder =
 typedef $$VehiclesTableUpdateCompanionBuilder =
     VehiclesCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       Value<String> vehicleName,
       Value<String> vehicleType,
       Value<String?> registrationNumber,
@@ -29374,25 +30914,6 @@ typedef $$VehiclesTableUpdateCompanionBuilder =
 final class $$VehiclesTableReferences
     extends BaseReferences<_$AppDatabase, $VehiclesTable, VehicleEntity> {
   $$VehiclesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
-      db.documents.createAlias(
-        $_aliasNameGenerator(db.vehicles.documentId, db.documents.id),
-      );
-
-  $$DocumentsTableProcessedTableManager? get documentId {
-    final $_column = $_itemColumn<int>('document_id');
-    if ($_column == null) return null;
-    final manager = $$DocumentsTableTableManager(
-      $_db,
-      $_db.documents,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
 
   static $VehiclesTable _previousVersionIdTable(_$AppDatabase db) =>
       db.vehicles.createAlias(
@@ -29718,29 +31239,6 @@ class $$VehiclesTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$DocumentsTableFilterComposer get documentId {
-    final $$DocumentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableFilterComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$VehiclesTableFilterComposer get previousVersionId {
     final $$VehiclesTableFilterComposer composer = $composerBuilder(
@@ -30085,29 +31583,6 @@ class $$VehiclesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$DocumentsTableOrderingComposer get documentId {
-    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableOrderingComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$VehiclesTableOrderingComposer get previousVersionId {
     final $$VehiclesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -30319,29 +31794,6 @@ class $$VehiclesTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  $$DocumentsTableAnnotationComposer get documentId {
-    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$VehiclesTableAnnotationComposer get previousVersionId {
     final $$VehiclesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -30481,7 +31933,6 @@ class $$VehiclesTableTableManager
           (VehicleEntity, $$VehiclesTableReferences),
           VehicleEntity,
           PrefetchHooks Function({
-            bool documentId,
             bool previousVersionId,
             bool complianceRecordsRefs,
             bool serviceRecordsRefs,
@@ -30503,7 +31954,6 @@ class $$VehiclesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 Value<String> vehicleName = const Value.absent(),
                 Value<String> vehicleType = const Value.absent(),
                 Value<String?> registrationNumber = const Value.absent(),
@@ -30548,7 +31998,6 @@ class $$VehiclesTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => VehiclesCompanion(
                 id: id,
-                documentId: documentId,
                 vehicleName: vehicleName,
                 vehicleType: vehicleType,
                 registrationNumber: registrationNumber,
@@ -30595,7 +32044,6 @@ class $$VehiclesTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 required String vehicleName,
                 required String vehicleType,
                 Value<String?> registrationNumber = const Value.absent(),
@@ -30640,7 +32088,6 @@ class $$VehiclesTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => VehiclesCompanion.insert(
                 id: id,
-                documentId: documentId,
                 vehicleName: vehicleName,
                 vehicleType: vehicleType,
                 registrationNumber: registrationNumber,
@@ -30694,7 +32141,6 @@ class $$VehiclesTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
-                documentId = false,
                 previousVersionId = false,
                 complianceRecordsRefs = false,
                 serviceRecordsRefs = false,
@@ -30725,19 +32171,6 @@ class $$VehiclesTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (documentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.documentId,
-                                    referencedTable: $$VehiclesTableReferences
-                                        ._documentIdTable(db),
-                                    referencedColumn: $$VehiclesTableReferences
-                                        ._documentIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
                         if (previousVersionId) {
                           state =
                               state.withJoin(
@@ -30861,7 +32294,6 @@ typedef $$VehiclesTableProcessedTableManager =
       (VehicleEntity, $$VehiclesTableReferences),
       VehicleEntity,
       PrefetchHooks Function({
-        bool documentId,
         bool previousVersionId,
         bool complianceRecordsRefs,
         bool serviceRecordsRefs,
@@ -30872,7 +32304,6 @@ typedef $$VehiclesTableProcessedTableManager =
 typedef $$AccountsTableCreateCompanionBuilder =
     AccountsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       required String accountName,
       required String accountType,
       required String provider,
@@ -30917,7 +32348,6 @@ typedef $$AccountsTableCreateCompanionBuilder =
 typedef $$AccountsTableUpdateCompanionBuilder =
     AccountsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       Value<String> accountName,
       Value<String> accountType,
       Value<String> provider,
@@ -30963,25 +32393,6 @@ typedef $$AccountsTableUpdateCompanionBuilder =
 final class $$AccountsTableReferences
     extends BaseReferences<_$AppDatabase, $AccountsTable, AccountEntity> {
   $$AccountsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
-      db.documents.createAlias(
-        $_aliasNameGenerator(db.accounts.documentId, db.documents.id),
-      );
-
-  $$DocumentsTableProcessedTableManager? get documentId {
-    final $_column = $_itemColumn<int>('document_id');
-    if ($_column == null) return null;
-    final manager = $$DocumentsTableTableManager(
-      $_db,
-      $_db.documents,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
 
   static $AccountsTable _previousVersionIdTable(_$AppDatabase db) =>
       db.accounts.createAlias(
@@ -31211,29 +32622,6 @@ class $$AccountsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$DocumentsTableFilterComposer get documentId {
-    final $$DocumentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableFilterComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$AccountsTableFilterComposer get previousVersionId {
     final $$AccountsTableFilterComposer composer = $composerBuilder(
@@ -31468,29 +32856,6 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$DocumentsTableOrderingComposer get documentId {
-    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableOrderingComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$AccountsTableOrderingComposer get previousVersionId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -31700,29 +33065,6 @@ class $$AccountsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  $$DocumentsTableAnnotationComposer get documentId {
-    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   $$AccountsTableAnnotationComposer get previousVersionId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -31760,7 +33102,7 @@ class $$AccountsTableTableManager
           $$AccountsTableUpdateCompanionBuilder,
           (AccountEntity, $$AccountsTableReferences),
           AccountEntity,
-          PrefetchHooks Function({bool documentId, bool previousVersionId})
+          PrefetchHooks Function({bool previousVersionId})
         > {
   $$AccountsTableTableManager(_$AppDatabase db, $AccountsTable table)
     : super(
@@ -31776,7 +33118,6 @@ class $$AccountsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 Value<String> accountName = const Value.absent(),
                 Value<String> accountType = const Value.absent(),
                 Value<String> provider = const Value.absent(),
@@ -31820,7 +33161,6 @@ class $$AccountsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => AccountsCompanion(
                 id: id,
-                documentId: documentId,
                 accountName: accountName,
                 accountType: accountType,
                 provider: provider,
@@ -31865,7 +33205,6 @@ class $$AccountsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 required String accountName,
                 required String accountType,
                 required String provider,
@@ -31909,7 +33248,6 @@ class $$AccountsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => AccountsCompanion.insert(
                 id: id,
-                documentId: documentId,
                 accountName: accountName,
                 accountType: accountType,
                 provider: provider,
@@ -31959,61 +33297,47 @@ class $$AccountsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback:
-              ({documentId = false, previousVersionId = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (documentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.documentId,
-                                    referencedTable: $$AccountsTableReferences
-                                        ._documentIdTable(db),
-                                    referencedColumn: $$AccountsTableReferences
-                                        ._documentIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (previousVersionId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.previousVersionId,
-                                    referencedTable: $$AccountsTableReferences
-                                        ._previousVersionIdTable(db),
-                                    referencedColumn: $$AccountsTableReferences
-                                        ._previousVersionIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
+          prefetchHooksCallback: ({previousVersionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (previousVersionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.previousVersionId,
+                                referencedTable: $$AccountsTableReferences
+                                    ._previousVersionIdTable(db),
+                                referencedColumn: $$AccountsTableReferences
+                                    ._previousVersionIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
 
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [];
+                    return state;
                   },
-                );
+              getPrefetchedDataCallback: (items) async {
+                return [];
               },
+            );
+          },
         ),
       );
 }
@@ -32030,12 +33354,11 @@ typedef $$AccountsTableProcessedTableManager =
       $$AccountsTableUpdateCompanionBuilder,
       (AccountEntity, $$AccountsTableReferences),
       AccountEntity,
-      PrefetchHooks Function({bool documentId, bool previousVersionId})
+      PrefetchHooks Function({bool previousVersionId})
     >;
 typedef $$HomeAssetsTableCreateCompanionBuilder =
     HomeAssetsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       required String assetName,
       required String assetType,
       required String category,
@@ -32076,7 +33399,6 @@ typedef $$HomeAssetsTableCreateCompanionBuilder =
 typedef $$HomeAssetsTableUpdateCompanionBuilder =
     HomeAssetsCompanion Function({
       Value<int> id,
-      Value<int?> documentId,
       Value<String> assetName,
       Value<String> assetType,
       Value<String> category,
@@ -32118,25 +33440,6 @@ typedef $$HomeAssetsTableUpdateCompanionBuilder =
 final class $$HomeAssetsTableReferences
     extends BaseReferences<_$AppDatabase, $HomeAssetsTable, HomeAssetEntity> {
   $$HomeAssetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DocumentsTable _documentIdTable(_$AppDatabase db) =>
-      db.documents.createAlias(
-        $_aliasNameGenerator(db.homeAssets.documentId, db.documents.id),
-      );
-
-  $$DocumentsTableProcessedTableManager? get documentId {
-    final $_column = $_itemColumn<int>('document_id');
-    if ($_column == null) return null;
-    final manager = $$DocumentsTableTableManager(
-      $_db,
-      $_db.documents,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_documentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
 
   static MultiTypedResultKey<$ServiceRecordsTable, List<ServiceRecordEntity>>
   _serviceRecordsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
@@ -32372,29 +33675,6 @@ class $$HomeAssetsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$DocumentsTableFilterComposer get documentId {
-    final $$DocumentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableFilterComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   Expression<bool> serviceRecordsRefs(
     Expression<bool> Function($$ServiceRecordsTableFilterComposer f) f,
@@ -32640,29 +33920,6 @@ class $$HomeAssetsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
-
-  $$DocumentsTableOrderingComposer get documentId {
-    final $$DocumentsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableOrderingComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
 class $$HomeAssetsTableAnnotationComposer
@@ -32827,29 +34084,6 @@ class $$HomeAssetsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  $$DocumentsTableAnnotationComposer get documentId {
-    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.documentId,
-      referencedTable: $db.documents,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DocumentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.documents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   Expression<T> serviceRecordsRefs<T extends Object>(
     Expression<T> Function($$ServiceRecordsTableAnnotationComposer a) f,
   ) {
@@ -32914,11 +34148,7 @@ class $$HomeAssetsTableTableManager
           $$HomeAssetsTableUpdateCompanionBuilder,
           (HomeAssetEntity, $$HomeAssetsTableReferences),
           HomeAssetEntity,
-          PrefetchHooks Function({
-            bool documentId,
-            bool serviceRecordsRefs,
-            bool tasksRefs,
-          })
+          PrefetchHooks Function({bool serviceRecordsRefs, bool tasksRefs})
         > {
   $$HomeAssetsTableTableManager(_$AppDatabase db, $HomeAssetsTable table)
     : super(
@@ -32934,7 +34164,6 @@ class $$HomeAssetsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 Value<String> assetName = const Value.absent(),
                 Value<String> assetType = const Value.absent(),
                 Value<String> category = const Value.absent(),
@@ -32973,7 +34202,6 @@ class $$HomeAssetsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => HomeAssetsCompanion(
                 id: id,
-                documentId: documentId,
                 assetName: assetName,
                 assetType: assetType,
                 category: category,
@@ -33014,7 +34242,6 @@ class $$HomeAssetsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> documentId = const Value.absent(),
                 required String assetName,
                 required String assetType,
                 required String category,
@@ -33053,7 +34280,6 @@ class $$HomeAssetsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => HomeAssetsCompanion.insert(
                 id: id,
-                documentId: documentId,
                 assetName: assetName,
                 assetType: assetType,
                 category: category,
@@ -33100,50 +34326,14 @@ class $$HomeAssetsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({
-                documentId = false,
-                serviceRecordsRefs = false,
-                tasksRefs = false,
-              }) {
+              ({serviceRecordsRefs = false, tasksRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (serviceRecordsRefs) db.serviceRecords,
                     if (tasksRefs) db.tasks,
                   ],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (documentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.documentId,
-                                    referencedTable: $$HomeAssetsTableReferences
-                                        ._documentIdTable(db),
-                                    referencedColumn:
-                                        $$HomeAssetsTableReferences
-                                            ._documentIdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-
-                        return state;
-                      },
+                  addJoins: null,
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (serviceRecordsRefs)
@@ -33208,11 +34398,7 @@ typedef $$HomeAssetsTableProcessedTableManager =
       $$HomeAssetsTableUpdateCompanionBuilder,
       (HomeAssetEntity, $$HomeAssetsTableReferences),
       HomeAssetEntity,
-      PrefetchHooks Function({
-        bool documentId,
-        bool serviceRecordsRefs,
-        bool tasksRefs,
-      })
+      PrefetchHooks Function({bool serviceRecordsRefs, bool tasksRefs})
     >;
 typedef $$ComplianceRecordsTableCreateCompanionBuilder =
     ComplianceRecordsCompanion Function({
@@ -37488,8 +38674,12 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$DocumentsTableTableManager get documents =>
       $$DocumentsTableTableManager(_db, _db.documents);
+  $$DocumentFieldsMetaTableTableManager get documentFieldsMeta =>
+      $$DocumentFieldsMetaTableTableManager(_db, _db.documentFieldsMeta);
   $$DocumentLinksTableTableManager get documentLinks =>
       $$DocumentLinksTableTableManager(_db, _db.documentLinks);
+  $$RelationshipsTableTableManager get relationships =>
+      $$RelationshipsTableTableManager(_db, _db.relationships);
   $$RemindersTableTableManager get reminders =>
       $$RemindersTableTableManager(_db, _db.reminders);
   $$BillsTableTableManager get bills =>

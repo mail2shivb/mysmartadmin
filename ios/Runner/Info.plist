@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>MySmartAdmin uses the camera to capture document images for field extraction.</string>
 </dict>
 </plist>

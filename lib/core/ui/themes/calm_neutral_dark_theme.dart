@@ -15,10 +15,10 @@ class CalmNeutralDarkTheme implements AppColorScheme {
   Color get appBackground => const Color(0xFF0F1117); // Deep base (Monzo-style)
 
   @override
-  Color get surface => const Color(0xFF1C1F2E); // Elevated cards (float above background)
+  Color get surface => const Color(0xFF1A1D2A); // Darker elevated layer (better separation)
 
   @override
-  Color get card => const Color(0xFF1C1F2E); // Same as surface for consistency
+  Color get card => const Color(0xFF1F2333); // Lighter cards (most elevated)
 
   @override
   Color get surfaceContainer => const Color(0xFF23263A); // Alternative elevation

@@ -1,61 +1,41 @@
 import 'package:drift/drift.dart';
 import '../../../data/local/app_database.dart';
-import '../../validation/entity_validators.dart';
+import '../../validation/date_rules.dart';
 
-/// Use case for creating a manual reminder
-///
-/// Creates a new reminder with validation and returns the reminder ID
+/// Create a manual reminder for any source entity.
 class CreateReminderUseCase {
   final AppDatabase _database;
-
   CreateReminderUseCase(this._database);
 
-  /// Create a new reminder
-  /// 
-  /// Returns the ID of the newly created reminder
   Future<int> call({
-    required String entityType,
-    required int entityId,
-    required String title,
-    required DateTime reminderDate,
-    required String reminderType,
-    String? description,
-    int? documentId,
-    bool isRecurring = false,
-    String? recurrencePattern,
+    required String sourceEntityKind,
+    required int sourceEntityId,
+    required String triggerTypeId,
+    required DateTime targetDate,
+    int leadInDays = 30,
+    String? userNote,
   }) async {
-    // Use centralized entity validator
-    EntityValidators.validateReminder(
-      title: title,
-      reminderDate: reminderDate,
-      reminderType: reminderType,
-    );
-
-    // Validate documentId if provided
-    if (documentId != null && documentId > 0) {
-      final document = await _database.documentsDao.getDocumentById(documentId);
-      if (document == null) {
-        throw StateError('Document with ID $documentId not found');
-      }
+    if (sourceEntityKind.trim().isEmpty) {
+      throw ArgumentError('Source entity kind cannot be empty');
+    }
+    if (triggerTypeId.trim().isEmpty) {
+      throw ArgumentError('Trigger type cannot be empty');
     }
 
-    // Create the reminder with status = pending
-    final reminderId = await _database.remindersDao.createReminder(
+    DateRules.validateReasonableFutureDate(targetDate);
+
+    final firesAt = targetDate.subtract(Duration(days: leadInDays));
+
+    return _database.remindersDao.createReminder(
       RemindersCompanion.insert(
-        entityType: entityType,
-        entityId: entityId,
-        title: title,
-        reminderDate: reminderDate,
-        reminderType: reminderType,
-        description: Value(description),
-        documentId: Value(documentId),
-        isRecurring: Value(isRecurring),
-        recurrencePattern: Value(recurrencePattern),
-        status: const Value('pending'),
+        sourceEntityKind: sourceEntityKind,
+        sourceEntityId: sourceEntityId,
+        triggerTypeId: triggerTypeId,
+        targetDate: targetDate,
+        leadInDaysSnapshot: Value(leadInDays),
+        firesAt: firesAt,
+        userNote: Value(userNote),
       ),
     );
-
-    return reminderId;
   }
 }
-

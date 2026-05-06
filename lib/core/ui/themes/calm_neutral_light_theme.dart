@@ -15,13 +15,13 @@ class CalmNeutralLightTheme implements AppColorScheme {
   Color get appBackground => const Color(0xFFF6F7FB); // Fintech neutral (NOT white)
 
   @override
-  Color get surface => const Color(0xFFFFFFFF); // Pure white cards (float above)
+  Color get surface => const Color(0xFFFAFBFC); // Very subtle off-white (layer separation)
 
   @override
-  Color get card => const Color(0xFFFFFFFF); // Same as surface for consistency
+  Color get card => const Color(0xFFFFFFFF); // Pure white cards (most elevated)
 
   @override
-  Color get surfaceContainer => const Color(0xFFF1F3F9); // Alternative container
+  Color get surfaceContainer => const Color(0xFFF0F2F8); // Darker alternative container
 
   // Gradient backgrounds - very subtle (rarely used in light mode)
   @override

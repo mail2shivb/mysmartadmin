@@ -1,3 +1,4 @@
+// B4.3 STATUS: IMPLEMENTED
 // F1.7 STATUS: IMPLEMENTED
 
 import 'package:flutter/material.dart';
@@ -130,9 +131,9 @@ class AppTheme {
       
       // Bottom Navigation Bar - anchored white sheet with divider
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: const Color(0xFFFFFFFF), // Pure white
+        backgroundColor: colorScheme.surfaceContainerLowest,
         selectedItemColor: colorScheme.primary, // #1E6FD9
-        unselectedItemColor: const Color(0xFF64748B), // Neutral grey
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         type: BottomNavigationBarType.fixed,
         elevation: 0, // No shadow, using divider instead
         selectedLabelStyle: const TextStyle(
@@ -157,6 +158,139 @@ class AppTheme {
       
       // Scaffold background
       scaffoldBackgroundColor: colorScheme.surface, // Canvas color
+    );
+  }
+
+  /// Dark theme (system/optional)
+  ///
+  /// Keeps the same canvas + sheet model:
+  /// - Deep blue-grey canvas
+  /// - Slightly lifted sheet surfaces for cards/nav
+  static ThemeData dark() {
+    const colorScheme = ColorScheme.dark(
+      // Canvas background (deep, calm)
+      surface: Color(0xFF0B1220),
+      surfaceContainerLowest: Color(0xFF0F1A2B), // Card / sheet
+      surfaceContainerLow: Color(0xFF121F33),
+      surfaceContainer: Color(0xFF16253B),
+
+      // Primary - luminous blue
+      primary: Color(0xFF6AA7FF),
+      onPrimary: Color(0xFF07121F),
+      primaryContainer: Color(0xFF133B6B),
+      onPrimaryContainer: Color(0xFFD9E8FB),
+
+      // Secondary - muted slate
+      secondary: Color(0xFF9AA6B2),
+      onSecondary: Color(0xFF0B1220),
+      secondaryContainer: Color(0xFF24324A),
+      onSecondaryContainer: Color(0xFFEAF0F7),
+
+      // Error - softened red
+      error: Color(0xFFFF6B6B),
+      onError: Color(0xFF3B0A0A),
+      errorContainer: Color(0xFF4A1212),
+      onErrorContainer: Color(0xFFFFD9D9),
+
+      // Outline and borders
+      outline: Color(0xFF3A4B6B),
+      outlineVariant: Color(0xFF24324A),
+
+      // Text colors
+      onSurface: Color(0xFFEAF0F7),
+      onSurfaceVariant: Color(0xFF9AA6B2),
+
+      // Shadow/scrim
+      shadow: Color(0x66000000),
+      scrim: Color(0x99000000),
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      textTheme: _textTheme(colorScheme),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        color: colorScheme.surfaceContainerLowest,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: colorScheme.outlineVariant,
+            width: 1,
+          ),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: colorScheme.onSurface,
+          letterSpacing: 0.15,
+        ),
+        scrolledUnderElevation: 0,
+      ),
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outlineVariant,
+        thickness: 1,
+        space: 1,
+      ),
+      iconTheme: IconThemeData(
+        color: colorScheme.onSurfaceVariant,
+        size: 24,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.surfaceContainer,
+        labelStyle: TextStyle(
+          fontSize: 13,
+          color: colorScheme.onSurface,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        selectedLabelStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+        ),
+        selectedIconTheme: IconThemeData(
+          size: 24,
+          color: colorScheme.primary,
+        ),
+        unselectedIconTheme: IconThemeData(
+          size: 24,
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
+      scaffoldBackgroundColor: colorScheme.surface,
     );
   }
 

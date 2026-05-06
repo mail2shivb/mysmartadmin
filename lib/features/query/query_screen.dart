@@ -36,7 +36,7 @@ class _QueryScreenState extends State<QueryScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('Search & Query'),
+        title: const Text('Search'),
       ),
       enableScroll: true,
       padding: AppPadding.screen,
@@ -46,7 +46,7 @@ class _QueryScreenState extends State<QueryScreen> {
           // Search bar
           SearchBar(
             controller: _searchController,
-            hintText: 'Ask about your documents...',
+            hintText: 'Try “What expires this month?” or “Show active policies”',
             leading: const Icon(Icons.search),
             trailing: [
               IconButton(
@@ -54,7 +54,7 @@ class _QueryScreenState extends State<QueryScreen> {
                 onPressed: () {
                   // TODO: Voice input (on-device speech-to-text)
                 },
-                tooltip: 'Voice search',
+                tooltip: 'Use voice input',
               ),
             ],
             onSubmitted: (query) {
@@ -64,7 +64,7 @@ class _QueryScreenState extends State<QueryScreen> {
           const SizedBox(height: AppSpacing.xl),
 
           // Example queries section
-          const SectionHeader(title: 'Example Queries'),
+          const SectionHeader(title: 'Try a question'),
           InsightCard(
             leadingIcon: Icons.lightbulb_outline,
             title: 'When does my passport expire?',

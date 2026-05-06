@@ -3,110 +3,83 @@
 import '../../data/local/app_database.dart';
 import 'dto/upcoming_reminder_view.dart';
 
-/// Reminder-specific reports service
-/// 
-/// Read-only queries for reminder analytics and insights
+/// Reminder-specific reports service.
+///
+/// Read-only queries for reminder analytics and upcoming views.
 class ReminderReports {
   final AppDatabase _database;
 
   ReminderReports(this._database);
 
-  /// Get reminders due between from and to dates
-  /// 
-  /// Excludes cancelled and deleted reminders
-  /// Orders by due date ascending
+  /// Reminders that fire between [from] and [to], excluding cancelled/dismissed.
   Future<List<UpcomingReminderView>> upcoming({
     required DateTime from,
     required DateTime to,
   }) async {
-    // Query reminders in date range, excluding cancelled and deleted
-    final reminders = await _database.remindersDao.getRemindersDueBetween(
-      from,
-      to,
-    );
+    // getFiresBetween already excludes snoozed/cancelled/dismissed/completed.
+    final reminders = await _database.remindersDao.getFiresBetween(from, to);
+    final active = reminders.toList();
 
-    // Filter out cancelled reminders
-    final activeReminders = reminders.where(
-      (r) => r.status != 'cancelled',
-    ).toList();
-
-    // Map to UpcomingReminderView and calculate daysUntilDue
     final now = DateTime.now();
-    return activeReminders.map((r) {
-      final daysUntilDue = r.reminderDate.difference(now).inDays;
-      
+    return active.map((r) {
       return UpcomingReminderView(
         reminderId: r.id,
-        entityType: r.entityType,
-        entityId: r.entityId,
-        title: r.title,
-        reminderDate: r.reminderDate,
-        reminderType: r.reminderType,
-        status: r.status,
-        daysUntilDue: daysUntilDue,
+        sourceEntityKind: r.sourceEntityKind,
+        sourceEntityId: r.sourceEntityId,
+        triggerTypeId: r.triggerTypeId,
+        firesAt: r.firesAt,
+        targetDate: r.targetDate,
+        state: r.state,
+        daysUntilDue: r.firesAt.difference(now).inDays,
+        userNote: r.userNote,
       );
     }).toList();
   }
 
-  /// Get reminders due within next N days
+  /// Reminders firing within the next [daysAhead] days.
   Future<List<UpcomingReminderView>> getRemindersDueSoon({
     int daysAhead = 7,
-  }) async {
+  }) {
     final now = DateTime.now();
-    final endDate = now.add(Duration(days: daysAhead));
-    
-    return await upcoming(from: now, to: endDate);
+    return upcoming(from: now, to: now.add(Duration(days: daysAhead)));
   }
 
-  /// Get overdue reminders
-  Future<List<ReminderEntity>> getOverdueReminders() async {
-    return await _database.remindersDao.getOverdueReminders();
-  }
+  /// Reminders that are overdue (firesAt in the past, state pending/due).
+  Future<List<ReminderEntity>> getOverdueReminders() =>
+      _database.remindersDao.getOverdue();
 
-  /// Get reminders by entity type
-  Future<Map<String, List<ReminderEntity>>> getRemindersByEntityType() async {
-    final allReminders = await _database.remindersDao.getAllReminders();
-    
+  /// Reminders grouped by their source entity kind.
+  Future<Map<String, List<ReminderEntity>>> getRemindersByEntityKind() async {
+    final all = await _database.remindersDao.getAll();
     final Map<String, List<ReminderEntity>> grouped = {};
-    for (final reminder in allReminders) {
-      grouped.putIfAbsent(reminder.entityType, () => []).add(reminder);
+    for (final r in all) {
+      grouped.putIfAbsent(r.sourceEntityKind, () => []).add(r);
     }
-    
     return grouped;
   }
 
-  /// Count pending reminders
-  Future<int> countPendingReminders() async {
-    return await _database.remindersDao.countPendingReminders();
-  }
+  /// Count of pending reminders.
+  Future<int> countPendingReminders() =>
+      _database.remindersDao.countPending();
 
-  /// Count overdue reminders
-  Future<int> countOverdueReminders() async {
-    return await _database.remindersDao.countOverdueReminders();
-  }
+  /// Count of overdue reminders.
+  Future<int> countOverdueReminders() =>
+      _database.remindersDao.countOverdue();
 
-  /// Get reminders by status
-  Future<Map<String, int>> getReminderCountsByStatus() async {
-    final allReminders = await _database.remindersDao.getAllReminders();
-    
+  /// Reminder counts keyed by state.
+  Future<Map<String, int>> getReminderCountsByState() async {
+    final all = await _database.remindersDao.getAll();
     final Map<String, int> counts = {};
-    for (final reminder in allReminders) {
-      counts[reminder.status] = (counts[reminder.status] ?? 0) + 1;
+    for (final r in all) {
+      counts[r.state] = (counts[r.state] ?? 0) + 1;
     }
-    
     return counts;
   }
 
-  /// Get reminders for specific entity
+  /// All reminders for a specific source entity.
   Future<List<ReminderEntity>> getRemindersForEntity({
-    required String entityType,
-    required int entityId,
-  }) async {
-    final allReminders = await _database.remindersDao.getAllReminders();
-    
-    return allReminders.where(
-      (r) => r.entityType == entityType && r.entityId == entityId,
-    ).toList();
-  }
+    required String sourceEntityKind,
+    required int sourceEntityId,
+  }) =>
+      _database.remindersDao.getForSource(sourceEntityKind, sourceEntityId);
 }
-

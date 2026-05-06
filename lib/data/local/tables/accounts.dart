@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'documents.dart';
 
 /// Accounts table - bank accounts, credit cards, loans, savings
 /// Monetary values stored as INTEGER (cents/pence)
+///
+/// Documents attach to accounts via the [Relationships] table (B6.4).
+/// No direct document_id FK — use relationship_type_id = 'account_statement'
+/// or the generic [Relationships] entity for other document ↔ account links.
 @DataClassName('AccountEntity')
 class Accounts extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
-
-  // Foreign key - link to account documents (statements, agreements, etc.)
-  IntColumn get documentId => integer().nullable().references(Documents, #id, onDelete: KeyAction.setNull)();
 
   // Account details
   TextColumn get accountName => text().withLength(min: 1, max: 255)();

@@ -227,9 +227,9 @@ class ReportsRepository {
     return reminders.getOverdueReminders();
   }
 
-  /// Get reminders grouped by entity type
+  /// Get reminders grouped by entity kind
   Future<Map<String, List<ReminderEntity>>> getRemindersByEntityType() {
-    return reminders.getRemindersByEntityType();
+    return reminders.getRemindersByEntityKind();
   }
 
   /// Count pending reminders
@@ -242,19 +242,19 @@ class ReportsRepository {
     return reminders.countOverdueReminders();
   }
 
-  /// Get reminder counts grouped by status
+  /// Get reminder counts grouped by state
   Future<Map<String, int>> getReminderCountsByStatus() {
-    return reminders.getReminderCountsByStatus();
+    return reminders.getReminderCountsByState();
   }
 
   /// Get reminders for a specific entity
   Future<List<ReminderEntity>> getRemindersForEntity({
-    required String entityType,
-    required int entityId,
+    required String sourceEntityKind,
+    required int sourceEntityId,
   }) {
     return reminders.getRemindersForEntity(
-      entityType: entityType,
-      entityId: entityId,
+      sourceEntityKind: sourceEntityKind,
+      sourceEntityId: sourceEntityId,
     );
   }
 

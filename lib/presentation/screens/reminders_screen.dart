@@ -2,13 +2,14 @@
 
 import 'package:flutter/material.dart';
 import '../../core/database_provider.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 import '../../domain/reports/reports_repository.dart';
 import '../viewmodels/reminders_view_model.dart';
 import '../widgets/app_card.dart';
 import '../widgets/primary_card.dart';
-import '../widgets/section_header.dart';
-import '../widgets/empty_state.dart';
-import '../theme/spacing.dart';
 
 /// Reminders screen
 ///
@@ -25,9 +26,11 @@ class RemindersScreen extends StatelessWidget {
     final viewModel = RemindersViewModel(repository);
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(Spacing.md),
+    return AppScaffold(
+      useSafeArea: true,
+      enableScroll: true,
+      body: Padding(
+        padding: AppPadding.screen,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -39,7 +42,7 @@ class RemindersScreen extends StatelessWidget {
                   return const PrimaryCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.lg),
+                        padding: EdgeInsets.all(AppSpacing.lg),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -47,10 +50,10 @@ class RemindersScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return PrimaryCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.pending_outlined,
                       title: 'Count unavailable',
-                      iconSize: 40,
+                      description: 'Your reminder count will appear shortly',
                     ),
                   );
                 }
@@ -61,24 +64,26 @@ class RemindersScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.notifications_active,
-                          size: 40,
+                          size: 44,
                           color: theme.colorScheme.primary,
                         ),
-                        const SizedBox(height: Spacing.sm),
+                        const SizedBox(height: 12),
                         Text(
                           '$count',
                           style: theme.textTheme.displayLarge?.copyWith(
-                            fontSize: 52,
+                            fontSize: 56,
                             fontWeight: FontWeight.w800,
-                            height: 1.1,
+                            height: 1.0,
+                            letterSpacing: -1.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           'pending reminders',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 13,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
@@ -88,10 +93,10 @@ class RemindersScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Upcoming
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Upcoming', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Due Soon
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Due Soon'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.loadRemindersDueSoon(daysAhead: 7),
               builder: (context, snapshot) {
@@ -99,7 +104,7 @@ class RemindersScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.xl),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -107,27 +112,29 @@ class RemindersScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.notifications_outlined,
-                      title: 'Reminders coming soon',
-                      description: 'Your upcoming reminders will appear here',
+                      title: 'Your due-soon reminders are not available yet',
+                      description:
+                          'This list highlights reminders generated from expiry, renewal, and review dates, so you can act before something becomes urgent.',
                     ),
                   );
                 }
                 final reminders = snapshot.data!;
                 if (reminders.isEmpty) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.check_circle_outline,
-                      title: 'All clear',
-                      description: 'No reminders due in the next 7 days',
+                      title: 'Nothing is due soon',
+                      description:
+                          'You have no reminders due in the next 7 days. When important dates approach, they will appear here automatically.',
                     ),
                   );
                 }
                 return Column(
                   children: reminders.map((reminder) {
                     return AppCard(
-                      margin: const EdgeInsets.only(bottom: Spacing.sm),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -138,10 +145,10 @@ class RemindersScreen extends StatelessWidget {
                                 size: 20,
                                 color: theme.colorScheme.primary,
                               ),
-                              const SizedBox(width: Spacing.xs),
+                              const SizedBox(width: AppSpacing.xs),
                               Expanded(
                                 child: Text(
-                                  reminder.title,
+                                  reminder.triggerTypeId,
                                   style: theme.textTheme.titleSmall,
                                 ),
                               ),
@@ -149,11 +156,11 @@ class RemindersScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Due: ${reminder.reminderDate.toLocal().toString().split(' ')[0]}',
+                            'Due on ${reminder.firesAt.toLocal().toString().split(' ')[0]}',
                             style: theme.textTheme.bodySmall,
                           ),
                           Text(
-                            '${reminder.daysUntilDue} days remaining • ${reminder.reminderType}',
+                            '${reminder.daysUntilDue} days left • ${reminder.triggerTypeId}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -166,10 +173,10 @@ class RemindersScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Overdue
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Overdue', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Needs Attention
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Needs Attention'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.countOverdueReminders(),
               builder: (context, snapshot) {
@@ -177,7 +184,7 @@ class RemindersScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.lg),
+                        padding: EdgeInsets.all(AppSpacing.lg),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -185,10 +192,11 @@ class RemindersScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.event_busy_outlined,
-                      title: 'Count unavailable',
-                      iconSize: 32,
+                      title: 'Your overdue view is not available yet',
+                      description:
+                          'This area helps you spot reminders that may need immediate action, based on dates already stored in your records.',
                     ),
                   );
                 }
@@ -204,7 +212,7 @@ class RemindersScreen extends StatelessWidget {
                               ? theme.colorScheme.error
                               : theme.colorScheme.outline,
                         ),
-                        const SizedBox(height: Spacing.xs),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           '$count',
                           style: theme.textTheme.headlineMedium?.copyWith(
@@ -214,7 +222,7 @@ class RemindersScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'overdue',
+                          'overdue reminders',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -225,7 +233,7 @@ class RemindersScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: Spacing.md), // Bottom padding
+            const SizedBox(height: AppSpacing.md), // Bottom padding
           ],
         ),
       ),

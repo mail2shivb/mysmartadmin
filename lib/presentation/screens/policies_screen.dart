@@ -2,13 +2,14 @@
 
 import 'package:flutter/material.dart';
 import '../../core/database_provider.dart';
+import '../../core/ui/tokens.dart';
+import '../../core/ui/components/app_scaffold.dart';
+import '../../core/ui/components/section_header.dart';
+import '../../core/ui/components/empty_state_widget.dart';
 import '../../domain/reports/reports_repository.dart';
 import '../viewmodels/policies_view_model.dart';
 import '../widgets/app_card.dart';
 import '../widgets/primary_card.dart';
-import '../widgets/section_header.dart';
-import '../widgets/empty_state.dart';
-import '../theme/spacing.dart';
 
 /// Policies screen
 ///
@@ -25,9 +26,11 @@ class PoliciesScreen extends StatelessWidget {
     final viewModel = PoliciesViewModel(repository);
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(Spacing.md),
+    return AppScaffold(
+      useSafeArea: true,
+      enableScroll: true,
+      body: Padding(
+        padding: AppPadding.screen,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -39,7 +42,7 @@ class PoliciesScreen extends StatelessWidget {
                   return const PrimaryCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.lg),
+                        padding: EdgeInsets.all(AppSpacing.lg),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -47,19 +50,22 @@ class PoliciesScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return PrimaryCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.security_outlined,
-                      title: 'Coverage data loading',
+                      title: 'Your coverage summary is not available yet',
+                      description:
+                          'This screen is designed to keep insurance cover easy to review, so important protection details stay clear and accessible.',
                     ),
                   );
                 }
                 final totalCoverage = snapshot.data!;
                 if (totalCoverage == 0) {
                   return PrimaryCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.policy_outlined,
-                      title: 'No policies recorded yet',
-                      description: 'Add your first policy to see coverage',
+                      title: 'No insurance records are being tracked yet',
+                      description:
+                          'When policies are added, you will be able to review cover, renewal timing, and costs in one place.',
                     ),
                   );
                 }
@@ -69,25 +75,27 @@ class PoliciesScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.security,
-                          size: 40,
+                          size: 44,
                           color: theme.colorScheme.primary,
                         ),
-                        const SizedBox(height: Spacing.sm),
+                        const SizedBox(height: 12),
                         Text(
                           '£${(totalCoverage / 100).toStringAsFixed(2)}',
                           style: theme.textTheme.displayLarge?.copyWith(
-                            fontSize: 52,
+                            fontSize: 56,
                             fontWeight: FontWeight.w800,
                             color: theme.colorScheme.primary,
-                            height: 1.1,
+                            height: 1.0,
+                            letterSpacing: -1.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
-                          'protected',
+                          'total cover recorded',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 13,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
@@ -97,10 +105,10 @@ class PoliciesScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Overview
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Overview', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Active Cover
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Active Cover'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.countActivePolicies(),
               builder: (context, snapshot) {
@@ -108,7 +116,7 @@ class PoliciesScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.xl),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -116,20 +124,22 @@ class PoliciesScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.shield_outlined,
-                      title: 'Policies coming soon',
-                      description: 'Your insurance policies will appear here',
+                      title: 'Your policy overview is not available yet',
+                      description:
+                          'This section helps you see how many active policies you are currently tracking on this device.',
                     ),
                   );
                 }
                 final count = snapshot.data!;
                 if (count == 0) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.policy_outlined,
-                      title: 'No policies recorded yet',
-                      description: 'Add your first policy to see insights here.',
+                      title: 'No active policies are being tracked yet',
+                      description:
+                          'Once you record a policy, this section will help you keep cover details and renewals visible.',
                     ),
                   );
                 }
@@ -141,13 +151,13 @@ class PoliciesScreen extends StatelessWidget {
                         size: 32,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: Spacing.md),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Active Policies',
+                              'Active policies',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -165,10 +175,10 @@ class PoliciesScreen extends StatelessWidget {
               },
             ),
 
-            // SECTION: Cost Analysis
-            const SizedBox(height: Spacing.sectionHeaderTop),
-            const SectionHeader(title: 'Cost Analysis', addTopMargin: false),
-            const SizedBox(height: Spacing.sectionHeaderBottom),
+            // SECTION: Premium Summary
+            const SizedBox(height: AppSpacing.sectionGap),
+            const SectionHeader(title: 'Premium Summary'),
+            const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
               future: viewModel.loadPoliciesMonthlyTotal(),
               builder: (context, snapshot) {
@@ -176,7 +186,7 @@ class PoliciesScreen extends StatelessWidget {
                   return const AppCard(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(Spacing.xl),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -184,9 +194,11 @@ class PoliciesScreen extends StatelessWidget {
                 }
                 if (snapshot.hasError) {
                   return AppCard(
-                    child: EmptyState(
+                    child: EmptyStateWidget(
                       icon: Icons.payments_outlined,
-                      title: 'Premium data loading',
+                      title: 'Your premium summary is not available yet',
+                      description:
+                          'This section is intended to show the regular cost of your policies, so you can understand what protection costs over time.',
                     ),
                   );
                 }
@@ -199,13 +211,13 @@ class PoliciesScreen extends StatelessWidget {
                         size: 32,
                         color: theme.colorScheme.secondary,
                       ),
-                      const SizedBox(width: Spacing.md),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Monthly Premium',
+                              'Tracked monthly premium',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -222,7 +234,7 @@ class PoliciesScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: Spacing.md), // Bottom padding
+            const SizedBox(height: AppSpacing.md), // Bottom padding
           ],
         ),
       ),

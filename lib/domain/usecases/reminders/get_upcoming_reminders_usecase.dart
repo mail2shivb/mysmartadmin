@@ -1,62 +1,34 @@
 import '../../../data/local/app_database.dart';
+import '../../validation/date_rules.dart';
 
-/// Use case for retrieving upcoming reminders
-///
-/// Fetches pending reminders within a lookahead period
 class GetUpcomingRemindersUseCase {
   final AppDatabase _database;
-
   GetUpcomingRemindersUseCase(this._database);
 
-  /// Get upcoming reminders
-  /// 
-  /// Fetches reminders with:
-  /// - status = pending
-  /// - reminderDate <= now + lookaheadDays
-  /// 
-  /// Results are sorted ascending by reminderDate
-  Future<List<ReminderEntity>> call({
-    int lookaheadDays = 7,
-  }) async {
+  Future<List<ReminderEntity>> call({int lookaheadDays = 7}) async {
     if (lookaheadDays < 0) {
       throw ArgumentError('Lookahead days must be non-negative');
     }
-
     final now = DateTime.now();
-    final endDate = now.add(Duration(days: lookaheadDays));
+    final end = now.add(Duration(days: lookaheadDays));
 
-    // Get pending reminders within the date range
-    final allReminders = await _database.remindersDao.getRemindersDueBetween(
-      now,
-      endDate,
-    );
-
-    // Filter to only pending status and sort by reminderDate ascending
-    final upcomingReminders = allReminders
-        .where((reminder) => reminder.status == 'pending')
-        .toList()
-      ..sort((a, b) => a.reminderDate.compareTo(b.reminderDate));
-
-    return upcomingReminders;
+    final all = await _database.remindersDao.getFiresBetween(now, end);
+    return all.where((r) => r.state == 'pending').toList()
+      ..sort((a, b) => a.firesAt.compareTo(b.firesAt));
   }
 
-  /// Get all pending reminders (no date filter)
-  Future<List<ReminderEntity>> getAllPending() async {
-    return await _database.remindersDao.getPendingReminders();
-  }
+  Future<List<ReminderEntity>> getAllPending() =>
+      _database.remindersDao.getPending();
 
-  /// Get overdue reminders (reminderDate < now and status = pending/overdue)
-  Future<List<ReminderEntity>> getOverdue() async {
-    return await _database.remindersDao.getOverdueReminders();
-  }
+  Future<List<ReminderEntity>> getOverdue() =>
+      _database.remindersDao.getOverdue();
 
-  /// Get reminders for a specific document
   Future<List<ReminderEntity>> getForDocument(int documentId) async {
-    if (documentId <= 0) {
-      throw ArgumentError('Invalid document ID');
-    }
-
-    return await _database.remindersDao.getRemindersForDocument(documentId);
+    if (documentId <= 0) throw ArgumentError('Invalid document ID');
+    return _database.remindersDao.getForSource('document', documentId);
   }
-}
 
+  // Keep the date validator accessible for callers.
+  static void validateRange(DateTime from, DateTime to) =>
+      DateRules.validateDateRange(from, to);
+}

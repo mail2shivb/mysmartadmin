@@ -4,290 +4,246 @@ import '../tables/reminders.dart';
 
 part 'reminders_dao.g.dart';
 
-/// Data Access Object for Reminders
-/// 
-/// Manages reminders for documents and custom alerts
+/// DAO for [Reminders].
+///
+/// Key query pattern: use [firesAt] for "what fires today / this week" — it is
+/// precomputed and indexed so the dashboard query is a single range scan.
+/// [targetDate] holds the actual document date; use it for display only.
 @DriftAccessor(tables: [Reminders])
-class RemindersDao extends DatabaseAccessor<AppDatabase> with _$RemindersDaoMixin {
+class RemindersDao extends DatabaseAccessor<AppDatabase>
+    with _$RemindersDaoMixin {
   RemindersDao(AppDatabase db) : super(db);
 
-  // ============================================================
-  // CREATE
-  // ============================================================
+  // ── CREATE ─────────────────────────────────────────────────────────────────
 
-  /// Create a new reminder
-  Future<int> createReminder(RemindersCompanion reminder) {
-    return into(reminders).insert(reminder);
+  Future<int> createReminder(RemindersCompanion reminder) =>
+      into(reminders).insert(reminder);
+
+  Future<void> createReminders(List<RemindersCompanion> list) async {
+    await batch((b) => b.insertAll(reminders, list));
   }
 
-  /// Create multiple reminders
-  Future<void> createReminders(List<RemindersCompanion> reminderList) async {
-    await batch((batch) {
-      batch.insertAll(reminders, reminderList);
-    });
-  }
+  // ── READ ───────────────────────────────────────────────────────────────────
 
-  // ============================================================
-  // READ
-  // ============================================================
+  Future<ReminderEntity?> getById(int id) =>
+      (select(reminders)
+            ..where((t) => t.id.equals(id))
+            ..where((t) => t.deletedAt.isNull()))
+          .getSingleOrNull();
 
-  /// Get a reminder by ID
-  Future<ReminderEntity?> getReminderById(int id) {
-    return (select(reminders)
-          ..where((t) => t.id.equals(id))
-          ..where((t) => t.deletedAt.isNull()))
-        .getSingleOrNull();
-  }
+  Future<List<ReminderEntity>> getAll() =>
+      (select(reminders)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .get();
 
-  /// Get all reminders
-  Future<List<ReminderEntity>> getAllReminders() {
-    return (select(reminders)
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
-  }
+  /// Reminders for a specific source entity.
+  Future<List<ReminderEntity>> getForSource(
+      String sourceEntityKind, int sourceEntityId) =>
+      (select(reminders)
+            ..where((t) =>
+                t.sourceEntityKind.equals(sourceEntityKind) &
+                t.sourceEntityId.equals(sourceEntityId))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .get();
 
-  /// Get reminders for a specific document
-  Future<List<ReminderEntity>> getRemindersForDocument(int documentId) {
-    return (select(reminders)
-          ..where((t) => t.documentId.equals(documentId))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
-  }
+  Future<List<ReminderEntity>> getByState(String state) =>
+      (select(reminders)
+            ..where((t) => t.state.equals(state))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .get();
 
-  /// Get reminders by status
-  Future<List<ReminderEntity>> getRemindersByStatus(String status) {
-    return (select(reminders)
-          ..where((t) => t.status.equals(status))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
-  }
+  Future<List<ReminderEntity>> getPending() => getByState('pending');
 
-  /// Get pending reminders
-  Future<List<ReminderEntity>> getPendingReminders() {
-    return (select(reminders)
-          ..where((t) => t.status.equals('pending'))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
-  }
-
-  /// Get overdue reminders
-  Future<List<ReminderEntity>> getOverdueReminders() {
+  Future<List<ReminderEntity>> getOverdue() {
     final now = DateTime.now();
     return (select(reminders)
-          ..where((t) => t.reminderDate.isSmallerThanValue(now))
-          ..where((t) => t.status.equals('pending') | t.status.equals('overdue'))
+          ..where((t) => t.firesAt.isSmallerThanValue(now))
+          // 'due' state is retired — only 'pending' is the active state.
+          ..where((t) => t.state.equals('pending'))
           ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
+          ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
         .get();
   }
 
-  /// Get reminders due within a date range
-  Future<List<ReminderEntity>> getRemindersDueBetween(
-    DateTime start,
-    DateTime end,
-  ) {
-    return (select(reminders)
-          ..where((t) => t.reminderDate.isBetweenValues(start, end))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
+  /// Returns actionable reminders that fire in [start, end].
+  ///
+  /// Snoozed reminders are intentionally excluded: their effective fire time
+  /// has been deferred to [snoozedUntil] and they should not surface as
+  /// active in this window until that date passes.
+  Future<List<ReminderEntity>> getFiresBetween(
+      DateTime start, DateTime end) =>
+      (select(reminders)
+            ..where((t) => t.firesAt.isBetweenValues(start, end))
+            ..where((t) => t.deletedAt.isNull())
+            // Exclude terminal/deferred states from upcoming-reminder views.
+            ..where((t) => t.state.isNotIn(
+                const ['snoozed', 'cancelled', 'dismissed', 'completed']))
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .get();
+
+  Future<List<ReminderEntity>> getFiresOnDate(DateTime date) {
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+    return getFiresBetween(start, end);
   }
 
-  /// Get reminders due today
-  Future<List<ReminderEntity>> getRemindersForToday() {
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
-    return getRemindersDueBetween(startOfDay, endOfDay);
-  }
+  // ── Watch ─────────────────────────────────────────────────────────────────
 
-  /// Get recurring reminders
-  Future<List<ReminderEntity>> getRecurringReminders() {
-    return (select(reminders)
-          ..where((t) => t.isRecurring.equals(true))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .get();
-  }
+  Stream<List<ReminderEntity>> watchAll() =>
+      (select(reminders)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .watch();
 
-  /// Stream all reminders
-  Stream<List<ReminderEntity>> watchAllReminders() {
-    return (select(reminders)
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .watch();
-  }
+  Stream<List<ReminderEntity>> watchPending() =>
+      (select(reminders)
+            ..where((t) => t.state.equals('pending'))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .watch();
 
-  /// Stream pending reminders
-  Stream<List<ReminderEntity>> watchPendingReminders() {
-    return (select(reminders)
-          ..where((t) => t.status.equals('pending'))
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([(t) => OrderingTerm.asc(t.reminderDate)]))
-        .watch();
-  }
+  Stream<List<ReminderEntity>> watchForSource(
+      String sourceEntityKind, int sourceEntityId) =>
+      (select(reminders)
+            ..where((t) =>
+                t.sourceEntityKind.equals(sourceEntityKind) &
+                t.sourceEntityId.equals(sourceEntityId))
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.firesAt)]))
+          .watch();
 
-  // ============================================================
-  // UPDATE
-  // ============================================================
+  // ── UPDATE ─────────────────────────────────────────────────────────────────
 
-  /// Update a reminder
-  Future<bool> updateReminder(ReminderEntity reminder) {
-    return update(reminders).replace(reminder);
-  }
+  Future<bool> updateReminder(ReminderEntity reminder) =>
+      update(reminders).replace(reminder);
 
-  /// Mark reminder as completed
-  Future<int> completeReminder(int id) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      RemindersCompanion(
-        status: const Value('completed'),
-        completedAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
-  }
-
-  /// Snooze a reminder
-  Future<int> snoozeReminder(int id, DateTime snoozeUntil) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      RemindersCompanion(
-        status: const Value('snoozed'),
-        snoozeUntil: Value(snoozeUntil),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
-  }
-
-  /// Mark reminder as overdue
-  Future<int> markAsOverdue(int id) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      RemindersCompanion(
-        status: const Value('overdue'),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
-  }
-
-  /// Update reminder date
-  Future<int> updateReminderDate(int id, DateTime newDate) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      RemindersCompanion(
-        reminderDate: Value(newDate),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
-  }
-
-  // ============================================================
-  // DELETE
-  // ============================================================
-
-  /// Soft delete a reminder
-  Future<int> softDeleteReminder(int id) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      RemindersCompanion(
-        deletedAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
-  }
-
-  /// Hard delete a reminder
-  Future<int> hardDeleteReminder(int id) {
-    return (delete(reminders)..where((t) => t.id.equals(id))).go();
-  }
-
-  /// Restore a soft deleted reminder
-  Future<int> restoreReminder(int id) {
-    return (update(reminders)..where((t) => t.id.equals(id))).write(
-      const RemindersCompanion(
-        deletedAt: Value(null),
-      ),
-    );
-  }
-
-  // ============================================================
-  // STATISTICS
-  // ============================================================
-
-  /// Count reminders by status
-  Future<int> countRemindersByStatus(String status) async {
-    final query = selectOnly(reminders)
-      ..addColumns([reminders.id.count()])
-      ..where(reminders.status.equals(status))
-      ..where(reminders.deletedAt.isNull());
-
-    final result = await query.getSingle();
-    return result.read(reminders.id.count()) ?? 0;
-  }
-
-  /// Count pending reminders
-  Future<int> countPendingReminders() async {
-    return countRemindersByStatus('pending');
-  }
-
-  /// Count overdue reminders
-  Future<int> countOverdueReminders() async {
-    final now = DateTime.now();
-    final query = selectOnly(reminders)
-      ..addColumns([reminders.id.count()])
-      ..where(reminders.reminderDate.isSmallerThanValue(now))
-      ..where(reminders.status.equals('pending') | reminders.status.equals('overdue'))
-      ..where(reminders.deletedAt.isNull());
-
-    final result = await query.getSingle();
-    return result.read(reminders.id.count()) ?? 0;
-  }
-
-  /// Cancel bill reminders for a specific bill
-  /// 
-  /// Uses description field pattern [ENTITY:bill:$billId] for matching
-  Future<void> cancelBillReminders(int billId) async {
-    // Get bill_due reminders that are not completed/cancelled
-    final candidates = await (select(reminders)
-          ..where((r) => r.reminderType.equals('bill_due'))
-          ..where((r) => r.deletedAt.isNull())
-          ..where((r) => r.status.isNotIn(['completed', 'cancelled'])))
-        .get();
-
-    // Filter by entity identifier in description
-    final billReminders = candidates.where(
-      (r) => r.description != null && 
-             r.description!.contains('[ENTITY:bill:$billId]'),
-    );
-
-    // Cancel each matching reminder
-    for (final reminder in billReminders) {
-      await (update(reminders)..where((t) => t.id.equals(reminder.id))).write(
+  Future<int> complete(int id) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
         RemindersCompanion(
-          status: const Value('cancelled'),
+          state: const Value('completed'),
+          completedAt: Value(DateTime.now()),
           updatedAt: Value(DateTime.now()),
         ),
       );
-    }
-  }
 
-  Future<void> cancelRemindersForEntity({
-    required String entityType,
-    required int entityId,
-  }) async {
+  Future<int> snooze(int id, DateTime until) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
+        RemindersCompanion(
+          state: const Value('snoozed'),
+          snoozedUntil: Value(until),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+  Future<int> dismiss(int id) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
+        RemindersCompanion(
+          state: const Value('dismissed'),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+  Future<int> updateTargetDate(int id, DateTime newDate,
+      {required DateTime newFiresAt}) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
+        RemindersCompanion(
+          targetDate: Value(newDate),
+          firesAt: Value(newFiresAt),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+  // ── DELETE ─────────────────────────────────────────────────────────────────
+
+  Future<int> softDelete(int id) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
+        RemindersCompanion(
+          deletedAt: Value(DateTime.now()),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+  Future<int> hardDelete(int id) =>
+      (delete(reminders)..where((t) => t.id.equals(id))).go();
+
+  Future<int> restore(int id) =>
+      (update(reminders)..where((t) => t.id.equals(id))).write(
+        const RemindersCompanion(deletedAt: Value(null)),
+      );
+
+  /// Soft-cascade: when a source record is deleted, dismiss its reminders.
+  Future<void> dismissForSource(
+      String sourceEntityKind, int sourceEntityId) async {
+    final now = DateTime.now();
     await (update(reminders)
-      ..where((r) =>
-      r.entityType.equals(entityType) &
-      r.entityId.equals(entityId) &
-      r.deletedAt.isNull() &
-      r.status.isNotIn(['completed', 'cancelled'])))
-        .write(
-      RemindersCompanion(
-        status: const Value('cancelled'),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
+          ..where((t) =>
+              t.sourceEntityKind.equals(sourceEntityKind) &
+              t.sourceEntityId.equals(sourceEntityId))
+          ..where((t) => t.deletedAt.isNull())
+          ..where((t) => t.state.isNotIn(['completed', 'dismissed'])))
+        .write(RemindersCompanion(
+      state: const Value('dismissed'),
+      updatedAt: Value(now),
+    ));
   }
 
-}
+  /// Cancel all active reminders for a source (e.g. bill deleted).
+  Future<void> cancelForSource(
+      String sourceEntityKind, int sourceEntityId) async {
+    final now = DateTime.now();
+    await (update(reminders)
+          ..where((t) =>
+              t.sourceEntityKind.equals(sourceEntityKind) &
+              t.sourceEntityId.equals(sourceEntityId))
+          ..where((t) => t.deletedAt.isNull())
+          ..where((t) => t.state.isNotIn(['completed', 'cancelled', 'dismissed'])))
+        .write(RemindersCompanion(
+      state: const Value('cancelled'),
+      updatedAt: Value(now),
+    ));
+  }
 
+  // ── STATISTICS ─────────────────────────────────────────────────────────────
+
+  Future<int> countByState(String state) async {
+    final q = selectOnly(reminders)
+      ..addColumns([reminders.id.count()])
+      ..where(reminders.state.equals(state))
+      ..where(reminders.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(reminders.id.count()) ?? 0;
+  }
+
+  Future<int> countPending() => countByState('pending');
+
+  Future<int> countOverdue() async {
+    final now = DateTime.now();
+    final q = selectOnly(reminders)
+      ..addColumns([reminders.id.count()])
+      ..where(reminders.firesAt.isSmallerThanValue(now))
+      // 'due' state is retired; 'pending' is the only active state.
+      ..where(reminders.state.equals('pending'))
+      ..where(reminders.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(reminders.id.count()) ?? 0;
+  }
+
+  /// Count of reminders that need user attention: pending and not soft-deleted.
+  ///
+  /// "Actionable" means the reminder is in the only active state ('pending'),
+  /// is not soft-deleted, and is not snoozed. This is the number surfaced on
+  /// dashboard badges and notification counts.
+  Future<int> countActionable() async {
+    final q = selectOnly(reminders)
+      ..addColumns([reminders.id.count()])
+      ..where(reminders.state.equals('pending'))
+      ..where(reminders.snoozedUntil.isNull() |
+          reminders.snoozedUntil.isSmallerThanValue(DateTime.now()))
+      ..where(reminders.deletedAt.isNull());
+    final r = await q.getSingle();
+    return r.read(reminders.id.count()) ?? 0;
+  }
+}

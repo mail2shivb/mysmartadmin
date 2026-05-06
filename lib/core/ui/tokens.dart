@@ -24,6 +24,9 @@ class AppSpacing {
 
   /// Extra extra large spacing: 32dp
   static const double xxl = 32.0;
+
+  /// Section gap spacing: 48dp (between major sections)
+  static const double sectionGap = 48.0;
 }
 
 /// Design tokens for border radius
