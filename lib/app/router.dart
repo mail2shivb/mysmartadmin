@@ -213,22 +213,24 @@ class AppRouter {
   );
 
   /// Get the bottom nav index for a given location.
-  /// Layout: 0=Home, 1=Vault, 2=FAB(centre), 3=Reminders, 4=Reports
+  /// Layout: 0=Dashboard, 1=Bills, 2=Documents, 3=Reminders, 4=Tasks
   static int getIndexForLocation(String location) {
     if (location.startsWith(home)) return 0;
-    if (location.startsWith(vault)) return 1;
+    if (location.startsWith(bills)) return 1;
+    if (location.startsWith(documents)) return 2;
     if (location.startsWith(reminders)) return 3;
-    if (location.startsWith(reports)) return 4;
+    if (location.startsWith(tasks)) return 4;
     return 0;
   }
 
-  /// Get the location for a given bottom nav index
+  /// Get the location for a given bottom nav index.
   static String getLocationForIndex(int index) {
     switch (index) {
       case 0: return home;
-      case 1: return vault;
+      case 1: return bills;
+      case 2: return documents;
       case 3: return reminders;
-      case 4: return reports;
+      case 4: return tasks;
       default: return home;
     }
   }

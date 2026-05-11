@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'router.dart';
 import '../core/proto_theme/app_colors.dart';
-import '../shared/widgets/proto_bottom_nav_bar.dart';
 
-/// Shell scaffold — wraps each tab with the bottom nav bar.
+/// Shell scaffold — wraps each tab with the original mysmartadmin bottom nav.
+/// Navigation: Dashboard | Bills | Documents | Reminders | Tasks
 class ShellScaffold extends StatelessWidget {
   final String location;
   final Widget child;
@@ -15,19 +15,60 @@ class ShellScaffold extends StatelessWidget {
     required this.child,
   });
 
+  static const _destinations = <NavigationDestination>[
+    NavigationDestination(
+      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Icons.home_rounded),
+      label: 'Dashboard',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.receipt_long_outlined),
+      selectedIcon: Icon(Icons.receipt_long_rounded),
+      label: 'Bills',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.description_outlined),
+      selectedIcon: Icon(Icons.description_rounded),
+      label: 'Documents',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.notifications_outlined),
+      selectedIcon: Icon(Icons.notifications_rounded),
+      label: 'Reminders',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.task_alt_outlined),
+      selectedIcon: Icon(Icons.task_alt_rounded),
+      label: 'Tasks',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final currentIndex = AppRouter.getIndexForLocation(location);
+    final showFab = currentIndex == 0 || currentIndex == 2;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF5B1B73),
+      backgroundColor: Colors.white,
       body: child,
-      bottomNavigationBar: ProtoBottomNavBar(
-        currentIndex: currentIndex,
-        onTabSelected: (index) {
+      floatingActionButton: showFab
+          ? FloatingActionButton(
+              backgroundColor: AppColors.primaryPurple,
+              foregroundColor: Colors.white,
+              onPressed: () => _showAddSheet(context),
+              child: const Icon(Icons.add_rounded),
+            )
+          : null,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentIndex,
+        onDestinationSelected: (index) {
           context.go(AppRouter.getLocationForIndex(index));
         },
-        onAddPressed: () => _showAddSheet(context),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        indicatorColor: AppColors.paleLavender,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        destinations: _destinations,
       ),
     );
   }
