@@ -1,16 +1,10 @@
-// B4.3.1 STATUS: IMPLEMENTED
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'router.dart';
-import '../core/ui/components/app_scaffold.dart';
+import '../shared/widgets/proto_bottom_nav_bar.dart';
 
-/// Shell scaffold with bottom navigation bar
-/// 
-/// Features:
-/// - Material 3 NavigationBar with 5 tabs
-/// - Settings icon in AppBar for Home, Documents, and Tasks
-/// - Tab switching updates routes correctly
+/// Shell scaffold — wraps each tab with the prototype bottom nav.
+/// Each screen owns its own header via PageScaffold (purple strip + white sheet).
 class ShellScaffold extends StatelessWidget {
   final String location;
   final Widget child;
@@ -24,87 +18,87 @@ class ShellScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = AppRouter.getIndexForLocation(location);
-    // Documents supplies its own AppBar (with inline add-mode toggle), so it
-    // must not receive a second AppBar from ShellScaffold.
-    final showAddAction = location == AppRouter.home;
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
-    final navBar = Container(
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: isDark 
-              ? theme.colorScheme.outline.withOpacity(0.1)
-              : theme.colorScheme.outline.withOpacity(0.08),
-            width: 0.5,
-          ),
-        ),
-      ),
-      child: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          final targetLocation = AppRouter.getLocationForIndex(index);
-          context.go(targetLocation);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: child,
+      bottomNavigationBar: ProtoBottomNavBar(
+        currentIndex: currentIndex,
+        onTabSelected: (index) {
+          context.go(AppRouter.getLocationForIndex(index));
         },
-        elevation: 0,
-        backgroundColor: theme.colorScheme.surface,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.receipt_outlined),
-            selectedIcon: Icon(Icons.receipt),
-            label: 'Bills',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.description_outlined),
-            selectedIcon: Icon(Icons.description),
-            label: 'Documents',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.notifications_outlined),
-            selectedIcon: Icon(Icons.notifications),
-            label: 'Reminders',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.task_outlined),
-            selectedIcon: Icon(Icons.task),
-            label: 'Tasks',
-          ),
-        ],
+        onAddPressed: () => _showAddSheet(context),
       ),
     );
-    
-    if (!showAddAction) {
-      return Scaffold(
-        body: child,
-        bottomNavigationBar: navBar,
-      );
-    }
+  }
 
-    final title = location == AppRouter.documents ? 'Documents' : 'Dashboard';
-
-    // Dashboard uses an inner SafeArea; remove top padding so AppBar spacing is consistent.
-    final wrappedBody = location == AppRouter.home
-        ? MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: child,
-          )
-        : child;
-
-    return AppScaffold(
-      appBar: AppBar(
-        title: Text(title),
+  void _showAddSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      showAddAction: true,
-      useSafeArea: false,
-      body: wrappedBody,
-      bottomNavigationBar: navBar,
+      builder: (_) => const _AddActionSheet(),
+    );
+  }
+}
+
+class _AddActionSheet extends StatelessWidget {
+  const _AddActionSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      (Icons.description_rounded, 'Add document',
+          AppRouter.addDocument),
+      (Icons.receipt_long_rounded, 'Add bill', AppRouter.bills),
+      (Icons.notifications_rounded, 'Add reminder', AppRouter.reminders),
+    ];
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('Add new',
+                style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w700,
+                  color: Color(0xFF1E1233),
+                )),
+            const SizedBox(height: 16),
+            for (final item in items)
+              ListTile(
+                leading: Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3ECFF),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(item.$1, color: const Color(0xFF7C3AED)),
+                ),
+                title: Text(item.$2,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.go(item.$3);
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

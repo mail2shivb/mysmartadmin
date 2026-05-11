@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'shell_scaffold.dart';
 import '../presentation/screens/dashboard_screen.dart' as b13;
-import '../presentation/screens/reminders_screen.dart' as b13;
 import '../presentation/screens/reports_screen.dart' as b13;
 import '../presentation/screens/policies_screen.dart' as b13;
+import '../features/reminders/reminders_screen.dart';
 import '../features/bills/bills_screen.dart';
+import '../features/documents/documents_hub_screen.dart';
 import '../features/documents/documents_functional_screen.dart';
 import '../features/documents/add_document_screen.dart';
 import '../features/documents/document_types.dart';
 import '../features/documents/driving_licence/driving_licence_list_screen.dart';
 import '../features/documents/passport/passport_list_screen.dart';
+import '../features/home/home_dashboard_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/vault/vault_explorer_screen.dart';
@@ -77,11 +79,11 @@ class AppRouter {
           );
         },
         routes: [
-          // Dashboard tab (B13)
+          // Dashboard tab — prototype HomeDashboardScreen
           GoRoute(
             path: home,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: b13.DashboardScreen(),
+              child: HomeDashboardScreen(),
             ),
           ),
           
@@ -93,19 +95,19 @@ class AppRouter {
             ),
           ),
           
-          // Documents tab
+          // Documents tab — prototype hub layout
           GoRoute(
             path: documents,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: DocumentsFunctionalScreen(),
+              child: DocumentsHubScreen(),
             ),
           ),
           
-          // Reminders tab (B13)
+          // Reminders tab — prototype RemindersScreen
           GoRoute(
             path: reminders,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: b13.RemindersScreen(),
+              child: RemindersScreen(),
             ),
           ),
           
@@ -212,42 +214,24 @@ class AppRouter {
     ],
   );
 
-  /// Get the bottom nav index for a given location
+  /// Get the bottom nav index for a given location.
+  /// Layout: 0=Dashboard, 1=Bills, 2=FAB(centre), 3=Documents, 4=Reminders
   static int getIndexForLocation(String location) {
-    switch (location) {
-      case home:
-        return 0;
-      case bills:
-        return 1;
-      case documents:
-        return 2;
-      case reminders:
-        return 3;
-      case tasks:
-        return 4;
-      // reports and policies are accessible routes but not in bottom nav
-      case reports:
-      case policies:
-      default:
-        return 0;
-    }
+    if (location.startsWith(home)) return 0;
+    if (location.startsWith(bills)) return 1;
+    if (location.startsWith(documents)) return 3;
+    if (location.startsWith(reminders)) return 4;
+    return 0;
   }
 
   /// Get the location for a given bottom nav index
   static String getLocationForIndex(int index) {
     switch (index) {
-      case 0:
-        return home;
-      case 1:
-        return bills;
-      case 2:
-        return documents;
-      case 3:
-        return reminders;
-      case 4:
-        return tasks;
-      default:
-        return home;
+      case 0: return home;
+      case 1: return bills;
+      case 3: return documents;
+      case 4: return reminders;
+      default: return home;
     }
   }
 }

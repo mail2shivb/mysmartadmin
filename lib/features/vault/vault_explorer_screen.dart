@@ -1,117 +1,123 @@
+// REBUILT: prototype-faithful VaultExplorerScreen
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/taxonomy/canonical_taxonomy.dart';
-import '../../core/ui/components/app_scaffold.dart';
-import '../../core/ui/components/ledger_components.dart';
-import '../../core/ui/tokens.dart';
+import '../../app/router.dart';
+import '../../core/proto_theme/app_colors.dart';
+import '../../core/proto_theme/app_radius.dart';
+import '../../core/proto_theme/app_spacing.dart';
+import '../../core/proto_theme/app_text_styles.dart';
+import '../../shared/widgets/colourful_icon_tile.dart';
+import '../../shared/widgets/page_scaffold.dart';
 
-/// Vault Explorer — browse all domain categories.
-///
-/// Data comes from [canonicalDomains]; tapping a tile navigates to the
-/// [CategoryDetailScreen] for that domain.
+/// Vault Explorer — prototype-faithful category grid with search bar.
 class VaultExplorerScreen extends StatelessWidget {
   const VaultExplorerScreen({super.key});
 
+  static const _categories = [
+    (Icons.badge_rounded,          'Identity & Legal',     AppColors.paleLavender),
+    (Icons.home_rounded,           'Home & Property',      AppColors.tileBlue),
+    (Icons.directions_car_rounded, 'Vehicles',             AppColors.tileGreen),
+    (Icons.account_balance_rounded,'Banking & Credit',     AppColors.tileSlate),
+    (Icons.shield_rounded,         'Insurance',            AppColors.tileCoral),
+    (Icons.receipt_long_rounded,   'Bills & Utilities',    AppColors.tileAmber),
+    (Icons.work_rounded,           'Work & Income',        AppColors.tileIndigo),
+    (Icons.people_rounded,         'People & Family',      AppColors.tileBrown),
+  ];
+
+  static const _categoryIds = [
+    'identity_legal',
+    'home_property',
+    'vehicles_transport',
+    'banking_credit',
+    'insurance',
+    'bills_utilities',
+    'work_income_tax',
+    'person_family',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppBar(title: const Text('Vault')),
-      enableScroll: true,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return PageScaffold(
+      title: 'Vault',
+      subtitle: 'Your secure records, on this device',
+      child: ListView(
+        padding: const EdgeInsets.all(ProtoSpacing.lg),
         children: [
-          SlackStyleHeader(
-            title: 'Your Vault',
-            subtitle: 'All your records in one place',
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: AppSpacing.sm,
-                crossAxisSpacing: AppSpacing.sm,
-                childAspectRatio: 1.25,
+          // ── Search bar ─────────────────────────────────────────────────
+          GestureDetector(
+            onTap: () => context.go(AppRouter.search),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: ProtoSpacing.md, vertical: ProtoSpacing.md,
               ),
-              itemCount: canonicalDomains.length,
-              itemBuilder: (context, i) {
-                final domain = canonicalDomains[i];
-                return _DomainTile(domain: domain);
-              },
+              decoration: BoxDecoration(
+                color: AppColors.softLavender,
+                borderRadius: BorderRadius.circular(ProtoRadius.md),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.search, color: AppColors.textMuted),
+                  SizedBox(width: ProtoSpacing.sm),
+                  Text('Search records, people, bills…',
+                      style: AppTextStyles.bodySecondary),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: AppSpacing.xl),
+
+          const SizedBox(height: ProtoSpacing.lg),
+
+          // ── Category grid ──────────────────────────────────────────────
+          Text('Categories', style: AppTextStyles.title),
+          const SizedBox(height: ProtoSpacing.sm),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: ProtoSpacing.sm,
+            crossAxisSpacing: ProtoSpacing.sm,
+            childAspectRatio: 1.5,
+            children: List.generate(_categories.length, (i) {
+              final (icon, label, tint) = _categories[i];
+              final categoryId = _categoryIds[i];
+              return ColourfulIconTile(
+                icon: icon,
+                label: label,
+                tint: tint,
+                onTap: () => context.go(
+                  '/vault/category/$categoryId',
+                ),
+              );
+            }),
+          ),
+
+          const SizedBox(height: ProtoSpacing.lg),
+
+          // ── Review queue ───────────────────────────────────────────────
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              width: 44, height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.paleLavender,
+                borderRadius: BorderRadius.circular(ProtoRadius.md),
+              ),
+              child: const Icon(Icons.fact_check_rounded,
+                  color: AppColors.deepPurple),
+            ),
+            title: const Text('Review queue',
+                style: AppTextStyles.title),
+            subtitle: const Text('Items waiting for your review',
+                style: AppTextStyles.bodySecondary),
+            trailing: const Icon(Icons.chevron_right,
+                color: AppColors.textMuted),
+            onTap: () => context.go(AppRouter.documents),
+          ),
+
+          const SizedBox(height: ProtoSpacing.xxxl),
         ],
-      ),
-    );
-  }
-}
-
-class _DomainTile extends StatelessWidget {
-  final DomainDescriptor domain;
-  const _DomainTile({required this.domain});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final bg = domain.iconBackground(cs);
-    final fg = domain.iconColor(cs);
-
-    return Material(
-      color: cs.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(AppRadius.md),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        onTap: () {
-          if (domain.featureRoute != null) {
-            context.go(domain.featureRoute!);
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(
-              color: cs.outlineVariant,
-              width: 0.5,
-            ),
-          ),
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: bg,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
-                child: Icon(domain.icon, color: fg, size: 20),
-              ),
-              const Spacer(),
-              Text(
-                domain.displayName,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: cs.onSurface,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'View records',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

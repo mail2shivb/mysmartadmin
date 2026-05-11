@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../core/database_provider.dart';
-import '../../core/taxonomy/canonical_taxonomy.dart';
-import '../../core/ui/components/app_scaffold.dart';
-import '../../core/ui/components/ledger_components.dart';
-import '../../core/ui/tokens.dart';
+import '../../core/proto_theme/app_colors.dart';
+import '../../core/proto_theme/app_radius.dart';
+import '../../core/proto_theme/app_spacing.dart';
+import '../../core/proto_theme/app_text_styles.dart';
 import '../../data/local/app_database.dart';
+import '../../shared/widgets/page_scaffold.dart';
+import '../../shared/widgets/proto_app_card.dart';
+import '../../shared/widgets/proto_empty_state.dart';
 
 /// Full-text search screen — uses the FTS5 index in [AppDatabase.ftsSearch].
 ///
@@ -53,128 +56,153 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-
-    return AppScaffold(
-      appBar: AppBar(title: const Text('Search')),
-      body: Column(
+    return PageScaffold(
+      title: 'Search',
+      subtitle: 'Results across your vault',
+      child: Column(
         children: [
-          // ── Search bar ─────────────────────────────────────────────────────
+          // ── Search input ──────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
-            child: SearchBar(
-              controller: _controller,
-              hintText: 'Search your records…',
-              leading: const Icon(Icons.search),
-              trailing: [
-                if (_controller.text.isNotEmpty)
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    tooltip: 'Clear',
-                    onPressed: () {
-                      _controller.clear();
-                      _search('');
-                    },
+                ProtoSpacing.lg, ProtoSpacing.lg, ProtoSpacing.lg, 0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.cardSurface,
+                borderRadius: BorderRadius.circular(ProtoRadius.md),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ProtoSpacing.md),
+                    child: Icon(Icons.search, color: AppColors.textMuted),
                   ),
-              ],
-              onChanged: _search,
-              onSubmitted: _search,
-              elevation: const WidgetStatePropertyAll(0),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      autofocus: false,
+                      decoration: const InputDecoration(
+                        hintText: 'Search records, bills, documents…',
+                        hintStyle: AppTextStyles.bodySecondary,
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: ProtoSpacing.md),
+                      ),
+                      onChanged: _search,
+                      onSubmitted: _search,
+                    ),
+                  ),
+                  if (_controller.text.isNotEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.close,
+                          color: AppColors.textMuted, size: 20),
+                      onPressed: () {
+                        _controller.clear();
+                        _search('');
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
 
-          // ── Suggestions / results ──────────────────────────────────────────
-          Expanded(
-            child: _buildBody(theme, cs),
-          ),
+          // ── Results / suggestions ─────────────────────────────────────
+          Expanded(child: _buildBody()),
         ],
       ),
     );
   }
 
-  Widget _buildBody(ThemeData theme, ColorScheme cs) {
+  Widget _buildBody() {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    // Nothing typed yet — show quick suggestion chips
-    if (_results == null) {
-      return _buildSuggestions(theme, cs);
-    }
-
-    if (_results!.isEmpty) {
-      return EmptyStateCard(
-        icon: Icons.search_off_rounded,
-        heading: 'No results for "$_lastQuery"',
-        body: 'Try a document title, type, or field value.',
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryPurple),
       );
     }
-
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+    if (_results == null) return _buildSuggestions();
+    if (_results!.isEmpty) {
+      return ProtoEmptyState(
+        icon: Icons.search_off_rounded,
+        title: 'No results for "$_lastQuery"',
+        message: 'Try a document title, type, or field value.',
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(ProtoSpacing.lg),
       itemCount: _results!.length,
-      separatorBuilder: (_, _) => const SizedBox.shrink(),
       itemBuilder: (context, i) {
         final doc = _results![i];
-        final domain = _domainFor(doc.domainId);
-        final cs2 = Theme.of(context).colorScheme;
-        return ListRow(
-          icon: domain?.icon ?? Icons.description_outlined,
-          iconColor: domain?.iconColor(cs2) ?? cs2.onSurfaceVariant,
-          iconBackground: domain?.iconBackground(cs2) ?? cs2.surfaceContainer,
-          title: doc.title,
-          subtitle: '${doc.documentTypeId}  ·  ${doc.domainId}',
-          showDivider: i < _results!.length - 1,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
+          child: ProtoAppCard(
+            padding: const EdgeInsets.all(ProtoSpacing.md),
+            child: Row(
+              children: [
+                Container(
+                  width: 40, height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.paleLavender,
+                    borderRadius: BorderRadius.circular(ProtoRadius.md),
+                  ),
+                  child: const Icon(Icons.description_rounded,
+                      color: AppColors.deepPurple, size: 20),
+                ),
+                const SizedBox(width: ProtoSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(doc.title,
+                          style: AppTextStyles.title.copyWith(fontSize: 15)),
+                      Text(doc.documentTypeId ?? '',
+                          style: AppTextStyles.bodySecondary),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: AppColors.textMuted),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildSuggestions(ThemeData theme, ColorScheme cs) {
+  Widget _buildSuggestions() {
     const suggestions = [
-      'passport',
-      'driving licence',
-      'expires this month',
-      'insurance',
-      'mortgage',
-      'subscription',
+      (Icons.book_rounded, 'Passport'),
+      (Icons.directions_car_rounded, 'Driving licence'),
+      (Icons.receipt_long_rounded, 'Bills'),
+      (Icons.shield_rounded, 'Insurance'),
+      (Icons.home_rounded, 'Property'),
+      (Icons.subscriptions_rounded, 'Subscriptions'),
     ];
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SectionTitle('Suggestions'),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: suggestions.map((s) {
-              return ActionChip(
-                label: Text(s),
-                avatar: Icon(Icons.search, size: 14,
-                    color: cs.onSurfaceVariant),
-                onPressed: () {
-                  _controller.text = s;
-                  _controller.selection = TextSelection.collapsed(
-                      offset: s.length);
-                  _search(s);
-                },
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+    return ListView(
+      padding: const EdgeInsets.all(ProtoSpacing.lg),
+      children: [
+        const Text('Try searching for…', style: AppTextStyles.title),
+        const SizedBox(height: ProtoSpacing.sm),
+        Wrap(
+          spacing: ProtoSpacing.sm,
+          runSpacing: ProtoSpacing.sm,
+          children: suggestions.map((s) {
+            final (icon, label) = s;
+            return ActionChip(
+              avatar: Icon(icon, size: 16, color: AppColors.deepPurple),
+              label: Text(label, style: AppTextStyles.bodySecondary),
+              backgroundColor: AppColors.paleLavender,
+              side: const BorderSide(color: AppColors.border),
+              onPressed: () {
+                _controller.text = label;
+                _controller.selection =
+                    TextSelection.collapsed(offset: label.length);
+                _search(label);
+              },
+            );
+          }).toList(),
+        ),
+      ],
     );
-  }
-
-  DomainDescriptor? _domainFor(String? domainId) {
-    if (domainId == null) return null;
-    try {
-      return canonicalDomains.firstWhere((d) => d.id == domainId);
-    } catch (_) {
-      return null;
-    }
   }
 }
