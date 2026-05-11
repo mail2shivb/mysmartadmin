@@ -1,0 +1,17 @@
+name: ledgerai
+description: LedgerAI — secure private life-admin vault.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  go_router: ^14.0.0
+  google_fonts: ^6.2.1
+
+flutter:
+  uses-material-design: true

@@ -90,6 +90,7 @@ class _DocumentsFunctionalScreenState
 
   UploadAreaState _uploadState = UploadAreaState.idle;
   String? _pickedFileName;
+  String? _extractionNotice;
 
   @override
   void dispose() {
@@ -252,6 +253,7 @@ class _DocumentsFunctionalScreenState
       if (!mounted) return;
       setState(() {
         _uploadState = UploadAreaState.done;
+        _extractionNotice = extracted.notice;
         _populateFromResult(extracted);
       });
     } catch (e) {
@@ -640,6 +642,8 @@ class _DocumentsFunctionalScreenState
         const Divider(height: 1),
         const SizedBox(height: AppSpacing.lg),
 
+        if (_extractionNotice != null) ..._buildNoticeBanner(_extractionNotice!, theme),
+
         _FormSectionLabel('Document label'),
         const SizedBox(height: AppSpacing.xs),
         TextFormField(
@@ -696,6 +700,48 @@ class _DocumentsFunctionalScreenState
         const SizedBox(height: AppSpacing.xs),
       ],
     );
+  }
+
+  // ── Extraction notice banner ────────────────────────────────────────────────
+
+  List<Widget> _buildNoticeBanner(String message, ThemeData theme) {
+    return [
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          border: Border.all(
+            color: theme.colorScheme.secondary.withValues(alpha: 0.25),
+            width: 0.5,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.info_outline_rounded,
+              size: 16,
+              color: theme.colorScheme.secondary,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(
+                message,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: AppSpacing.md),
+    ];
   }
 }
 

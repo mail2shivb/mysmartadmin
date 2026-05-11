@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/ui/colour_variant.dart';
 import '../../core/ui/tokens.dart';
 import '../../core/ui/typography.dart';
 import '../../core/ui/components/app_scaffold.dart';
@@ -37,8 +38,12 @@ class SettingsScreen extends StatelessWidget {
           // Appearance Section
           const SectionHeader(title: 'Look and Feel'),
           
-          // Theme Mode (ONLY user control)
+          // Theme Mode
           _ThemeModeSection(appearance: appearance),
+          const SizedBox(height: AppSpacing.lg),
+
+          // Colour Variant
+          _ColourVariantSection(appearance: appearance),
           const SizedBox(height: AppSpacing.xxl),
 
           // Privacy Section
@@ -159,3 +164,36 @@ class _ThemeModeOption extends StatelessWidget {
   }
 }
 
+// ── Colour variant section ──────────────────────────────────────────────────
+
+class _ColourVariantSection extends StatelessWidget {
+  final dynamic appearance;
+  const _ColourVariantSection({required this.appearance});
+
+  @override
+  Widget build(BuildContext context) {
+    final current = appearance.colourVariant as AppColourVariant;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Colour Palette',
+          style: AppTypography.labelMedium(context).copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        for (final variant in AppColourVariant.values)
+          InsightCard(
+            leadingIcon: variant.icon,
+            title: variant.displayName,
+            subtitle: variant.description,
+            trailingIcon:
+                current == variant ? Icons.check_circle : null,
+            onTap: () => appearance.setColourVariant(variant),
+            margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+          ),
+      ],
+    );
+  }
+}

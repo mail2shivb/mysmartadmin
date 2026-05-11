@@ -46,6 +46,15 @@ dependencies:
   file_picker: ^11.0.2
   image_picker: ^1.2.1
 
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # On-device OCR (Android/iOS only; desktop uses manual fallback)
+  google_mlkit_text_recognition: ^0.14.0
+
+  # Local key-value storage for profile/settings
+  shared_preferences: ^2.3.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../core/ui/appearance_controller.dart';
 import '../core/ui/app_theme_data.dart';
+import '../core/ui/colour_variant.dart';
 import '../core/ui/theme_inherited_widget.dart';
 import '../presentation/theme/app_theme.dart';
 import 'router.dart';
@@ -32,6 +33,7 @@ class _LedgerAppState extends State<LedgerApp> with WidgetsBindingObserver {
     _appearanceController = AppearanceController();
     _systemBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
     WidgetsBinding.instance.addObserver(this);
+    _appearanceController.loadPreferences();
   }
 
   @override
@@ -56,21 +58,28 @@ class _LedgerAppState extends State<LedgerApp> with WidgetsBindingObserver {
     return ListenableBuilder(
       listenable: _appearanceController,
       builder: (context, _) {
-        // Determine which theme to use based on theme mode and system brightness
+        // Determine which theme to use based on mode, variant, and system brightness
         final isDark = _appearanceController.themeMode == ThemeMode.dark ||
             (_appearanceController.themeMode == ThemeMode.system &&
                 (_systemBrightness ?? Brightness.light) == Brightness.dark);
-        
+
+        final isLavender =
+            _appearanceController.colourVariant == AppColourVariant.lavender;
+
         final currentTheme = isDark
             ? AppThemeData.dark()
             : AppThemeData.light();
-        
+
+        final lightTheme =
+            isLavender ? AppTheme.lavenderLight() : AppTheme.light();
+        final darkTheme =
+            isLavender ? AppTheme.lavenderDark() : AppTheme.dark();
+
         return MaterialApp.router(
           title: 'LedgerAI',
           debugShowCheckedModeBanner: false,
-          // F1 Design System: Production-grade calm UI
-          theme: AppTheme.light(),
-          darkTheme: AppTheme.dark(),
+          theme: lightTheme,
+          darkTheme: darkTheme,
           themeMode: _appearanceController.themeMode,
           routerConfig: AppRouter.router,
           builder: (context, child) {

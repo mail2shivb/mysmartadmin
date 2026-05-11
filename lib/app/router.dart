@@ -13,6 +13,9 @@ import '../features/documents/driving_licence/driving_licence_list_screen.dart';
 import '../features/documents/passport/passport_list_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/vault/vault_explorer_screen.dart';
+import '../features/vault/category_detail_screen.dart';
+import '../features/search/search_screen.dart';
 
 /// Application router configuration using go_router
 /// 
@@ -48,6 +51,9 @@ class AppRouter {
   static const String query = '/query';
   static const String tasks = '/tasks';
   static const String settings = '/settings';
+  static const String vault = '/vault';
+  static const String vaultCategory = '/vault/category/:domainId';
+  static const String search = '/search';
   static const String passportList = '/passport';
   static const String passportAdd = '/passport/add';
   static const String drivingLicenceList = '/driving-licence';
@@ -124,6 +130,33 @@ class AppRouter {
             path: tasks,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: TasksScreen(),
+            ),
+          ),
+
+          // Vault explorer (in shell)
+          GoRoute(
+            path: vault,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: VaultExplorerScreen(),
+            ),
+          ),
+
+          // Category detail (in shell, reached from Vault)
+          GoRoute(
+            path: vaultCategory,
+            pageBuilder: (context, state) {
+              final domainId = state.pathParameters['domainId'] ?? '';
+              return NoTransitionPage(
+                child: CategoryDetailScreen(domainId: domainId),
+              );
+            },
+          ),
+
+          // Search (in shell)
+          GoRoute(
+            path: search,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SearchScreen(),
             ),
           ),
 

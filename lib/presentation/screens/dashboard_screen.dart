@@ -2,6 +2,8 @@
 // F2.1 STATUS: FIXED
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../app/router.dart';
 import '../../core/database_provider.dart';
 import '../../core/ui/tokens.dart';
 import '../../core/ui/components/app_scaffold.dart';
@@ -98,8 +100,12 @@ class DashboardScreen extends StatelessWidget {
               },
             ),
 
+            // QUICK ACCESS: Vault + Search
+            const SizedBox(height: AppSpacing.md),
+            _QuickAccessRow(),
+
             // SECTION: Monthly Commitments
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.lg),
             const SectionHeader(title: 'Monthly Commitments'),
             const SizedBox(height: AppSpacing.sm),
             FutureBuilder(
@@ -307,6 +313,84 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _QuickAccessRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        Expanded(
+          child: _QuickTile(
+            icon: Icons.grid_view_rounded,
+            label: 'Vault',
+            color: cs.primaryContainer,
+            onTap: () => context.go(AppRouter.vault),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _QuickTile(
+            icon: Icons.search_rounded,
+            label: 'Search',
+            color: cs.secondaryContainer,
+            onTap: () => context.go(AppRouter.search),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    return Material(
+      color: color,
+      borderRadius: BorderRadius.circular(AppRadius.md),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: cs.onPrimaryContainer),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                label,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: cs.onPrimaryContainer,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.arrow_forward_ios_rounded,
+                  size: 12, color: cs.onPrimaryContainer.withValues(alpha: 0.5)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
