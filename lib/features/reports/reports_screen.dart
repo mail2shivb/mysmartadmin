@@ -2,248 +2,241 @@ import 'package:flutter/material.dart';
 
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_radius.dart';
-import '../../core/proto_theme/app_spacing.dart';
-import '../../core/proto_theme/app_text_styles.dart';
 import '../../data/local/app_database.dart';
 import '../../domain/reports/reports_repository.dart';
+import '../../domain/reports/dto/active_entity_summary.dart';
+import '../../presentation/viewmodels/dashboard_view_model.dart';
 import '../../presentation/viewmodels/reports_view_model.dart';
-import '../../shared/widgets/page_scaffold.dart';
-import '../../shared/widgets/proto_app_card.dart';
-import '../../shared/widgets/proto_empty_state.dart';
+import '../../shared/widgets/l_widgets.dart';
 
-/// Reports screen — prototype PageScaffold style, wired to real Drift data.
 class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final db = DatabaseProvider.instance;
-    final repository = ReportsRepository(db);
-    final viewModel = ReportsViewModel(repository);
+    final repo = ReportsRepository(db);
+    final dashVm = DashboardViewModel(repo);
+    final repVm = ReportsViewModel(repo);
 
-    return PageScaffold(
+    return LScreen(
       title: 'Reports',
-      subtitle: 'Insights from your private vault',
+      subtitle: 'Insights across your vault',
       child: ListView(
-        padding: const EdgeInsets.all(ProtoSpacing.lg),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
         children: [
-          // ── Monthly total hero ─────────────────────────────────────────
-          FutureBuilder(
+          // ── Overview stats ─────────────────────────────────────────
+          const SectionTitle('Overview'),
+          FutureBuilder<ActiveEntitySummary>(
+            future: dashVm.loadActiveEntitiesSummary(),
+            builder: (context, snap) {
+              final s = snap.data;
+              final total = (s?.activeBills ?? 0) +
+                  (s?.activePolicies ?? 0) +
+                  (s?.activeDocuments ?? 0) +
+                  (s?.activeSubscriptions ?? 0);
+              return Row(
+                children: [
+                  StatCard(
+                    value: '$total',
+                    label: 'Records',
+                    color: AppColors.royalPurple,
+                  ),
+                  const SizedBox(width: 10),
+                  StatCard(
+                    value: '${s?.activeBills ?? 0}',
+                    label: 'Bills',
+                    color: AppColors.warning,
+                  ),
+                  const SizedBox(width: 10),
+                  StatCard(
+                    value: '${s?.activePolicies ?? 0}',
+                    label: 'Policies',
+                    color: AppColors.info,
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+
+          // ── Monthly total ──────────────────────────────────────────
+          const SectionTitle('Monthly commitment'),
+          FutureBuilder<List<int>>(
             future: Future.wait([
-              viewModel.loadBillsMonthlyTotal(),
-              viewModel.loadSubscriptionsMonthlyTotal(),
+              repVm.loadBillsMonthlyTotal(),
+              repVm.loadSubscriptionsMonthlyTotal(),
             ]),
             builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
-                return const ProtoAppCard(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(ProtoSpacing.xxxl),
-                      child: CircularProgressIndicator(
-                          color: AppColors.primaryPurple),
-                    ),
-                  ),
-                );
-              }
               final bills = snap.data?[0] ?? 0;
-              final subs  = snap.data?[1] ?? 0;
+              final subs = snap.data?[1] ?? 0;
               final total = (bills + subs) / 100.0;
-              return ProtoAppCard(
+              return LCard(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '£${total.toStringAsFixed(2)}',
-                      style: AppTextStyles.displayLarge.copyWith(
-                        fontSize: 48,
-                        color: AppColors.primaryPurple,
-                        letterSpacing: -1,
-                      ),
+                    const Text(
+                      'Total',
+                      style: TextStyle(
+                          color: AppColors.textSecondary, fontSize: 12),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'tracked each month across bills & subscriptions',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.bodySecondary,
+                    Text(
+                      '£${total.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        _MiniStat(
+                          label: 'Bills',
+                          value:
+                              '£${(bills / 100).toStringAsFixed(2)}',
+                          color: AppColors.warning,
+                        ),
+                        const SizedBox(width: 12),
+                        _MiniStat(
+                          label: 'Subscriptions',
+                          value:
+                              '£${(subs / 100).toStringAsFixed(2)}',
+                          color: AppColors.info,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               );
             },
           ),
+          const SizedBox(height: 20),
 
-          const SizedBox(height: ProtoSpacing.lg),
-
-          // ── Report tiles ───────────────────────────────────────────────
-          Text('Report categories', style: AppTextStyles.title),
-          const SizedBox(height: ProtoSpacing.sm),
-
-          _ReportTile(
-            icon: Icons.receipt_long_rounded,
-            tint: AppColors.tileGreen,
-            title: 'Bill Commitments',
-            subtitle: 'Monthly total across all tracked bills',
-            future: viewModel.loadBillsMonthlyTotal(),
+          // ── Report categories ──────────────────────────────────────
+          const SectionTitle('Reports'),
+          LCard(
+            padding: const EdgeInsets.symmetric(
+                vertical: 4, horizontal: 4),
+            child: Column(
+              children: [
+                ListRow(
+                  icon: Icons.bar_chart_rounded,
+                  title: 'Monthly bills',
+                  subtitle: 'Breakdown of recurring bill costs',
+                ),
+                const Divider(height: 1, color: AppColors.divider),
+                ListRow(
+                  icon: Icons.event_note_outlined,
+                  title: 'Renewals in 90 days',
+                  subtitle: 'All upcoming renewal dates',
+                ),
+                const Divider(height: 1, color: AppColors.divider),
+                ListRow(
+                  icon: Icons.timeline_outlined,
+                  title: 'Life timeline',
+                  subtitle: 'Key dates across all your records',
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: ProtoSpacing.sm),
-          _ReportTile(
-            icon: Icons.subscriptions_rounded,
-            tint: AppColors.tileIndigo,
-            title: 'Subscription Spend',
-            subtitle: 'Monthly cost of active subscriptions',
-            future: viewModel.loadSubscriptionsMonthlyTotal(),
-          ),
-          const SizedBox(height: ProtoSpacing.sm),
+          const SizedBox(height: 20),
 
-          // ── Bills due soon ─────────────────────────────────────────────
-          Text('Bills due soon', style: AppTextStyles.title),
-          const SizedBox(height: ProtoSpacing.sm),
+          // ── Bills due soon ─────────────────────────────────────────
+          const SectionTitle('Bills due soon'),
           FutureBuilder<List<BillEntity>>(
-            future: viewModel.loadBillsDueSoon(daysAhead: 30),
+            future: repVm.loadBillsDueSoon(daysAhead: 30),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: Padding(
-                    padding: EdgeInsets.all(ProtoSpacing.xl),
+                    padding: EdgeInsets.all(24),
                     child: CircularProgressIndicator(
-                        color: AppColors.primaryPurple),
+                        color: AppColors.primaryPurple,
+                        strokeWidth: 2),
                   ),
                 );
               }
               final bills = snap.data ?? [];
               if (bills.isEmpty) {
-                return const ProtoAppCard(
-                  child: ProtoEmptyState(
-                    icon: Icons.check_circle_outline,
-                    title: 'No bills due in 30 days',
-                    message: 'You are all caught up.',
-                  ),
+                return const LEmptyState(
+                  icon: Icons.check_circle_outline,
+                  title: 'No bills due soon',
+                  message: 'Nothing due in the next 30 days.',
                 );
               }
-              return Column(
-                children: bills.map((bill) {
-                  final daysLeft = bill.nextDueDate != null
-                      ? bill.nextDueDate!
-                          .difference(DateTime.now())
-                          .inDays
-                      : null;
-                  final urgentColor = (daysLeft != null && daysLeft <= 7)
-                      ? AppColors.error
-                      : AppColors.warning;
-                  return Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: ProtoSpacing.sm),
-                    child: ProtoAppCard(
-                      padding: const EdgeInsets.all(ProtoSpacing.md),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40, height: 40,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFE0DC),
-                              borderRadius:
-                                  BorderRadius.circular(ProtoRadius.md),
-                            ),
-                            child: Icon(Icons.receipt_long_rounded,
-                                color: urgentColor, size: 20),
+              return LCard(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 4, horizontal: 4),
+                child: Column(
+                  children: [
+                    for (int i = 0; i < bills.length; i++) ...[
+                      if (i > 0)
+                        const Divider(
+                            height: 1, color: AppColors.divider),
+                      ListRow(
+                        icon: Icons.receipt_long_outlined,
+                        title: bills[i].name,
+                        subtitle: bills[i].nextDueDate != null
+                            ? 'Due ${_formatDate(bills[i].nextDueDate!)}'
+                            : null,
+                        trailing: Text(
+                          '£${(bills[i].amountCents / 100).toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
-                          const SizedBox(width: ProtoSpacing.md),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(bill.name,
-                                    style: AppTextStyles.title
-                                        .copyWith(fontSize: 15)),
-                                if (daysLeft != null)
-                                  Text(
-                                    daysLeft <= 0
-                                        ? 'Due today'
-                                        : '$daysLeft days left',
-                                    style: AppTextStyles.bodySecondary
-                                        .copyWith(color: urgentColor),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            '£${(bill.amountCents / 100).toStringAsFixed(2)}',
-                            style: AppTextStyles.title.copyWith(
-                              color: AppColors.primaryPurple,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              );
-            },
-          ),
-
-          const SizedBox(height: ProtoSpacing.xxxl),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReportTile extends StatelessWidget {
-  final IconData icon;
-  final Color tint;
-  final String title;
-  final String subtitle;
-  final Future<int> future;
-
-  const _ReportTile({
-    required this.icon,
-    required this.tint,
-    required this.title,
-    required this.subtitle,
-    required this.future,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ProtoAppCard(
-      padding: const EdgeInsets.all(ProtoSpacing.md),
-      child: Row(
-        children: [
-          Container(
-            width: 44, height: 44,
-            decoration: BoxDecoration(
-              color: tint,
-              borderRadius: BorderRadius.circular(ProtoRadius.md),
-            ),
-            child: Icon(icon, color: AppColors.deepPurple, size: 22),
-          ),
-          const SizedBox(width: ProtoSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: AppTextStyles.title.copyWith(fontSize: 15)),
-                Text(subtitle, style: AppTextStyles.bodySecondary),
-              ],
-            ),
-          ),
-          FutureBuilder<int>(
-            future: future,
-            builder: (_, snap) {
-              final val = snap.data ?? 0;
-              return Text(
-                '£${(val / 100).toStringAsFixed(2)}',
-                style: AppTextStyles.headline.copyWith(
-                  color: AppColors.primaryPurple,
-                  fontSize: 16,
+                    ],
+                  ],
                 ),
               );
             },
           ),
         ],
       ),
+    );
+  }
+}
+
+String _formatDate(DateTime d) =>
+    '${d.day} ${_months[d.month - 1]} ${d.year}';
+
+const _months = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+class _MiniStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _MiniStat(
+      {required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration:
+              BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          '$label: $value',
+          style: const TextStyle(
+              color: AppColors.textSecondary, fontSize: 12),
+        ),
+      ],
     );
   }
 }

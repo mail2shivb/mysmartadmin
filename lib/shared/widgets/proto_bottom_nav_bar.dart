@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_shadows.dart';
 
-/// Prototype 5-tab bottom nav: Home | Vault | ＋ (centre FAB) | Reminders | Reports
+/// 5-tab bottom nav: Home | Vault | ＋ (FAB) | Reminders | Reports
 class ProtoBottomNavBar extends StatelessWidget {
   const ProtoBottomNavBar({
     super.key,
@@ -21,33 +20,49 @@ class ProtoBottomNavBar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.divider)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 68,
-          child: Row(
-            children: [
-              _NavTab(
-                icon: Icons.home_rounded, label: 'Dashboard',
-                index: 0, currentIndex: currentIndex, onTap: onTabSelected,
-              ),
-              _NavTab(
-                icon: Icons.receipt_long_rounded, label: 'Bills',
-                index: 1, currentIndex: currentIndex, onTap: onTabSelected,
-              ),
-              _AddFab(onPressed: onAddPressed),
-              _NavTab(
-                icon: Icons.description_rounded, label: 'Documents',
-                index: 3, currentIndex: currentIndex, onTap: onTabSelected,
-              ),
-              _NavTab(
-                icon: Icons.notifications_rounded, label: 'Reminders',
-                index: 4, currentIndex: currentIndex, onTap: onTabSelected,
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x0F5B1B73),
+            blurRadius: 16,
+            offset: Offset(0, -4),
           ),
-        ),
+        ],
+      ),
+      padding: EdgeInsets.fromLTRB(
+          8, 8, 8, 8 + MediaQuery.of(context).padding.bottom),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _NavTab(
+            icon: Icons.home_rounded,
+            label: 'Home',
+            index: 0,
+            currentIndex: currentIndex,
+            onTap: onTabSelected,
+          ),
+          _NavTab(
+            icon: Icons.lock_outline_rounded,
+            label: 'Vault',
+            index: 1,
+            currentIndex: currentIndex,
+            onTap: onTabSelected,
+          ),
+          _AddFab(onPressed: onAddPressed),
+          _NavTab(
+            icon: Icons.notifications_none_rounded,
+            label: 'Reminders',
+            index: 3,
+            currentIndex: currentIndex,
+            onTap: onTabSelected,
+          ),
+          _NavTab(
+            icon: Icons.bar_chart_rounded,
+            label: 'Reports',
+            index: 4,
+            currentIndex: currentIndex,
+            onTap: onTabSelected,
+          ),
+        ],
       ),
     );
   }
@@ -61,6 +76,7 @@ class _NavTab extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
   });
+
   final IconData icon;
   final String label;
   final int index;
@@ -70,23 +86,31 @@ class _NavTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = currentIndex == index;
-    final color = active ? AppColors.primaryPurple : AppColors.textMuted;
+    final color =
+        active ? AppColors.primaryPurple : AppColors.textMuted;
     return Expanded(
       child: InkWell(
         onTap: () => onTap(index),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                color: color, fontSize: 10,
-                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+        child: Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 22),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 10,
+                  fontWeight: active
+                      ? FontWeight.w700
+                      : FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -95,6 +119,7 @@ class _NavTab extends StatelessWidget {
 
 class _AddFab extends StatelessWidget {
   const _AddFab({required this.onPressed});
+
   final VoidCallback onPressed;
 
   @override
@@ -104,17 +129,22 @@ class _AddFab extends StatelessWidget {
         child: GestureDetector(
           onTap: onPressed,
           child: Container(
-            width: 52, height: 52,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primaryPurple, AppColors.royalPurple],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: AppShadows.elevatedAdd,
+              gradient: AppColors.purpleButton,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryPurple
+                      .withValues(alpha: 0.4),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
+            child:
+                const Icon(Icons.add_rounded, color: Colors.white, size: 26),
           ),
         ),
       ),

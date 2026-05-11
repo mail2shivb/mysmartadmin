@@ -2,134 +2,95 @@ import 'package:flutter/material.dart';
 
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_radius.dart';
-import '../../core/proto_theme/app_spacing.dart';
-import '../../core/proto_theme/app_text_styles.dart';
 import '../../data/local/app_database.dart';
-import '../../shared/widgets/page_scaffold.dart';
-import '../../shared/widgets/proto_app_card.dart';
-import '../../shared/widgets/proto_empty_state.dart';
+import '../../shared/widgets/l_widgets.dart';
 
-/// Category Detail — prototype PageScaffold style.
-/// Lists [DocumentEntity] rows for a given [domainId].
+/// Category Detail — lists DocumentEntity rows for a given domainId.
 class CategoryDetailScreen extends StatelessWidget {
   final String domainId;
   const CategoryDetailScreen({super.key, required this.domainId});
 
   static const _labels = <String, String>{
-    'identity_legal':      'Identity & Legal',
-    'home_property':       'Home & Property',
-    'vehicles_transport':  'Vehicles',
-    'banking_credit':      'Banking & Credit',
-    'insurance':           'Insurance',
-    'bills_utilities':     'Bills & Utilities',
-    'work_income_tax':     'Work & Income',
-    'person_family':       'People & Family',
+    'identity_legal':               'Identity & Legal',
+    'home_property':                'Home & Property',
+    'vehicles_transport':           'Vehicles & Transport',
+    'banking_credit_borrowing':     'Banking & Credit',
+    'banking_credit':               'Banking & Credit',
+    'insurance_protection':         'Insurance',
+    'insurance':                    'Insurance',
+    'bills_utilities_subscriptions':'Bills & Utilities',
+    'bills_utilities':              'Bills & Utilities',
+    'work_income_tax':              'Work & Income',
+    'person_family':                'People & Family',
   };
 
   static const _icons = <String, IconData>{
-    'identity_legal':      Icons.badge_rounded,
-    'home_property':       Icons.home_rounded,
-    'vehicles_transport':  Icons.directions_car_rounded,
-    'banking_credit':      Icons.account_balance_rounded,
-    'insurance':           Icons.shield_rounded,
-    'bills_utilities':     Icons.receipt_long_rounded,
-    'work_income_tax':     Icons.work_rounded,
-    'person_family':       Icons.people_rounded,
+    'identity_legal':               Icons.badge_outlined,
+    'home_property':                Icons.home_outlined,
+    'vehicles_transport':           Icons.directions_car_outlined,
+    'banking_credit_borrowing':     Icons.account_balance_outlined,
+    'banking_credit':               Icons.account_balance_outlined,
+    'insurance_protection':         Icons.shield_outlined,
+    'insurance':                    Icons.shield_outlined,
+    'bills_utilities_subscriptions':Icons.receipt_long_outlined,
+    'bills_utilities':              Icons.receipt_long_outlined,
+    'work_income_tax':              Icons.work_outline,
+    'person_family':                Icons.group_outlined,
   };
 
   @override
   Widget build(BuildContext context) {
     final db = DatabaseProvider.instance;
-    final title = _labels[domainId] ?? domainId;
-    final icon  = _icons[domainId]  ?? Icons.folder_rounded;
+    final title = _labels[domainId] ?? domainId.replaceAll('_', ' ');
+    final icon = _icons[domainId] ?? Icons.folder_outlined;
 
-    return PageScaffold(
+    return LScreen(
       title: title,
-      subtitle: 'Records in this category',
-      showBack: true,
+      subtitle: '$title records and reminders',
+      searchHint: 'Search $title…',
+      onBack: () => Navigator.of(context).maybePop(),
       child: FutureBuilder<List<DocumentEntity>>(
         future: _loadDocuments(db),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: Padding(
-                padding: EdgeInsets.all(ProtoSpacing.xxxl),
+                padding: EdgeInsets.all(40),
                 child: CircularProgressIndicator(
-                    color: AppColors.primaryPurple),
+                    color: AppColors.primaryPurple, strokeWidth: 2),
               ),
-            );
-          }
-          if (snapshot.hasError) {
-            return const ProtoEmptyState(
-              icon: Icons.error_outline,
-              title: 'Could not load records',
-              message: 'Please try again later.',
             );
           }
           final docs = snapshot.data ?? [];
           if (docs.isEmpty) {
-            return ProtoEmptyState(
-              icon: icon,
-              title: 'No $title records yet',
-              message: 'Records you add in this category will appear here.',
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+              children: [
+                LEmptyState(
+                  icon: icon,
+                  title: 'No $title records yet',
+                  message:
+                      'Records you add in this category will appear here.',
+                ),
+              ],
             );
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(ProtoSpacing.lg),
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
             itemCount: docs.length,
+            separatorBuilder: (context2, index2) => const SizedBox(height: 8),
             itemBuilder: (context, i) {
               final doc = docs[i];
-              final statusLabel = _statusLabel(doc.expiryDate);
-              final statusColor = _statusColor(doc.expiryDate);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
-                child: ProtoAppCard(
-                  padding: const EdgeInsets.all(ProtoSpacing.md),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.paleLavender,
-                          borderRadius:
-                              BorderRadius.circular(ProtoRadius.md),
-                        ),
-                        child: Icon(icon,
-                            color: AppColors.deepPurple, size: 20),
-                      ),
-                      const SizedBox(width: ProtoSpacing.md),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(doc.title,
-                                style: AppTextStyles.title
-                                    .copyWith(fontSize: 15)),
-                            if (doc.documentTypeId != null)
-                              Text(doc.documentTypeId!,
-                                  style: AppTextStyles.bodySecondary),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: ProtoSpacing.sm,
-                            vertical: ProtoSpacing.xs),
-                        decoration: BoxDecoration(
-                          color: statusColor.withValues(alpha: 0.12),
-                          borderRadius:
-                              BorderRadius.circular(ProtoRadius.sm),
-                        ),
-                        child: Text(
-                          statusLabel,
-                          style: AppTextStyles.caption.copyWith(
-                            color: statusColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+              return LCard(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 4, horizontal: 4),
+                child: ListRow(
+                  icon: icon,
+                  title: doc.title,
+                  subtitle: doc.documentTypeId,
+                  badge: StatusBadge(
+                    kind: _badgeKind(doc.expiryDate),
+                    label: _statusLabel(doc.expiryDate),
                   ),
                 ),
               );
@@ -154,11 +115,12 @@ class CategoryDetailScreen extends StatelessWidget {
     return 'Valid';
   }
 
-  Color _statusColor(DateTime? expiry) {
-    if (expiry == null) return AppColors.success;
+  BadgeKind _badgeKind(DateTime? expiry) {
+    if (expiry == null) return BadgeKind.active;
     final diff = expiry.difference(DateTime.now()).inDays;
-    if (diff < 0) return AppColors.error;
-    if (diff <= 30) return AppColors.warning;
-    return AppColors.success;
+    if (diff < 0) return BadgeKind.urgent;
+    if (diff <= 14) return BadgeKind.expiring;
+    if (diff <= 30) return BadgeKind.review;
+    return BadgeKind.active;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Prototype lavender/purple palette — source of truth for all UI colours.
+/// Lavender/purple palette — source of truth for all UI colours.
 class AppColors {
   AppColors._();
 
@@ -13,10 +13,25 @@ class AppColors {
   static const Color divider       = Color(0xFFECE3F8);
 
   // Brand purples
-  static const Color primaryPurple = Color(0xFF8B5CF6);
-  static const Color royalPurple   = Color(0xFF7C3AED);
-  static const Color deepPurple    = Color(0xFF5B21B6);
-  static const Color headerPurple  = Color(0xFF5B1B73);
+  static const Color primaryPurple  = Color(0xFF8B5CF6);
+  static const Color mediumPurple   = Color(0xFF9D4EDD);
+  static const Color royalPurple    = Color(0xFF7C3AED);
+  static const Color deepPurple     = Color(0xFF5B21B6);
+  static const Color headerPurple   = Color(0xFF5B1B73);
+
+  // Gradient — used by SlackStyleHeader and LScreen
+  static const LinearGradient headerGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF5B1B73), Color(0xFF7B2CBF), Color(0xFF9D4EDD)],
+  );
+
+  // Button gradient
+  static const LinearGradient purpleButton = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF7C3AED), Color(0xFF9D4EDD)],
+  );
 
   // Text
   static const Color textPrimary   = Color(0xFF1E1233);

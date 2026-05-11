@@ -1,190 +1,212 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../app/router.dart';
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_radius.dart';
-import '../../core/proto_theme/app_spacing.dart';
-import '../../core/proto_theme/app_text_styles.dart';
 import '../../domain/reports/reports_repository.dart';
+import '../../domain/reports/dto/upcoming_reminder_view.dart';
 import '../../presentation/viewmodels/reminders_view_model.dart';
-import '../../shared/widgets/page_scaffold.dart';
-import '../../shared/widgets/proto_app_card.dart';
-import '../../shared/widgets/proto_empty_state.dart';
+import '../../shared/widgets/l_widgets.dart';
 
-/// Reminders screen — prototype RemindersTasksPage style wired to live data.
-class RemindersScreen extends StatelessWidget {
+class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
 
   @override
+  State<RemindersScreen> createState() => _RemindersScreenState();
+}
+
+class _RemindersScreenState extends State<RemindersScreen> {
+  String _filter = 'All';
+  late final RemindersViewModel _vm;
+
+  @override
+  void initState() {
+    super.initState();
+    _vm = RemindersViewModel(ReportsRepository(DatabaseProvider.instance));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final db = DatabaseProvider.instance;
-    final repo = ReportsRepository(db);
-    final vm = RemindersViewModel(repo);
-
-    return PageScaffold(
+    return LScreen(
       title: 'Reminders',
-      subtitle: 'Renewals, deadlines and tasks',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.task_alt_rounded, color: Colors.white),
-          tooltip: 'Tasks',
-          onPressed: () => context.go(AppRouter.tasks),
-        ),
-      ],
-      child: ListView(
-        padding: const EdgeInsets.all(ProtoSpacing.lg),
-        children: [
-          // ── Pending count hero ─────────────────────────────────────────
-          FutureBuilder<int>(
-            future: vm.countPendingReminders(),
-            builder: (context, snap) {
-              final count = snap.data ?? 0;
-              return ProtoAppCard(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56, height: 56,
-                      decoration: BoxDecoration(
-                        color: AppColors.paleLavender,
-                        borderRadius: BorderRadius.circular(ProtoRadius.md),
-                      ),
-                      child: const Icon(Icons.notifications_active_rounded,
-                          color: AppColors.primaryPurple, size: 28),
-                    ),
-                    const SizedBox(width: ProtoSpacing.md),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('$count',
-                            style: AppTextStyles.displayLarge.copyWith(
-                              color: AppColors.primaryPurple,
-                            )),
-                        const Text('pending reminders',
-                            style: AppTextStyles.bodySecondary),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: ProtoSpacing.lg),
-
-          // ── Due soon ───────────────────────────────────────────────────
-          Text('Due Soon', style: AppTextStyles.title),
-          const SizedBox(height: ProtoSpacing.sm),
-          FutureBuilder(
-            future: vm.loadRemindersDueSoon(daysAhead: 7),
-            builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(ProtoSpacing.xl),
-                    child: CircularProgressIndicator(
-                        color: AppColors.primaryPurple),
-                  ),
-                );
-              }
-              final reminders = snap.data ?? [];
-              if (reminders.isEmpty) {
-                return const ProtoAppCard(
-                  child: ProtoEmptyState(
-                    icon: Icons.check_circle_outline,
-                    title: 'Nothing due soon',
-                    message: 'No reminders due in the next 7 days.',
-                  ),
-                );
-              }
-              return Column(
-                children: reminders.map((r) => Padding(
-                  padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
-                  child: ProtoAppCard(
-                    padding: const EdgeInsets.all(ProtoSpacing.md),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Container(
-                        width: 44, height: 44,
-                        decoration: BoxDecoration(
-                          color: r.daysUntilDue <= 3
-                              ? const Color(0xFFFFE0DC)
-                              : AppColors.tileAmber,
-                          borderRadius:
-                              BorderRadius.circular(ProtoRadius.md),
-                        ),
-                        child: Icon(
-                          Icons.notifications_active_rounded,
-                          color: r.daysUntilDue <= 3
-                              ? AppColors.error
-                              : AppColors.warning,
-                        ),
-                      ),
-                      title: Text(r.triggerTypeId,
-                          style: AppTextStyles.title.copyWith(fontSize: 15)),
-                      subtitle: Text(
-                        'Due ${r.firesAt.toLocal().toString().split(' ')[0]}'
-                        ' · ${r.daysUntilDue}d left',
-                        style: AppTextStyles.bodySecondary,
-                      ),
-                      trailing: const Icon(Icons.chevron_right,
-                          color: AppColors.textMuted),
-                    ),
-                  ),
-                )).toList(),
-              );
-            },
-          ),
-
-          const SizedBox(height: ProtoSpacing.lg),
-
-          // ── Needs attention ────────────────────────────────────────────
-          Text('Needs Attention', style: AppTextStyles.title),
-          const SizedBox(height: ProtoSpacing.sm),
-          FutureBuilder<int>(
-            future: vm.countOverdueReminders(),
-            builder: (context, snap) {
-              final count = snap.data ?? 0;
-              return ProtoAppCard(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44, height: 44,
-                      decoration: BoxDecoration(
-                        color: count > 0
-                            ? const Color(0xFFFFE0DC)
-                            : AppColors.softLavender,
-                        borderRadius: BorderRadius.circular(ProtoRadius.md),
-                      ),
-                      child: Icon(Icons.event_busy_rounded,
-                          color: count > 0
-                              ? AppColors.error
-                              : AppColors.textMuted),
-                    ),
-                    const SizedBox(width: ProtoSpacing.md),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('$count',
-                            style: AppTextStyles.headline.copyWith(
-                              color: count > 0
-                                  ? AppColors.error
-                                  : AppColors.textPrimary,
-                            )),
-                        const Text('overdue reminders',
-                            style: AppTextStyles.bodySecondary),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: ProtoSpacing.xxxl),
-        ],
+      subtitle: 'Renewals, deadlines and bills',
+      searchHint: 'Search reminders…',
+      child: FutureBuilder<List<UpcomingReminderView>>(
+        future: _vm.loadRemindersDueSoon(daysAhead: 90),
+        builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: CircularProgressIndicator(
+                    color: AppColors.primaryPurple, strokeWidth: 2),
+              ),
+            );
+          }
+          final all = snap.data ?? [];
+          return _RemindersBody(
+            reminders: all,
+            filter: _filter,
+            onFilterChange: (f) => setState(() => _filter = f),
+          );
+        },
       ),
     );
   }
+}
+
+class _RemindersBody extends StatelessWidget {
+  final List<UpcomingReminderView> reminders;
+  final String filter;
+  final ValueChanged<String> onFilterChange;
+
+  const _RemindersBody({
+    required this.reminders,
+    required this.filter,
+    required this.onFilterChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Group reminders: today / this week / later
+    final today = reminders
+        .where((r) => r.daysUntilDue <= 0)
+        .toList();
+    final thisWeek = reminders
+        .where((r) => r.daysUntilDue >= 1 && r.daysUntilDue <= 7)
+        .toList();
+    final later = reminders
+        .where((r) => r.daysUntilDue > 7)
+        .toList();
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+      children: [
+        // ── Filter chips ─────────────────────────────────────────────
+        FilterChipRow(
+          chips: const ['All', 'Bills', 'Renewals', 'Tasks', 'Overdue'],
+          active: filter,
+          onChange: onFilterChange,
+        ),
+        const SizedBox(height: 20),
+
+        if (reminders.isEmpty) ...[
+          const LEmptyState(
+            icon: Icons.check_circle_outline,
+            title: 'All clear',
+            message: 'No upcoming reminders. You are on top of everything.',
+          ),
+        ] else ...[
+          // ── Today ─────────────────────────────────────────────────
+          if (today.isNotEmpty) ...[
+            const SectionTitle('Today'),
+            LCard(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 4, horizontal: 4),
+              child: Column(
+                children: _buildRows(context, today),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // ── This week ─────────────────────────────────────────────
+          if (thisWeek.isNotEmpty) ...[
+            const SectionTitle('This week'),
+            LCard(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 4, horizontal: 4),
+              child: Column(
+                children: _buildRows(context, thisWeek),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // ── Later ─────────────────────────────────────────────────
+          if (later.isNotEmpty) ...[
+            const SectionTitle('Later'),
+            LCard(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 4, horizontal: 4),
+              child: Column(
+                children: _buildRows(context, later),
+              ),
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+
+  List<Widget> _buildRows(
+      BuildContext context, List<UpcomingReminderView> items) {
+    final rows = <Widget>[];
+    for (int i = 0; i < items.length; i++) {
+      if (i > 0) {
+        rows.add(
+            const Divider(height: 1, color: AppColors.divider));
+      }
+      final r = items[i];
+      rows.add(ListRow(
+        icon: _iconForKind(r.sourceEntityKind),
+        title: _formatTrigger(r.triggerTypeId),
+        subtitle: r.daysUntilDue <= 0
+            ? '${_labelKind(r.sourceEntityKind)} · Due today'
+            : '${_labelKind(r.sourceEntityKind)} · Due in ${r.daysUntilDue}d',
+        badge: StatusBadge(
+          kind: _badgeForDays(r.daysUntilDue),
+          label: r.daysUntilDue <= 0
+              ? 'Today'
+              : r.daysUntilDue <= 3
+                  ? 'Urgent'
+                  : r.daysUntilDue <= 7
+                      ? 'Soon'
+                      : 'Later',
+        ),
+        onTap: () {},
+      ));
+    }
+    return rows;
+  }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+IconData _iconForKind(String kind) => switch (kind) {
+      'bill' => Icons.receipt_long_outlined,
+      'policy' => Icons.shield_outlined,
+      'document' => Icons.badge_outlined,
+      'subscription' => Icons.subscriptions_outlined,
+      'vehicle' => Icons.directions_car_outlined,
+      'property' => Icons.home_outlined,
+      _ => Icons.notifications_outlined,
+    };
+
+String _labelKind(String kind) => switch (kind) {
+      'bill' => 'Bill',
+      'policy' => 'Policy',
+      'document' => 'Document',
+      'subscription' => 'Subscription',
+      'vehicle' => 'Vehicle',
+      'property' => 'Property',
+      _ => kind,
+    };
+
+String _formatTrigger(String id) => switch (id) {
+      'expiry_date' => 'Expires soon',
+      'renewal_date' => 'Renewal due',
+      'payment_due_date' => 'Payment due',
+      'review_date' => 'Review needed',
+      'service_due_date' => 'Service due',
+      'contract_end_date' => 'Contract ending',
+      'trial_end_date' => 'Trial ending',
+      'statement_available_date' => 'Statement available',
+      _ => id.replaceAll('_', ' '),
+    };
+
+BadgeKind _badgeForDays(int days) {
+  if (days <= 0) return BadgeKind.urgent;
+  if (days <= 7) return BadgeKind.expiring;
+  if (days <= 14) return BadgeKind.review;
+  return BadgeKind.info;
 }

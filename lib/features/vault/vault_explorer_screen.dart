@@ -1,122 +1,162 @@
-// REBUILT: prototype-faithful VaultExplorerScreen
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_radius.dart';
-import '../../core/proto_theme/app_spacing.dart';
-import '../../core/proto_theme/app_text_styles.dart';
-import '../../shared/widgets/colourful_icon_tile.dart';
-import '../../shared/widgets/page_scaffold.dart';
+import '../../shared/widgets/l_widgets.dart';
 
-/// Vault Explorer — prototype-faithful category grid with search bar.
-class VaultExplorerScreen extends StatelessWidget {
+const _kVaultCategories = <({String label, IconData icon, String id})>[
+  (label: 'Identity',    icon: Icons.badge_outlined,           id: 'identity_legal'),
+  (label: 'Insurance',   icon: Icons.shield_outlined,          id: 'insurance_protection'),
+  (label: 'Banking',     icon: Icons.account_balance_outlined, id: 'banking_credit_borrowing'),
+  (label: 'Utilities',   icon: Icons.bolt_outlined,            id: 'bills_utilities_subscriptions'),
+  (label: 'Vehicle',     icon: Icons.directions_car_outlined,  id: 'vehicles_transport'),
+  (label: 'Home',        icon: Icons.home_outlined,            id: 'home_property'),
+  (label: 'Work',        icon: Icons.work_outline,             id: 'work_income_tax'),
+  (label: 'Subs',        icon: Icons.subscriptions_outlined,   id: 'bills_utilities_subscriptions'),
+  (label: 'Health',      icon: Icons.favorite_border,          id: 'insurance_protection'),
+  (label: 'Family',      icon: Icons.group_outlined,           id: 'identity_legal'),
+];
+
+class VaultExplorerScreen extends StatefulWidget {
   const VaultExplorerScreen({super.key});
 
-  static const _categories = [
-    (Icons.badge_rounded,          'Identity & Legal',     AppColors.paleLavender),
-    (Icons.home_rounded,           'Home & Property',      AppColors.tileBlue),
-    (Icons.directions_car_rounded, 'Vehicles',             AppColors.tileGreen),
-    (Icons.account_balance_rounded,'Banking & Credit',     AppColors.tileSlate),
-    (Icons.shield_rounded,         'Insurance',            AppColors.tileCoral),
-    (Icons.receipt_long_rounded,   'Bills & Utilities',    AppColors.tileAmber),
-    (Icons.work_rounded,           'Work & Income',        AppColors.tileIndigo),
-    (Icons.people_rounded,         'People & Family',      AppColors.tileBrown),
-  ];
+  @override
+  State<VaultExplorerScreen> createState() => _VaultExplorerScreenState();
+}
 
-  static const _categoryIds = [
-    'identity_legal',
-    'home_property',
-    'vehicles_transport',
-    'banking_credit',
-    'insurance',
-    'bills_utilities',
-    'work_income_tax',
-    'person_family',
-  ];
+class _VaultExplorerScreenState extends State<VaultExplorerScreen> {
+  String _filter = 'All';
 
   @override
   Widget build(BuildContext context) {
-    return PageScaffold(
+    return LScreen(
       title: 'Vault',
       subtitle: 'Your secure records, on this device',
+      searchHint: 'Search vault…',
+      onSearchTap: () => context.go(AppRouter.search),
+      trailing: HeaderIcon(
+        icon: Icons.tune_rounded,
+        onTap: () => context.go(AppRouter.search),
+      ),
       child: ListView(
-        padding: const EdgeInsets.all(ProtoSpacing.lg),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
         children: [
-          // ── Search bar ─────────────────────────────────────────────────
-          GestureDetector(
-            onTap: () => context.go(AppRouter.search),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ProtoSpacing.md, vertical: ProtoSpacing.md,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.softLavender,
-                borderRadius: BorderRadius.circular(ProtoRadius.md),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.search, color: AppColors.textMuted),
-                  SizedBox(width: ProtoSpacing.sm),
-                  Text('Search records, people, bills…',
-                      style: AppTextStyles.bodySecondary),
-                ],
-              ),
-            ),
+          // ── Filter chips ───────────────────────────────────────────────
+          FilterChipRow(
+            chips: const ['All', 'Active', 'Expiring', 'Review', 'Drafts'],
+            active: _filter,
+            onChange: (c) => setState(() => _filter = c),
           ),
+          const SizedBox(height: 20),
 
-          const SizedBox(height: ProtoSpacing.lg),
+          // ── Categories ─────────────────────────────────────────────────
+          const SectionTitle('Categories'),
+          CategoryCarousel(
+            items: _kVaultCategories,
+            onTap: (id) => context.go('/vault/category/$id'),
+          ),
+          const SizedBox(height: 20),
 
-          // ── Category grid ──────────────────────────────────────────────
-          Text('Categories', style: AppTextStyles.title),
-          const SizedBox(height: ProtoSpacing.sm),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: ProtoSpacing.sm,
-            crossAxisSpacing: ProtoSpacing.sm,
-            childAspectRatio: 1.5,
-            children: List.generate(_categories.length, (i) {
-              final (icon, label, tint) = _categories[i];
-              final categoryId = _categoryIds[i];
-              return ColourfulIconTile(
-                icon: icon,
-                label: label,
-                tint: tint,
-                onTap: () => context.go(
-                  '/vault/category/$categoryId',
+          // ── Documents ─────────────────────────────────────────────────
+          Row(
+            children: [
+              const Expanded(
+                child: SectionTitle('Documents'),
+              ),
+              TextButton(
+                onPressed: () => context.go(AppRouter.documents),
+                child: const Text(
+                  'See all',
+                  style: TextStyle(
+                    color: AppColors.royalPurple,
+                    fontSize: 13,
+                  ),
                 ),
-              );
-            }),
-          ),
-
-          const SizedBox(height: ProtoSpacing.lg),
-
-          // ── Review queue ───────────────────────────────────────────────
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              width: 44, height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.paleLavender,
-                borderRadius: BorderRadius.circular(ProtoRadius.md),
               ),
-              child: const Icon(Icons.fact_check_rounded,
-                  color: AppColors.deepPurple),
-            ),
-            title: const Text('Review queue',
-                style: AppTextStyles.title),
-            subtitle: const Text('Items waiting for your review',
-                style: AppTextStyles.bodySecondary),
-            trailing: const Icon(Icons.chevron_right,
-                color: AppColors.textMuted),
-            onTap: () => context.go(AppRouter.documents),
+            ],
           ),
+          LCard(
+            padding: const EdgeInsets.symmetric(
+                vertical: 4, horizontal: 4),
+            child: Column(
+              children: [
+                ListRow(
+                  icon: Icons.badge_outlined,
+                  title: 'Passports',
+                  subtitle: 'Track expiry and renewal reminders',
+                  onTap: () => context.go(AppRouter.passportList),
+                ),
+                const Divider(height: 1, color: AppColors.divider),
+                ListRow(
+                  icon: Icons.directions_car_outlined,
+                  title: 'Driving licences',
+                  subtitle: 'Photocard expiry and categories',
+                  onTap: () =>
+                      context.go(AppRouter.drivingLicenceList),
+                ),
+                const Divider(height: 1, color: AppColors.divider),
+                ListRow(
+                  icon: Icons.description_outlined,
+                  title: 'All documents',
+                  subtitle: 'Browse all saved documents',
+                  onTap: () => context.go(AppRouter.documents),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
 
-          const SizedBox(height: ProtoSpacing.xxxl),
+          // ── Bills & subscriptions ──────────────────────────────────────
+          const SectionTitle('Bills & Subscriptions'),
+          LCard(
+            padding: const EdgeInsets.symmetric(
+                vertical: 4, horizontal: 4),
+            child: Column(
+              children: [
+                ListRow(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'Bills',
+                  subtitle: 'Recurring payments and due dates',
+                  onTap: () => context.go(AppRouter.bills),
+                ),
+                const Divider(height: 1, color: AppColors.divider),
+                ListRow(
+                  icon: Icons.shield_outlined,
+                  title: 'Insurance policies',
+                  subtitle: 'Renewal dates and coverage details',
+                  onTap: () => context.go(AppRouter.policies),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // ── Privacy note ───────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.paleLavender,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.lock_outline,
+                    color: AppColors.royalPurple, size: 16),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Your device is the system of record. Nothing leaves this app without your permission.',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
