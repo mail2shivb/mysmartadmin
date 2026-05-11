@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'shell_scaffold.dart';
-import '../presentation/screens/dashboard_screen.dart' as b13;
-import '../presentation/screens/reports_screen.dart' as b13;
 import '../presentation/screens/policies_screen.dart' as b13;
+import '../features/reports/reports_screen.dart';
 import '../features/reminders/reminders_screen.dart';
 import '../features/bills/bills_screen.dart';
 import '../features/documents/documents_hub_screen.dart';
-import '../features/documents/documents_functional_screen.dart';
 import '../features/documents/add_document_screen.dart';
 import '../features/documents/document_types.dart';
 import '../features/documents/driving_licence/driving_licence_list_screen.dart';
@@ -111,11 +109,11 @@ class AppRouter {
             ),
           ),
           
-          // Reports tab (B13)
+          // Reports tab — prototype ReportsScreen
           GoRoute(
             path: reports,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: b13.ReportsScreen(),
+              child: ReportsScreen(),
             ),
           ),
           

@@ -1,91 +1,137 @@
 import 'package:flutter/material.dart';
 
 import '../../core/database_provider.dart';
-import '../../core/taxonomy/canonical_taxonomy.dart';
-import '../../core/ui/components/app_scaffold.dart';
-import '../../core/ui/components/ledger_components.dart';
-import '../../core/ui/tokens.dart';
+import '../../core/proto_theme/app_colors.dart';
+import '../../core/proto_theme/app_radius.dart';
+import '../../core/proto_theme/app_spacing.dart';
+import '../../core/proto_theme/app_text_styles.dart';
 import '../../data/local/app_database.dart';
+import '../../shared/widgets/page_scaffold.dart';
+import '../../shared/widgets/proto_app_card.dart';
+import '../../shared/widgets/proto_empty_state.dart';
 
-/// Category Detail — lists all [DocumentEntity] rows for a given [domainId].
-///
-/// The [domainId] is a [DomainIds] constant. Passed as a GoRouter path
-/// parameter: `/vault/category/:domainId`.
+/// Category Detail — prototype PageScaffold style.
+/// Lists [DocumentEntity] rows for a given [domainId].
 class CategoryDetailScreen extends StatelessWidget {
   final String domainId;
   const CategoryDetailScreen({super.key, required this.domainId});
 
+  static const _labels = <String, String>{
+    'identity_legal':      'Identity & Legal',
+    'home_property':       'Home & Property',
+    'vehicles_transport':  'Vehicles',
+    'banking_credit':      'Banking & Credit',
+    'insurance':           'Insurance',
+    'bills_utilities':     'Bills & Utilities',
+    'work_income_tax':     'Work & Income',
+    'person_family':       'People & Family',
+  };
+
+  static const _icons = <String, IconData>{
+    'identity_legal':      Icons.badge_rounded,
+    'home_property':       Icons.home_rounded,
+    'vehicles_transport':  Icons.directions_car_rounded,
+    'banking_credit':      Icons.account_balance_rounded,
+    'insurance':           Icons.shield_rounded,
+    'bills_utilities':     Icons.receipt_long_rounded,
+    'work_income_tax':     Icons.work_rounded,
+    'person_family':       Icons.people_rounded,
+  };
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
     final db = DatabaseProvider.instance;
+    final title = _labels[domainId] ?? domainId;
+    final icon  = _icons[domainId]  ?? Icons.folder_rounded;
 
-    final descriptor = canonicalDomains.firstWhere(
-      (d) => d.id == domainId,
-      orElse: () => DomainDescriptor(
-        id: domainId,
-        displayName: domainId,
-        icon: Icons.folder_outlined,
-        iconColor: (cs) => cs.onSurfaceVariant,
-        iconBackground: (cs) => cs.surfaceContainer,
-      ),
-    );
-
-    return AppScaffold(
-      appBar: AppBar(
-        title: Text(descriptor.displayName),
-      ),
-      enableScroll: true,
-      body: FutureBuilder<List<DocumentEntity>>(
-        future: _loadDocuments(db, domainId),
+    return PageScaffold(
+      title: title,
+      subtitle: 'Records in this category',
+      showBack: true,
+      child: FutureBuilder<List<DocumentEntity>>(
+        future: _loadDocuments(db),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Padding(
-              padding: EdgeInsets.all(AppSpacing.xl),
-              child: Center(child: CircularProgressIndicator()),
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(ProtoSpacing.xxxl),
+                child: CircularProgressIndicator(
+                    color: AppColors.primaryPurple),
+              ),
             );
           }
           if (snapshot.hasError) {
-            return Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: EmptyStateCard(
-                icon: Icons.error_outline,
-                heading: 'Could not load records',
-                body: 'Please try again later.',
-              ),
+            return const ProtoEmptyState(
+              icon: Icons.error_outline,
+              title: 'Could not load records',
+              message: 'Please try again later.',
             );
           }
           final docs = snapshot.data ?? [];
           if (docs.isEmpty) {
-            return EmptyStateCard(
-              icon: descriptor.icon,
-              heading: 'No ${descriptor.displayName} records yet',
-              body: 'Records you add in this category will appear here.',
+            return ProtoEmptyState(
+              icon: icon,
+              title: 'No $title records yet',
+              message: 'Records you add in this category will appear here.',
             );
           }
           return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.all(ProtoSpacing.lg),
             itemCount: docs.length,
             itemBuilder: (context, i) {
               final doc = docs[i];
-              final expiryDate = doc.expiryDate;
-              final statusLevel = _statusLevel(expiryDate);
-              final statusLabel = _statusLabel(expiryDate);
-
-              return ListRow(
-                icon: descriptor.icon,
-                iconColor: descriptor.iconColor(cs),
-                iconBackground: descriptor.iconBackground(cs),
-                title: doc.title,
-                subtitle: doc.documentTypeId,
-                trailing: StatusBadge(
-                  label: statusLabel,
-                  level: statusLevel,
+              final statusLabel = _statusLabel(doc.expiryDate);
+              final statusColor = _statusColor(doc.expiryDate);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
+                child: ProtoAppCard(
+                  padding: const EdgeInsets.all(ProtoSpacing.md),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40, height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.paleLavender,
+                          borderRadius:
+                              BorderRadius.circular(ProtoRadius.md),
+                        ),
+                        child: Icon(icon,
+                            color: AppColors.deepPurple, size: 20),
+                      ),
+                      const SizedBox(width: ProtoSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(doc.title,
+                                style: AppTextStyles.title
+                                    .copyWith(fontSize: 15)),
+                            if (doc.documentTypeId != null)
+                              Text(doc.documentTypeId!,
+                                  style: AppTextStyles.bodySecondary),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: ProtoSpacing.sm,
+                            vertical: ProtoSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: statusColor.withValues(alpha: 0.12),
+                          borderRadius:
+                              BorderRadius.circular(ProtoRadius.sm),
+                        ),
+                        child: Text(
+                          statusLabel,
+                          style: AppTextStyles.caption.copyWith(
+                            color: statusColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                showDivider: i < docs.length - 1,
               );
             },
           );
@@ -94,31 +140,25 @@ class CategoryDetailScreen extends StatelessWidget {
     );
   }
 
-  Future<List<DocumentEntity>> _loadDocuments(
-    AppDatabase db,
-    String domainId,
-  ) async {
+  Future<List<DocumentEntity>> _loadDocuments(AppDatabase db) async {
     final all = await db.documentsDao.getAllDocuments();
     return all.where((d) => d.domainId == domainId).toList();
   }
 
-  LedgerStatusLevel _statusLevel(DateTime? expiry) {
-    if (expiry == null) return LedgerStatusLevel.neutral;
-    final now = DateTime.now();
-    final diff = expiry.difference(now).inDays;
-    if (diff < 0) return LedgerStatusLevel.danger;
-    if (diff <= 30) return LedgerStatusLevel.warning;
-    if (diff <= 90) return LedgerStatusLevel.info;
-    return LedgerStatusLevel.ok;
-  }
-
   String _statusLabel(DateTime? expiry) {
     if (expiry == null) return 'Active';
-    final now = DateTime.now();
-    final diff = expiry.difference(now).inDays;
+    final diff = expiry.difference(DateTime.now()).inDays;
     if (diff < 0) return 'Expired';
     if (diff == 0) return 'Today';
     if (diff <= 30) return '${diff}d left';
     return 'Valid';
+  }
+
+  Color _statusColor(DateTime? expiry) {
+    if (expiry == null) return AppColors.success;
+    final diff = expiry.difference(DateTime.now()).inDays;
+    if (diff < 0) return AppColors.error;
+    if (diff <= 30) return AppColors.warning;
+    return AppColors.success;
   }
 }

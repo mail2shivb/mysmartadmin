@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../core/ui/colour_variant.dart';
-import '../../core/ui/tokens.dart';
-import '../../core/ui/typography.dart';
-import '../../core/ui/components/app_scaffold.dart';
-import '../../core/ui/components/section_header.dart';
-import '../../core/ui/components/insight_card.dart';
+import '../../core/proto_theme/app_colors.dart';
+import '../../core/proto_theme/app_radius.dart';
+import '../../core/proto_theme/app_spacing.dart';
+import '../../core/proto_theme/app_text_styles.dart';
 import '../../core/utils/constants.dart';
+import '../../shared/widgets/page_scaffold.dart';
+import '../../shared/widgets/proto_app_card.dart';
 import '../../app/app.dart';
 
 /// Settings screen - Fintech-grade simplicity
@@ -25,146 +26,161 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appearance = AppearanceProvider.of(context);
-    
-    return AppScaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      enableScroll: true,
-      padding: AppPadding.screen,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+
+    return PageScaffold(
+      title: 'Settings',
+      subtitle: 'Preferences, security, appearance',
+      showBack: true,
+      child: ListView(
+        padding: const EdgeInsets.all(ProtoSpacing.lg),
         children: [
-          // Appearance Section
-          const SectionHeader(title: 'Look and Feel'),
-          
-          // Theme Mode
+          // ── Appearance ─────────────────────────────────────────────────
+          _SectionLabel('Look and Feel'),
           _ThemeModeSection(appearance: appearance),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Colour Variant
+          const SizedBox(height: ProtoSpacing.lg),
           _ColourVariantSection(appearance: appearance),
-          const SizedBox(height: AppSpacing.xxl),
 
-          // Privacy Section
-          const SectionHeader(title: 'Privacy on This Device'),
-          InsightCard(
-            leadingIcon: Icons.privacy_tip_outlined,
+          const SizedBox(height: ProtoSpacing.xl),
+
+          // ── Privacy ────────────────────────────────────────────────────
+          _SectionLabel('Privacy on This Device'),
+          _SettingsTile(
+            icon: Icons.privacy_tip_outlined,
             title: 'Privacy First',
             subtitle: AppConstants.privacyStatement,
           ),
-          const SizedBox(height: AppSpacing.xl),
 
-          // Storage Section
-          const SectionHeader(title: 'Local Storage'),
-          InsightCard(
-            leadingIcon: Icons.storage,
+          const SizedBox(height: ProtoSpacing.xl),
+
+          // ── Storage ────────────────────────────────────────────────────
+          _SectionLabel('Local Storage'),
+          _SettingsTile(
+            icon: Icons.storage_rounded,
             title: 'Local Storage',
             subtitle: '0 MB used · All data on device',
           ),
-          const SizedBox(height: AppSpacing.xl),
 
-          // About Section
-          const SectionHeader(title: 'App Information'),
-          InsightCard(
-            leadingIcon: Icons.info_outline,
+          const SizedBox(height: ProtoSpacing.xl),
+
+          // ── About ──────────────────────────────────────────────────────
+          _SectionLabel('App Information'),
+          _SettingsTile(
+            icon: Icons.info_outline,
             title: 'App Version',
             subtitle: '1.0.0',
           ),
-          const SizedBox(height: AppSpacing.xxl),
+
+          const SizedBox(height: ProtoSpacing.xxxl),
         ],
       ),
     );
   }
 }
 
-/// Theme Mode section (System/Light/Dark) - ONLY user control
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
+    child: Text(text,
+        style: AppTextStyles.title.copyWith(
+          fontSize: 14,
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+        )),
+  );
+}
+
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+  final bool selected;
+  const _SettingsTile({
+    required this.icon, required this.title, required this.subtitle,
+    this.onTap, this.selected = false,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: ProtoSpacing.xs),
+      child: ProtoAppCard(
+        padding: const EdgeInsets.all(ProtoSpacing.md),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ProtoRadius.lg),
+          child: Row(
+            children: [
+              Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.primaryPurple
+                      : AppColors.paleLavender,
+                  borderRadius: BorderRadius.circular(ProtoRadius.md),
+                ),
+                child: Icon(icon,
+                    color: selected ? Colors.white : AppColors.deepPurple,
+                    size: 20),
+              ),
+              const SizedBox(width: ProtoSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: AppTextStyles.title.copyWith(fontSize: 15)),
+                    Text(subtitle, style: AppTextStyles.bodySecondary),
+                  ],
+                ),
+              ),
+              if (selected)
+                const Icon(Icons.check_circle_rounded,
+                    color: AppColors.primaryPurple),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ThemeModeSection extends StatelessWidget {
   final dynamic appearance;
-
   const _ThemeModeSection({required this.appearance});
 
   @override
   Widget build(BuildContext context) {
-    final currentMode = appearance.themeMode;
-    
+    final currentMode = appearance.themeMode as ThemeMode;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Theme Preference',
-          style: AppTypography.labelMedium(context).copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        
-        // System
-        _ThemeModeOption(
-          mode: ThemeMode.system,
-          label: 'System',
-          description: 'Use the same appearance as your device',
+        _SettingsTile(
           icon: Icons.brightness_auto_outlined,
-          isSelected: currentMode == ThemeMode.system,
+          title: 'System',
+          subtitle: 'Use the same appearance as your device',
+          selected: currentMode == ThemeMode.system,
           onTap: () => appearance.setThemeMode(ThemeMode.system),
         ),
-        
-        // Light
-        _ThemeModeOption(
-          mode: ThemeMode.light,
-          label: 'Light',
-          description: 'Use the light appearance at all times',
+        _SettingsTile(
           icon: Icons.light_mode_outlined,
-          isSelected: currentMode == ThemeMode.light,
+          title: 'Light',
+          subtitle: 'Use the light appearance at all times',
+          selected: currentMode == ThemeMode.light,
           onTap: () => appearance.setThemeMode(ThemeMode.light),
         ),
-        
-        // Dark
-        _ThemeModeOption(
-          mode: ThemeMode.dark,
-          label: 'Dark',
-          description: 'Use the dark appearance at all times',
+        _SettingsTile(
           icon: Icons.dark_mode_outlined,
-          isSelected: currentMode == ThemeMode.dark,
+          title: 'Dark',
+          subtitle: 'Use the dark appearance at all times',
+          selected: currentMode == ThemeMode.dark,
           onTap: () => appearance.setThemeMode(ThemeMode.dark),
         ),
       ],
     );
   }
 }
-
-/// Theme mode option tile
-class _ThemeModeOption extends StatelessWidget {
-  final ThemeMode mode;
-  final String label;
-  final String description;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ThemeModeOption({
-    required this.mode,
-    required this.label,
-    required this.description,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InsightCard(
-      leadingIcon: icon,
-      title: label,
-      subtitle: description,
-      trailingIcon: isSelected ? Icons.check_circle : null,
-      onTap: onTap,
-      margin: const EdgeInsets.only(bottom: AppSpacing.xs),
-    );
-  }
-}
-
-// ── Colour variant section ──────────────────────────────────────────────────
 
 class _ColourVariantSection extends StatelessWidget {
   final dynamic appearance;
@@ -176,22 +192,14 @@ class _ColourVariantSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Colour Palette',
-          style: AppTypography.labelMedium(context).copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
+        _SectionLabel('Colour Palette'),
         for (final variant in AppColourVariant.values)
-          InsightCard(
-            leadingIcon: variant.icon,
+          _SettingsTile(
+            icon: variant.icon,
             title: variant.displayName,
             subtitle: variant.description,
-            trailingIcon:
-                current == variant ? Icons.check_circle : null,
+            selected: current == variant,
             onTap: () => appearance.setColourVariant(variant),
-            margin: const EdgeInsets.only(bottom: AppSpacing.xs),
           ),
       ],
     );
