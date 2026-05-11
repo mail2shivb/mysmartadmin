@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/proto_theme/app_colors.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -31,47 +32,41 @@ class LScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Stack + Scaffold(transparent) pattern mirrors AppScaffold and reliably
-    // fills available space regardless of how the parent Navigator constrains.
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: const DecoratedBox(
-            decoration: BoxDecoration(gradient: AppColors.headerGradient),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            bottom: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _Header(
-                  title: title,
-                  subtitle: subtitle,
-                  searchHint: searchHint,
-                  onSearchTap: onSearchTap,
-                  trailing: trailing,
-                  onBack: onBack,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(28)),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: child,
+    // No nested Scaffold — ShellScaffold (or the push-route Scaffold) owns
+    // the outer Scaffold. We just paint the gradient background ourselves and
+    // lay out the header + content column.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: DecoratedBox(
+        decoration: const BoxDecoration(gradient: AppColors.headerGradient),
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Header(
+                title: title,
+                subtitle: subtitle,
+                searchHint: searchHint,
+                onSearchTap: onSearchTap,
+                trailing: trailing,
+                onBack: onBack,
+              ),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(28)),
                   ),
+                  clipBehavior: Clip.antiAlias,
+                  child: child,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
