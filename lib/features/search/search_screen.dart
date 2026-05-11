@@ -2,18 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
-import '../../core/proto_theme/app_radius.dart';
-import '../../core/proto_theme/app_spacing.dart';
-import '../../core/proto_theme/app_text_styles.dart';
 import '../../data/local/app_database.dart';
-import '../../shared/widgets/page_scaffold.dart';
-import '../../shared/widgets/proto_app_card.dart';
-import '../../shared/widgets/proto_empty_state.dart';
+import '../../shared/widgets/l_widgets.dart';
 
-/// Full-text search screen — uses the FTS5 index in [AppDatabase.ftsSearch].
-///
-/// Replaces the stub [QueryScreen] with live data-backed search.
-/// Tapping a result navigates to the appropriate detail screen.
+/// Search screen — full-text search across the vault.
+/// Uses LScreen so it renders as a push route with gradient header + back button.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -56,38 +49,37 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PageScaffold(
+    return LScreen(
       title: 'Search',
-      subtitle: 'Results across your vault',
+      subtitle: 'Records, reminders, tasks…',
+      onBack: () => Navigator.of(context).maybePop(),
       child: Column(
         children: [
-          // ── Search input ──────────────────────────────────────────────
+          // ── Active search bar ─────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-                ProtoSpacing.lg, ProtoSpacing.lg, ProtoSpacing.lg, 0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.cardSurface,
-                borderRadius: BorderRadius.circular(ProtoRadius.md),
+                color: AppColors.paleLavender,
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ProtoSpacing.md),
-                    child: Icon(Icons.search, color: AppColors.textMuted),
+                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    child: Icon(Icons.search, color: AppColors.textMuted, size: 20),
                   ),
                   Expanded(
                     child: TextField(
                       controller: _controller,
-                      autofocus: false,
+                      autofocus: true,
                       decoration: const InputDecoration(
-                        hintText: 'Search records, bills, documents…',
-                        hintStyle: AppTextStyles.bodySecondary,
+                        hintText: 'Type to search…',
+                        hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
                         border: InputBorder.none,
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: ProtoSpacing.md),
+                        contentPadding: EdgeInsets.symmetric(vertical: 14),
                       ),
                       onChanged: _search,
                       onSubmitted: _search,
@@ -95,8 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   if (_controller.text.isNotEmpty)
                     IconButton(
-                      icon: const Icon(Icons.close,
-                          color: AppColors.textMuted, size: 20),
+                      icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
                       onPressed: () {
                         _controller.clear();
                         _search('');
@@ -107,7 +98,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
 
-          // ── Results / suggestions ─────────────────────────────────────
+          // ── Results / suggestions ─────────────────────────────────────────
           Expanded(child: _buildBody()),
         ],
       ),
@@ -117,52 +108,38 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _buildBody() {
     if (_loading) {
       return const Center(
-        child: CircularProgressIndicator(color: AppColors.primaryPurple),
+        child: Padding(
+          padding: EdgeInsets.all(40),
+          child: CircularProgressIndicator(
+              color: AppColors.primaryPurple, strokeWidth: 2),
+        ),
       );
     }
     if (_results == null) return _buildSuggestions();
     if (_results!.isEmpty) {
-      return ProtoEmptyState(
-        icon: Icons.search_off_rounded,
-        title: 'No results for "$_lastQuery"',
-        message: 'Try a document title, type, or field value.',
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+        children: [
+          LEmptyState(
+            icon: Icons.search_off_rounded,
+            title: 'No results for "$_lastQuery"',
+            message: 'Try a document title, type, or field value.',
+          ),
+        ],
       );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.all(ProtoSpacing.lg),
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
       itemCount: _results!.length,
+      separatorBuilder: (context2, i2) => const SizedBox(height: 8),
       itemBuilder: (context, i) {
         final doc = _results![i];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: ProtoSpacing.sm),
-          child: ProtoAppCard(
-            padding: const EdgeInsets.all(ProtoSpacing.md),
-            child: Row(
-              children: [
-                Container(
-                  width: 40, height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.paleLavender,
-                    borderRadius: BorderRadius.circular(ProtoRadius.md),
-                  ),
-                  child: const Icon(Icons.description_rounded,
-                      color: AppColors.deepPurple, size: 20),
-                ),
-                const SizedBox(width: ProtoSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(doc.title,
-                          style: AppTextStyles.title.copyWith(fontSize: 15)),
-                      Text(doc.documentTypeId ?? '',
-                          style: AppTextStyles.bodySecondary),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right, color: AppColors.textMuted),
-              ],
-            ),
+        return LCard(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: ListRow(
+            icon: Icons.description_outlined,
+            title: doc.title,
+            subtitle: doc.documentTypeId,
           ),
         );
       },
@@ -170,7 +147,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSuggestions() {
-    const suggestions = [
+    const chips = [
       (Icons.book_rounded, 'Passport'),
       (Icons.directions_car_rounded, 'Driving licence'),
       (Icons.receipt_long_rounded, 'Bills'),
@@ -179,18 +156,20 @@ class _SearchScreenState extends State<SearchScreen> {
       (Icons.subscriptions_rounded, 'Subscriptions'),
     ];
     return ListView(
-      padding: const EdgeInsets.all(ProtoSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
       children: [
-        const Text('Try searching for…', style: AppTextStyles.title),
-        const SizedBox(height: ProtoSpacing.sm),
+        const SectionTitle('Try searching for…'),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: ProtoSpacing.sm,
-          runSpacing: ProtoSpacing.sm,
-          children: suggestions.map((s) {
+          spacing: 8,
+          runSpacing: 8,
+          children: chips.map((s) {
             final (icon, label) = s;
             return ActionChip(
-              avatar: Icon(icon, size: 16, color: AppColors.deepPurple),
-              label: Text(label, style: AppTextStyles.bodySecondary),
+              avatar: Icon(icon, size: 16, color: AppColors.royalPurple),
+              label: Text(label,
+                  style: const TextStyle(
+                      color: AppColors.textPrimary, fontSize: 13)),
               backgroundColor: AppColors.paleLavender,
               side: const BorderSide(color: AppColors.border),
               onPressed: () {

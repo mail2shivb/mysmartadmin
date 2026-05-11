@@ -11,26 +11,27 @@ import '../features/documents/document_types.dart';
 import '../features/documents/driving_licence/driving_licence_list_screen.dart';
 import '../features/documents/passport/passport_list_screen.dart';
 import '../features/home/home_dashboard_screen.dart';
+import '../features/home/emergency_pack_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/settings/profile_screen.dart';
 import '../features/vault/vault_explorer_screen.dart';
 import '../features/vault/category_detail_screen.dart';
 import '../features/search/search_screen.dart';
+import '../features/records/add_record_screen.dart';
+import '../features/records/record_detail_screen.dart';
+import '../features/records/edit_record_screen.dart';
+import '../features/records/replace_record_screen.dart';
+import '../features/records/version_history_screen.dart';
+import '../features/reminders/reminder_detail_screen.dart';
+import '../features/reminders/add_reminder_screen.dart';
+import '../features/reports/report_detail_screen.dart';
+import '../features/reports/life_timeline_screen.dart';
 
 /// Application router configuration using go_router
-/// 
-/// Routes:
-/// - /home - Dashboard
-/// - /bills - Bills
-/// - /documents - Documents
-/// - /reminders - Reminders
-/// - /reports - Reports (accessible via navigation, not in bottom nav)
-/// - /policies - Policies (accessible via navigation, not in bottom nav)
-/// - /tasks - Tasks
-/// - /settings - Settings (full screen, not in bottom nav)
-/// 
+///
 /// Bottom nav tabs (5):
-/// Dashboard, Bills, Documents, Reminders, Tasks
+/// Home | Vault | + (add) | Reminders | Reports
 class AppRouter {
   AppRouter._();
 
@@ -40,25 +41,45 @@ class AppRouter {
   /// Shell navigator key (for bottom nav)
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-  /// Route paths
+  // ── Tab route paths ──────────────────────────────────────────────────────
   static const String home = '/home';
-  static const String bills = '/bills';
-  static const String documents = '/documents';
+  static const String vault = '/vault';
   static const String reminders = '/reminders';
   static const String reports = '/reports';
+
+  // ── Shell sub-routes (retain bottom nav) ────────────────────────────────
+  static const String bills = '/bills';
+  static const String documents = '/documents';
   static const String policies = '/policies';
-  static const String categories = '/categories';
-  static const String query = '/query';
   static const String tasks = '/tasks';
-  static const String settings = '/settings';
-  static const String vault = '/vault';
+
+  // ── Root routes (push over shell — no bottom nav) ────────────────────────
   static const String vaultCategory = '/vault/category/:domainId';
   static const String search = '/search';
+  static const String settings = '/settings';
+  static const String profile = '/profile';
+  static const String emergencyPack = '/emergency-pack';
+
+  // ── Record routes ────────────────────────────────────────────────────────
+  static const String addRecord = '/records/add';
+  static const String recordDetail = '/records/detail';
+  static const String editRecord = '/records/edit';
+  static const String replaceRecord = '/records/replace';
+  static const String versionHistory = '/records/version-history';
+
+  // ── Reminder routes ──────────────────────────────────────────────────────
+  static const String reminderDetail = '/reminders/detail';
+  static const String addReminder = '/reminders/add';
+
+  // ── Report routes ────────────────────────────────────────────────────────
+  static const String reportDetail = '/reports/detail';
+  static const String lifeTimeline = '/reports/life-timeline';
+
+  // ── Document routes (legacy + new) ──────────────────────────────────────
   static const String passportList = '/passport';
   static const String passportAdd = '/passport/add';
   static const String drivingLicenceList = '/driving-licence';
   static const String drivingLicenceAdd = '/driving-licence/add';
-  /// Untyped entry point — shows the document-type selector first.
   static const String addDocument = '/documents/add';
 
   /// Router configuration
@@ -67,7 +88,7 @@ class AppRouter {
     initialLocation: home,
     debugLogDiagnostics: false,
     routes: [
-      // Shell route with bottom navigation
+      // ── Shell route (bottom nav) ─────────────────────────────────────────
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -77,63 +98,15 @@ class AppRouter {
           );
         },
         routes: [
-          // Dashboard tab — prototype HomeDashboardScreen
+          // Home tab
           GoRoute(
             path: home,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: HomeDashboardScreen(),
             ),
           ),
-          
-          // Bills tab
-          GoRoute(
-            path: bills,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: BillsScreen(),
-            ),
-          ),
-          
-          // Documents tab — prototype hub layout
-          GoRoute(
-            path: documents,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: DocumentsHubScreen(),
-            ),
-          ),
-          
-          // Reminders tab — prototype RemindersScreen
-          GoRoute(
-            path: reminders,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: RemindersScreen(),
-            ),
-          ),
-          
-          // Reports tab — prototype ReportsScreen
-          GoRoute(
-            path: reports,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ReportsScreen(),
-            ),
-          ),
-          
-          // Policies tab (B13)
-          GoRoute(
-            path: policies,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: b13.PoliciesScreen(),
-            ),
-          ),
-          
-          // Tasks tab (keep existing)
-          GoRoute(
-            path: tasks,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: TasksScreen(),
-            ),
-          ),
 
-          // Vault explorer (in shell)
+          // Vault tab
           GoRoute(
             path: vault,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -141,26 +114,55 @@ class AppRouter {
             ),
           ),
 
-          // Category detail (in shell, reached from Vault)
+          // Reminders tab
           GoRoute(
-            path: vaultCategory,
-            pageBuilder: (context, state) {
-              final domainId = state.pathParameters['domainId'] ?? '';
-              return NoTransitionPage(
-                child: CategoryDetailScreen(domainId: domainId),
-              );
-            },
-          ),
-
-          // Search (in shell)
-          GoRoute(
-            path: search,
+            path: reminders,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: SearchScreen(),
+              child: RemindersScreen(),
             ),
           ),
 
-          // Passport list (in shell — no bottom nav slot, reached from Documents)
+          // Reports tab
+          GoRoute(
+            path: reports,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ReportsScreen(),
+            ),
+          ),
+
+          // Bills
+          GoRoute(
+            path: bills,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: BillsScreen(),
+            ),
+          ),
+
+          // Documents hub
+          GoRoute(
+            path: documents,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: DocumentsHubScreen(),
+            ),
+          ),
+
+          // Policies
+          GoRoute(
+            path: policies,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: b13.PoliciesScreen(),
+            ),
+          ),
+
+          // Tasks
+          GoRoute(
+            path: tasks,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: TasksScreen(),
+            ),
+          ),
+
+          // Passport list (in shell)
           GoRoute(
             path: passportList,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -168,7 +170,7 @@ class AppRouter {
             ),
           ),
 
-          // Driving licence list (in shell — no bottom nav slot)
+          // Driving licence list (in shell)
           GoRoute(
             path: drivingLicenceList,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -178,14 +180,98 @@ class AppRouter {
         ],
       ),
 
-      // Settings (not in bottom nav)
+      // ── Root routes (full-screen push, no bottom nav) ────────────────────
+
+      // Category detail
+      GoRoute(
+        path: vaultCategory,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final domainId = state.pathParameters['domainId'] ?? '';
+          return CategoryDetailScreen(domainId: domainId);
+        },
+      ),
+
+      // Search
+      GoRoute(
+        path: search,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SearchScreen(),
+      ),
+
+      // Settings
       GoRoute(
         path: settings,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsScreen(),
       ),
 
-      // Passport add — pre-selects passport type in the unified form.
+      // Profile
+      GoRoute(
+        path: profile,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ProfileScreen(),
+      ),
+
+      // Emergency pack
+      GoRoute(
+        path: emergencyPack,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EmergencyPackScreen(),
+      ),
+
+      // ── Record routes ──────────────────────────────────────────────────
+      GoRoute(
+        path: addRecord,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AddRecordScreen(),
+      ),
+      GoRoute(
+        path: recordDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RecordDetailScreen(),
+      ),
+      GoRoute(
+        path: editRecord,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EditRecordScreen(),
+      ),
+      GoRoute(
+        path: replaceRecord,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReplaceRecordScreen(),
+      ),
+      GoRoute(
+        path: versionHistory,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const VersionHistoryScreen(),
+      ),
+
+      // ── Reminder routes ────────────────────────────────────────────────
+      GoRoute(
+        path: reminderDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReminderDetailScreen(),
+      ),
+      GoRoute(
+        path: addReminder,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AddReminderScreen(),
+      ),
+
+      // ── Report routes ──────────────────────────────────────────────────
+      GoRoute(
+        path: reportDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReportDetailScreen(),
+      ),
+      GoRoute(
+        path: lifeTimeline,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const LifeTimelineScreen(),
+      ),
+
+      // ── Document / legacy routes ───────────────────────────────────────
       GoRoute(
         path: passportAdd,
         parentNavigatorKey: _rootNavigatorKey,
@@ -193,8 +279,6 @@ class AppRouter {
           initialType: SupportedDocumentType.passport,
         ),
       ),
-
-      // Driving licence add — pre-selects driving licence type in the unified form.
       GoRoute(
         path: drivingLicenceAdd,
         parentNavigatorKey: _rootNavigatorKey,
@@ -202,8 +286,6 @@ class AppRouter {
           initialType: SupportedDocumentType.drivingLicence,
         ),
       ),
-
-      // Untyped entry point — shows type selector first (e.g. from Documents hub FAB).
       GoRoute(
         path: addDocument,
         parentNavigatorKey: _rootNavigatorKey,
@@ -212,27 +294,29 @@ class AppRouter {
     ],
   );
 
-  /// Get the bottom nav index for a given location.
-  /// Layout: 0=Dashboard, 1=Bills, 2=Documents, 3=Reminders, 4=Tasks
+  /// Bottom nav index for a given location.
+  /// Layout: 0=Home, 1=Vault, 2=Add(fab), 3=Reminders, 4=Reports
   static int getIndexForLocation(String location) {
     if (location.startsWith(home)) return 0;
-    if (location.startsWith(bills)) return 1;
-    if (location.startsWith(documents)) return 2;
+    if (location.startsWith(vault)) return 1;
     if (location.startsWith(reminders)) return 3;
-    if (location.startsWith(tasks)) return 4;
+    if (location.startsWith(reports)) return 4;
     return 0;
   }
 
-  /// Get the location for a given bottom nav index.
+  /// Route path for a given bottom nav index (skips index 2 = add fab).
   static String getLocationForIndex(int index) {
     switch (index) {
-      case 0: return home;
-      case 1: return bills;
-      case 2: return documents;
-      case 3: return reminders;
-      case 4: return tasks;
-      default: return home;
+      case 0:
+        return home;
+      case 1:
+        return vault;
+      case 3:
+        return reminders;
+      case 4:
+        return reports;
+      default:
+        return home;
     }
   }
 }
-

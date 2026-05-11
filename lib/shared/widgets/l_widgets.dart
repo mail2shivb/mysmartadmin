@@ -8,8 +8,12 @@ import '../../core/proto_theme/app_colors.dart';
 
 // ── LScreen ──────────────────────────────────────────────────────────────────
 
-/// Full-screen shell: gradient header + rounded white content area.
-/// Replaces PageScaffold for all main tab screens.
+/// Full-screen shell for SUB-SCREENS (push routes outside the shell).
+/// Uses Scaffold(backgroundColor: purple) + Column so it works in any
+/// navigator context — root or shell.
+///
+/// Tab screens (Home, Vault, Reminders, Reports) do NOT use LScreen;
+/// they return content only and ShellScaffold wraps them.
 class LScreen extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -32,39 +36,33 @@ class LScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // No nested Scaffold — ShellScaffold (or the push-route Scaffold) owns
-    // the outer Scaffold. We just paint the gradient background ourselves and
-    // lay out the header + content column.
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
-      child: DecoratedBox(
-        decoration: const BoxDecoration(gradient: AppColors.headerGradient),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _Header(
-                title: title,
-                subtitle: subtitle,
-                searchHint: searchHint,
-                onSearchTap: onSearchTap,
-                trailing: trailing,
-                onBack: onBack,
-              ),
-              Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(28)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: child,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF7B2CBF),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _Header(
+              title: title,
+              subtitle: subtitle,
+              searchHint: searchHint,
+              onSearchTap: onSearchTap,
+              trailing: trailing,
+              onBack: onBack,
+            ),
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(28)),
                 ),
+                clipBehavior: Clip.antiAlias,
+                child: child,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -90,8 +88,10 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, searchHint != null ? 20 : 16),
+    final topPad = MediaQuery.paddingOf(context).top;
+    return Container(
+      decoration: const BoxDecoration(gradient: AppColors.headerGradient),
+      padding: EdgeInsets.fromLTRB(20, topPad + 12, 20, searchHint != null ? 20 : 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

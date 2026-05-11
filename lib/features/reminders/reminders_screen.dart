@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../app/router.dart';
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
 import '../../domain/reports/reports_repository.dart';
@@ -7,6 +9,8 @@ import '../../domain/reports/dto/upcoming_reminder_view.dart';
 import '../../presentation/viewmodels/reminders_view_model.dart';
 import '../../shared/widgets/l_widgets.dart';
 
+/// Reminders screen — returns content only.
+/// ShellScaffold provides the gradient header + bottom nav wrapper.
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
 
@@ -26,30 +30,25 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LScreen(
-      title: 'Reminders',
-      subtitle: 'Renewals, deadlines and bills',
-      searchHint: 'Search reminders…',
-      child: FutureBuilder<List<UpcomingReminderView>>(
-        future: _vm.loadRemindersDueSoon(daysAhead: 90),
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(40),
-                child: CircularProgressIndicator(
-                    color: AppColors.primaryPurple, strokeWidth: 2),
-              ),
-            );
-          }
-          final all = snap.data ?? [];
-          return _RemindersBody(
-            reminders: all,
-            filter: _filter,
-            onFilterChange: (f) => setState(() => _filter = f),
+    return FutureBuilder<List<UpcomingReminderView>>(
+      future: _vm.loadRemindersDueSoon(daysAhead: 90),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(
+                  color: AppColors.primaryPurple, strokeWidth: 2),
+            ),
           );
-        },
-      ),
+        }
+        final all = snap.data ?? [];
+        return _RemindersBody(
+          reminders: all,
+          filter: _filter,
+          onFilterChange: (f) => setState(() => _filter = f),
+        );
+      },
     );
   }
 }
@@ -68,20 +67,22 @@ class _RemindersBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Group reminders: today / this week / later
-    final today = reminders
-        .where((r) => r.daysUntilDue <= 0)
-        .toList();
-    final thisWeek = reminders
-        .where((r) => r.daysUntilDue >= 1 && r.daysUntilDue <= 7)
-        .toList();
-    final later = reminders
-        .where((r) => r.daysUntilDue > 7)
-        .toList();
+    final today = reminders.where((r) => r.daysUntilDue <= 0).toList();
+    final thisWeek =
+        reminders.where((r) => r.daysUntilDue >= 1 && r.daysUntilDue <= 7).toList();
+    final later = reminders.where((r) => r.daysUntilDue > 7).toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
       children: [
-        // ── Filter chips ─────────────────────────────────────────────
+        // ── Add reminder button ───────────────────────────────────────────
+        LPrimaryButton(
+          label: 'Add reminder',
+          onPressed: () => context.push(AppRouter.addReminder),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Filter chips ──────────────────────────────────────────────────
         FilterChipRow(
           chips: const ['All', 'Bills', 'Renewals', 'Tasks', 'Overdue'],
           active: filter,
@@ -96,41 +97,32 @@ class _RemindersBody extends StatelessWidget {
             message: 'No upcoming reminders. You are on top of everything.',
           ),
         ] else ...[
-          // ── Today ─────────────────────────────────────────────────
+          // ── Today ────────────────────────────────────────────────────
           if (today.isNotEmpty) ...[
             const SectionTitle('Today'),
             LCard(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 4, horizontal: 4),
-              child: Column(
-                children: _buildRows(context, today),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Column(children: _buildRows(context, today)),
             ),
             const SizedBox(height: 16),
           ],
 
-          // ── This week ─────────────────────────────────────────────
+          // ── This week ────────────────────────────────────────────────
           if (thisWeek.isNotEmpty) ...[
             const SectionTitle('This week'),
             LCard(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 4, horizontal: 4),
-              child: Column(
-                children: _buildRows(context, thisWeek),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Column(children: _buildRows(context, thisWeek)),
             ),
             const SizedBox(height: 16),
           ],
 
-          // ── Later ─────────────────────────────────────────────────
+          // ── Later ────────────────────────────────────────────────────
           if (later.isNotEmpty) ...[
             const SectionTitle('Later'),
             LCard(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 4, horizontal: 4),
-              child: Column(
-                children: _buildRows(context, later),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Column(children: _buildRows(context, later)),
             ),
           ],
         ],
@@ -142,10 +134,7 @@ class _RemindersBody extends StatelessWidget {
       BuildContext context, List<UpcomingReminderView> items) {
     final rows = <Widget>[];
     for (int i = 0; i < items.length; i++) {
-      if (i > 0) {
-        rows.add(
-            const Divider(height: 1, color: AppColors.divider));
-      }
+      if (i > 0) rows.add(const Divider(height: 1, color: AppColors.divider));
       final r = items[i];
       rows.add(ListRow(
         icon: _iconForKind(r.sourceEntityKind),
@@ -163,14 +152,14 @@ class _RemindersBody extends StatelessWidget {
                       ? 'Soon'
                       : 'Later',
         ),
-        onTap: () {},
+        onTap: () => context.push(AppRouter.reminderDetail),
       ));
     }
     return rows;
   }
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 IconData _iconForKind(String kind) => switch (kind) {
       'bill' => Icons.receipt_long_outlined,
