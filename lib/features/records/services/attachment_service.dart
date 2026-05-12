@@ -42,13 +42,18 @@ class StoredAttachment {
   });
 }
 
+enum _PickSource { camera, gallery, file }
+
 class AttachmentService {
   AttachmentService._();
 
   /// Show the standard "Attach" bottom sheet (Take Photo / Choose from Library
   /// / Choose File) and return the user's choice, or null if they cancelled.
-  static Future<PickedAttachment?> pick(BuildContext context) {
-    return showModalBottomSheet<PickedAttachment?>(
+  ///
+  /// The sheet closes BEFORE the OS picker opens, so the app never appears
+  /// frozen during image compression or iCloud downloads.
+  static Future<PickedAttachment?> pick(BuildContext context) async {
+    final source = await showModalBottomSheet<_PickSource>(
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
@@ -86,57 +91,57 @@ class AttachmentService {
               icon: Icons.camera_alt_outlined,
               title: 'Take photo',
               subtitle: 'Use the camera to photograph a document',
-              onTap: () async {
-                final picked = await _pickFromCamera();
-                if (sheetCtx.mounted) Navigator.of(sheetCtx).pop(picked);
-              },
+              onTap: () => Navigator.of(sheetCtx).pop(_PickSource.camera),
             ),
             _SheetTile(
               icon: Icons.image_outlined,
               title: 'Choose from library',
               subtitle: 'Pick an image from your photos',
-              onTap: () async {
-                final picked = await _pickFromGallery();
-                if (sheetCtx.mounted) Navigator.of(sheetCtx).pop(picked);
-              },
+              onTap: () => Navigator.of(sheetCtx).pop(_PickSource.gallery),
             ),
             _SheetTile(
               icon: Icons.upload_file_outlined,
               title: 'Choose file',
               subtitle: 'PDF, image, or any saved document',
-              onTap: () async {
-                final picked = await _pickFile();
-                if (sheetCtx.mounted) Navigator.of(sheetCtx).pop(picked);
-              },
+              onTap: () => Navigator.of(sheetCtx).pop(_PickSource.file),
             ),
             const SizedBox(height: 8),
           ],
         ),
       ),
     );
+
+    if (source == null) return null;
+
+    // Sheet is fully dismissed before OS picker opens — no visible freeze.
+    return switch (source) {
+      _PickSource.camera => _pickFromCamera(),
+      _PickSource.gallery => _pickFromGallery(),
+      _PickSource.file => _pickFile(),
+    };
   }
 
   static Future<PickedAttachment?> _pickFromCamera() async {
-    final x = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 90);
+    final x = await ImagePicker().pickImage(source: ImageSource.camera);
     if (x == null) return null;
+    final size = await File(x.path).length();
     return PickedAttachment(
       sourcePath: x.path,
       fileName: x.name,
       mimeType: 'image/jpeg',
-      sizeBytes: await File(x.path).length(),
+      sizeBytes: size,
     );
   }
 
   static Future<PickedAttachment?> _pickFromGallery() async {
-    final x = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 90);
+    final x = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (x == null) return null;
+    final size = await File(x.path).length();
     return PickedAttachment(
       sourcePath: x.path,
       fileName: x.name,
       mimeType: x.mimeType ?? 'image/jpeg',
-      sizeBytes: await File(x.path).length(),
+      sizeBytes: size,
     );
   }
 

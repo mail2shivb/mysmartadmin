@@ -5,15 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/proto_theme/app_colors.dart';
 import '../services/attachment_service.dart';
 
-/// Section that lets the user attach a single photo/file to a record.
-///
-/// Shows an empty drop-zone when nothing is selected; once a file is picked
-/// (or already saved), shows a preview tile with a remove button.
-///
-/// The widget is fully controlled — pass [picked] (a freshly-picked file
-/// pending persistence) and/or [existingPath] (a relative path to a file
-/// already saved in the app docs dir) and react to [onPicked] / [onClear].
-class AttachmentField extends StatelessWidget {
+class AttachmentField extends StatefulWidget {
   final PickedAttachment? picked;
   final String? existingPath;
   final String? existingMime;
@@ -31,7 +23,25 @@ class AttachmentField extends StatelessWidget {
     this.existingSize,
   });
 
-  bool get _hasAnything => picked != null || existingPath != null;
+  @override
+  State<AttachmentField> createState() => _AttachmentFieldState();
+}
+
+class _AttachmentFieldState extends State<AttachmentField> {
+  bool _picking = false;
+
+  bool get _hasAnything => widget.picked != null || widget.existingPath != null;
+
+  Future<void> _pick() async {
+    if (_picking) return;
+    setState(() => _picking = true);
+    try {
+      final p = await AttachmentService.pick(context);
+      if (p != null && mounted) widget.onPicked(p);
+    } finally {
+      if (mounted) setState(() => _picking = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +55,57 @@ class AttachmentField extends StatelessWidget {
             child: Text('Attachment',
                 style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
-          if (_hasAnything) _preview(context) else _empty(context),
+          if (_picking)
+            _loadingZone()
+          else if (_hasAnything)
+            _preview()
+          else
+            _empty(),
         ],
       ),
     );
   }
 
-  Widget _empty(BuildContext context) {
+  Widget _loadingZone() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      decoration: BoxDecoration(
+        color: AppColors.softLavender,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: const Row(
+        children: [
+          SizedBox(
+            width: 38,
+            height: 38,
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.royalPurple,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          Text(
+            'Loading file…',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _empty() {
     return GestureDetector(
-      onTap: () async {
-        final p = await AttachmentService.pick(context);
-        if (p != null) onPicked(p);
-      },
+      onTap: _pick,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
         decoration: BoxDecoration(
@@ -79,10 +128,10 @@ class AttachmentField extends StatelessWidget {
                   color: AppColors.royalPurple, size: 19),
             ),
             const SizedBox(width: 12),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text('Add photo or file',
                       style: TextStyle(
                           color: AppColors.textPrimary,
@@ -102,11 +151,12 @@ class AttachmentField extends StatelessWidget {
     );
   }
 
-  Widget _preview(BuildContext context) {
-    final isImage = _isImage(picked?.mimeType ?? existingMime);
-    final fileName = picked?.fileName ?? existingPath?.split('/').last ?? '';
-    final mime = picked?.mimeType ?? existingMime ?? 'file';
-    final size = picked?.sizeBytes ?? existingSize;
+  Widget _preview() {
+    final isImage = _isImage(widget.picked?.mimeType ?? widget.existingMime);
+    final fileName =
+        widget.picked?.fileName ?? widget.existingPath?.split('/').last ?? '';
+    final mime = widget.picked?.mimeType ?? widget.existingMime ?? 'file';
+    final size = widget.picked?.sizeBytes ?? widget.existingSize;
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -122,8 +172,9 @@ class AttachmentField extends StatelessWidget {
             child: SizedBox(
               width: 56,
               height: 56,
-              child: isImage && picked != null
-                  ? Image.file(File(picked!.sourcePath), fit: BoxFit.cover)
+              child: isImage && widget.picked != null
+                  ? Image.file(File(widget.picked!.sourcePath),
+                      fit: BoxFit.cover)
                   : Container(
                       color: AppColors.paleLavender,
                       alignment: Alignment.center,
@@ -153,10 +204,7 @@ class AttachmentField extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 GestureDetector(
-                  onTap: () async {
-                    final p = await AttachmentService.pick(context);
-                    if (p != null) onPicked(p);
-                  },
+                  onTap: _pick,
                   child: const Text('Replace',
                       style: TextStyle(
                           color: AppColors.royalPurple,
@@ -167,7 +215,7 @@ class AttachmentField extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: onClear,
+            onPressed: widget.onClear,
             icon: const Icon(Icons.close_rounded,
                 size: 18, color: AppColors.textMuted),
             tooltip: 'Remove attachment',

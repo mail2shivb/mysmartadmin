@@ -33,7 +33,9 @@ class MlKitImageExtractionService implements DocumentExtractionService {
     final inputImage = InputImage.fromFilePath(filePath);
     final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
     try {
-      final recognized = await recognizer.processImage(inputImage);
+      final recognized = await recognizer
+          .processImage(inputImage)
+          .timeout(const Duration(seconds: 20));
       final text = recognized.text;
       return switch (type) {
         SupportedDocumentType.passport => PassportMrzParser.parse(text),

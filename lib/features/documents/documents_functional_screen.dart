@@ -188,8 +188,7 @@ class _DocumentsFunctionalScreenState
 
   Future<void> _takePhoto() async {
     final picker = ImagePicker();
-    final XFile? photo =
-        await picker.pickImage(source: ImageSource.camera, imageQuality: 90);
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
 
     if (!mounted) return;
     if (photo == null) {
@@ -234,7 +233,8 @@ class _DocumentsFunctionalScreenState
       _uploadState = UploadAreaState.extracting;
     });
 
-    await _runExtraction(filePath: filePath, mimeType: file.extension ?? '');
+    final mime = _mimeFromExtension(file.extension ?? '');
+    await _runExtraction(filePath: filePath, mimeType: mime);
   }
 
   // ── Shared extraction runner ───────────────────────────────────────────────
@@ -405,6 +405,17 @@ class _DocumentsFunctionalScreenState
           ],
         ),
       );
+
+  // ── Mime helper ────────────────────────────────────────────────────────────
+
+  static String _mimeFromExtension(String ext) => switch (ext.toLowerCase()) {
+        'jpg' || 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'heic' => 'image/heic',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
+        _ => 'application/octet-stream',
+      };
 
   // ── Error helper ───────────────────────────────────────────────────────────
 
