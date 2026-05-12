@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router.dart';
+import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
+import '../../data/local/app_database.dart';
 import '../../shared/widgets/l_widgets.dart';
 
 class AddRecordScreen extends StatefulWidget {
@@ -118,17 +123,123 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
 
   // ── Validation & save ────────────────────────────────────────────────────
 
-  void _save() {
+  /// Map UI category label → (domainId, default categoryId) used by the vault
+  /// taxonomy. Keys must match the strings shown in the picker exactly.
+  static const _categoryToTaxonomy = <String, ({String domain, String category})>{
+    'Identity & Legal':
+        (domain: 'identity_legal', category: 'personal_identity'),
+    'Insurance & Protection':
+        (domain: 'insurance_protection', category: 'general_insurance'),
+    'Bills, Utilities & Subscriptions':
+        (domain: 'bills_utilities_subscriptions', category: 'utilities'),
+    'Home & Property': (domain: 'home_property', category: 'home'),
+    'Vehicles & Transport':
+        (domain: 'vehicles_transport', category: 'vehicle'),
+    'Banking, Credit & Borrowing':
+        (domain: 'banking_credit_borrowing', category: 'banking'),
+    'Work, Income & Tax': (domain: 'work_income_tax', category: 'employment'),
+    'Person & Family Profile':
+        (domain: 'person_family', category: 'people'),
+  };
+
+  /// Map UI record-type label → canonical documentTypeId.
+  static const _recordTypeIds = <String, String>{
+    'Passport': 'passport',
+    'Driving Licence': 'driving_licence',
+    'Home Insurance Policy': 'home_insurance',
+    'Car Insurance Policy': 'car_insurance',
+    'Electricity Bill': 'electricity_bill',
+    'Mortgage Statement': 'mortgage_statement',
+    'Payslip': 'payslip',
+    'Employment Contract': 'employment_contract',
+    'Proof of Address': 'proof_of_address',
+    'Bank Statement': 'bank_statement',
+    'Credit Card Statement': 'credit_card_statement',
+  };
+
+  /// Pull the first numeric value out of free-form text (e.g. "£12.99 / month")
+  /// and convert it to pence. Returns null when no number is present.
+  int? _parseAmountToCents(String text) {
+    final m = RegExp(r'(\d+(?:\.\d+)?)').firstMatch(text);
+    if (m == null) return null;
+    final v = double.tryParse(m.group(1)!);
+    if (v == null) return null;
+    return (v * 100).round();
+  }
+
+  Future<void> _save() async {
     final newErrors = <String, String>{};
-    if (_titleCtrl.text.trim().isEmpty) newErrors['title'] = 'Please enter a title';
+    if (_titleCtrl.text.trim().isEmpty) {
+      newErrors['title'] = 'Please enter a title';
+    }
     if (_category == null) newErrors['category'] = 'Please choose a category';
-    if (_recordType == null) newErrors['recordType'] = 'Please choose a record type';
+    if (_recordType == null) {
+      newErrors['recordType'] = 'Please choose a record type';
+    }
     setState(() => _errors
       ..clear()
       ..addAll(newErrors));
-
     if (newErrors.isNotEmpty) return;
 
+    final tax = _categoryToTaxonomy[_category!] ??
+        (domain: 'identity_legal', category: 'general');
+    final docTypeId = _recordTypeIds[_recordType!] ??
+        _recordType!.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+    final amountText = _amountCtrl.text.trim();
+    final amountCents =
+        amountText.isEmpty ? null : _parseAmountToCents(amountText);
+
+    // Zone B: free-form fields the schema does not normalise.
+    final extra = <String, dynamic>{
+      if (_notesCtrl.text.trim().isNotEmpty) 'notes': _notesCtrl.text.trim(),
+      if (amountText.isNotEmpty && amountCents == null)
+        'amount_raw': amountText,
+      if (widget.mode != 'manual') 'entry_mode': widget.mode,
+    };
+
+    try {
+      final db = DatabaseProvider.instance;
+      await db.transaction(() async {
+        final id = await db.documentsDao.insertDocument(
+          DocumentsCompanion.insert(
+            title: _titleCtrl.text.trim(),
+            issuer: Value(_providerCtrl.text.trim().isEmpty
+                ? null
+                : _providerCtrl.text.trim()),
+            referenceNumber: Value(_referenceCtrl.text.trim().isEmpty
+                ? null
+                : _referenceCtrl.text.trim()),
+            amountCents: Value(amountCents),
+            expiryDate: Value(_expiryDate),
+            extraFieldsJson:
+                Value(extra.isEmpty ? null : jsonEncode(extra)),
+            source: const Value('manual'),
+          ),
+        );
+        await db.documentsDao.classify(
+          id: id,
+          documentTypeId: docTypeId,
+          categoryId: tax.category,
+          domainId: tax.domain,
+          taxonomyVersion: 1,
+        );
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not save: $e'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Row(children: [

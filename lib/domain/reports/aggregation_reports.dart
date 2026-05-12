@@ -1,23 +1,31 @@
 // B11.4 STATUS: IMPLEMENTED
 
+import '../../data/local/app_database.dart';
 import 'bill_reports.dart';
 import 'subscription_reports.dart';
 import 'dto/monthly_cost_summary.dart';
 import 'dto/active_entity_summary.dart';
 import 'dto/cost_breakdown_by_category.dart';
 
-/// Cross-entity aggregation reports service
-/// 
-/// Read-only composition layer that aggregates data across multiple entity types
-/// No direct database access - composes results from other report classes
+/// Cross-entity aggregation reports service.
+///
+/// Read-only composition layer that aggregates data across multiple entity
+/// types. Uses [BillReports] and [SubscriptionReports] for monetary
+/// aggregations and [AppDatabase] directly for the documents count
+/// (no DocumentReports class yet).
 class AggregationReports {
   final BillReports _billReports;
   final SubscriptionReports _subscriptionReports;
+  final AppDatabase _database;
 
-  AggregationReports(this._billReports, this._subscriptionReports);
+  AggregationReports(
+    this._billReports,
+    this._subscriptionReports,
+    this._database,
+  );
 
   /// Get monthly cost summary across all commitment types
-  /// 
+  ///
   /// Composes bills and subscriptions totals into a single summary
   Future<MonthlyCostSummary> getMonthlyCostSummary() async {
     final billsTotal = await _billReports.getMonthlyTotal();
@@ -42,7 +50,7 @@ class AggregationReports {
     final activeBills = await _billReports.countActiveBills();
     final activeSubscriptions = await _subscriptionReports.countActiveSubscriptions();
     final activePolicies = 0; // PolicyReports not yet implemented
-    final activeDocuments = 0; // DocumentReports not yet implemented
+    final activeDocuments = await _database.documentsDao.countAll();
     final pendingReminders = 0; // ReminderReports not yet wired up
     
     return ActiveEntitySummary(

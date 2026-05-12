@@ -31,7 +31,7 @@ class ReportsRepository {
     subscriptions = SubscriptionReports(_database);
     policies = PolicyReports(_database);
     reminders = ReminderReports(_database);
-    aggregations = AggregationReports(bills, subscriptions);
+    aggregations = AggregationReports(bills, subscriptions, _database);
   }
 
   // ============================================================
