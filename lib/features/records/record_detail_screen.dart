@@ -8,20 +8,90 @@ import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../shared/widgets/l_widgets.dart';
+import 'services/attachment_service.dart';
 
 /// Record Detail — loads a [DocumentEntity] by id and renders its fields.
 /// Returns content only — ShellScaffold provides gradient header + back button.
-class RecordDetailScreen extends StatelessWidget {
+class RecordDetailScreen extends StatefulWidget {
   final int? recordId;
   const RecordDetailScreen({super.key, this.recordId});
 
   @override
+  State<RecordDetailScreen> createState() => _RecordDetailScreenState();
+}
+
+class _RecordDetailScreenState extends State<RecordDetailScreen> {
+  late Future<DocumentEntity?> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _fetch();
+  }
+
+  Future<DocumentEntity?> _fetch() async {
+    final id = widget.recordId;
+    if (id == null) return null;
+    return DatabaseProvider.instance.documentsDao.getDocumentById(id);
+  }
+
+  void _refresh() => setState(() => _future = _fetch());
+
+  Future<void> _confirmAndDelete(DocumentEntity doc) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete this record?'),
+        content: Text(
+            '“${doc.title}” will be moved to the recycle bin. Any linked file '
+            'will also be removed from the device.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+
+    try {
+      await DatabaseProvider.instance.documentsDao.softDeleteDocument(doc.id);
+      if (doc.filePath != null) {
+        await AttachmentService.deleteRelative(doc.filePath!);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete: $e')),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    context.pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Record deleted'),
+        backgroundColor: AppColors.success,
+        behavior: SnackBarBehavior.floating,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (recordId == null) {
+    if (widget.recordId == null) {
       return const _NotFound(message: 'No record id supplied.');
     }
     return FutureBuilder<DocumentEntity?>(
-      future: DatabaseProvider.instance.documentsDao.getDocumentById(recordId!),
+      future: _future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -34,9 +104,17 @@ class RecordDetailScreen extends StatelessWidget {
         }
         final doc = snap.data;
         if (doc == null) {
-          return _NotFound(message: 'Record #$recordId not found.');
+          return _NotFound(message: 'Record #${widget.recordId} not found.');
         }
-        return _RecordBody(doc: doc);
+        return _RecordBody(
+          doc: doc,
+          onEdit: () async {
+            await context.push(AppRouter.editRecordPath(doc.id));
+            if (!mounted) return;
+            _refresh();
+          },
+          onDelete: () => _confirmAndDelete(doc),
+        );
       },
     );
   }
@@ -44,7 +122,13 @@ class RecordDetailScreen extends StatelessWidget {
 
 class _RecordBody extends StatelessWidget {
   final DocumentEntity doc;
-  const _RecordBody({required this.doc});
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  const _RecordBody({
+    required this.doc,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +238,7 @@ class _RecordBody extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: LPrimaryButton(
-                label: 'Edit',
-                onPressed: () => context.push(AppRouter.editRecord),
-              ),
+              child: LPrimaryButton(label: 'Edit', onPressed: onEdit),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -172,6 +253,18 @@ class _RecordBody extends StatelessWidget {
         LGhostButton(
           label: 'Version history',
           onPressed: () => context.push(AppRouter.versionHistory),
+        ),
+        const SizedBox(height: 16),
+        // Destructive action kept visually separated at the bottom, matching
+        // iOS/Material conventions for irreversible operations.
+        TextButton.icon(
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete_outline, size: 18),
+          label: const Text('Delete record'),
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.error,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
         ),
       ],
     );

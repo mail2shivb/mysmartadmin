@@ -90,7 +90,8 @@ class AppRouter {
 
   // ── Root paths (no bottom nav — add/edit forms) ────────────────────────
   static const String addRecord = '/records/add';
-  static const String editRecord = '/records/edit';
+  static const String editRecord = '/records/edit/:id';
+  static String editRecordPath(int id) => '/records/edit/$id';
   static const String replaceRecord = '/records/replace';
   static const String addReminder = '/reminders/add';
   static const String passportAdd = '/passport/add';
@@ -252,7 +253,10 @@ class AppRouter {
       GoRoute(
         path: editRecord,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const EditRecordScreen(),
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          return EditRecordScreen(recordId: id);
+        },
       ),
       GoRoute(
         path: replaceRecord,

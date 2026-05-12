@@ -5,7 +5,10 @@
       "Bash(flutter analyze *)",
       "Bash(grep -v \"^$\")",
       "Bash(flutter build *)",
-      "Bash(flutter --version)"
+      "Bash(flutter --version)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

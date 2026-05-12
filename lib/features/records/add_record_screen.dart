@@ -9,6 +9,8 @@ import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../shared/widgets/l_widgets.dart';
+import 'services/attachment_service.dart';
+import 'widgets/attachment_field.dart';
 
 class AddRecordScreen extends StatefulWidget {
   final String mode;
@@ -47,6 +49,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
   String? _category;
   String? _recordType;
   DateTime? _expiryDate;
+  PickedAttachment? _attachment;
 
   final _titleCtrl = TextEditingController();
   final _providerCtrl = TextEditingController();
@@ -200,7 +203,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
 
     try {
       final db = DatabaseProvider.instance;
-      await db.transaction(() async {
+      final newId = await db.transaction<int>(() async {
         final id = await db.documentsDao.insertDocument(
           DocumentsCompanion.insert(
             title: _titleCtrl.text.trim(),
@@ -224,7 +227,24 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
           domainId: tax.domain,
           taxonomyVersion: 1,
         );
+        return id;
       });
+
+      // Persist the attachment after insert so we can scope it under
+      // /records/<id>/. We update the row with the resulting metadata.
+      if (_attachment != null) {
+        final stored =
+            await AttachmentService.persist(_attachment!, recordId: newId);
+        await db.documentsDao.updateDocumentFields(
+          newId,
+          DocumentsCompanion(
+            filePath: Value(stored.relativePath),
+            fileMime: Value(stored.mimeType),
+            fileSizeBytes: Value(stored.sizeBytes),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -690,6 +710,18 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
               ),
             ),
 
+            const SizedBox(height: 16),
+
+            // Attachment
+            _sectionLabel('Attachment', Icons.attach_file_rounded),
+            LCard(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 4),
+              child: AttachmentField(
+                picked: _attachment,
+                onPicked: (p) => setState(() => _attachment = p),
+                onClear: () => setState(() => _attachment = null),
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Privacy
