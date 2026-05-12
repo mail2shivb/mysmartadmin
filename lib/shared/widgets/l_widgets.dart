@@ -535,6 +535,7 @@ class CategoryCarousel extends StatelessWidget {
       height: 86,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(right: 20),
         itemCount: items.length,
         separatorBuilder: (context2, index2) => const SizedBox(width: 12),
         itemBuilder: (_, i) {

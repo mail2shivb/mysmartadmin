@@ -12,14 +12,14 @@ import '../../presentation/viewmodels/reminders_view_model.dart';
 import '../../shared/widgets/l_widgets.dart';
 
 const _kCategories = <({String label, IconData icon, String id})>[
-  (label: 'Identity',      icon: Icons.badge_outlined,            id: 'identity_legal'),
-  (label: 'Insurance',     icon: Icons.shield_outlined,           id: 'insurance_protection'),
-  (label: 'Banking',       icon: Icons.account_balance_outlined,  id: 'banking_credit_borrowing'),
-  (label: 'Utilities',     icon: Icons.bolt_outlined,             id: 'bills_utilities_subscriptions'),
-  (label: 'Vehicle',       icon: Icons.directions_car_outlined,   id: 'vehicles_transport'),
-  (label: 'Home',          icon: Icons.home_outlined,             id: 'home_property'),
-  (label: 'Work',          icon: Icons.work_outline,              id: 'work_income_tax'),
-  (label: 'Subscriptions', icon: Icons.subscriptions_outlined,    id: 'bills_utilities_subscriptions'),
+  (label: 'Identity',      icon: Icons.badge_outlined,           id: 'identity_legal'),
+  (label: 'Insurance',     icon: Icons.shield_outlined,          id: 'insurance_protection'),
+  (label: 'Banking',       icon: Icons.account_balance_outlined, id: 'banking_credit_borrowing'),
+  (label: 'Utilities',     icon: Icons.bolt_outlined,            id: 'bills_utilities_subscriptions'),
+  (label: 'Vehicle',       icon: Icons.directions_car_outlined,  id: 'vehicles_transport'),
+  (label: 'Home',          icon: Icons.home_outlined,            id: 'home_property'),
+  (label: 'Work',          icon: Icons.work_outline,             id: 'work_income_tax'),
+  (label: 'Family',        icon: Icons.people_outline,           id: 'person_family'),
 ];
 
 /// Home Dashboard — returns a ListView directly.
@@ -41,7 +41,43 @@ class HomeDashboardScreen extends StatelessWidget {
         const SectionTitle('Categories'),
         CategoryCarousel(
           items: _kCategories,
-          onTap: (id) => context.go('/vault/category/$id'),
+          onTap: (id) => context.push('/vault/category/$id'),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Quick access chips (horizontal scroll) ───────────────────────
+        SizedBox(
+          height: 38,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _QuickChip(
+                  icon: Icons.smart_toy_outlined,
+                  label: 'Ask LedgerAI',
+                  onTap: () => context.push(AppRouter.assistantChat),
+                ),
+                const SizedBox(width: 8),
+                _QuickChip(
+                  icon: Icons.upload_file_outlined,
+                  label: 'Add Document',
+                  onTap: () => context.push(AppRouter.addDocument),
+                ),
+                const SizedBox(width: 8),
+                _QuickChip(
+                  icon: Icons.people_outline,
+                  label: 'People & Family',
+                  onTap: () => context.push('/vault/category/person_family'),
+                ),
+                const SizedBox(width: 8),
+                _QuickChip(
+                  icon: Icons.rate_review_outlined,
+                  label: 'Review Queue',
+                  onTap: () => context.go(AppRouter.vault),
+                ),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 20),
 
@@ -55,10 +91,8 @@ class HomeDashboardScreen extends StatelessWidget {
             }
             final reminders = snap.data ?? [];
             if (reminders.isEmpty) {
-              return const LEmptyState(
-                icon: Icons.check_circle_outline,
-                title: 'All clear',
-                message: 'No upcoming deadlines in the next 30 days.',
+              return _ActionNeededEmpty(
+                onAddReminder: () => context.push(AppRouter.addReminder),
               );
             }
             return LCard(
@@ -71,8 +105,7 @@ class HomeDashboardScreen extends StatelessWidget {
                     ListRow(
                       icon: _iconForKind(reminders[i].sourceEntityKind),
                       title: _formatTrigger(reminders[i].triggerTypeId),
-                      subtitle:
-                          '${_labelKind(reminders[i].sourceEntityKind)}'
+                      subtitle: '${_labelKind(reminders[i].sourceEntityKind)}'
                           ' · Due in ${reminders[i].daysUntilDue}d',
                       badge: StatusBadge(
                         kind: _badgeForDays(reminders[i].daysUntilDue),
@@ -102,19 +135,26 @@ class HomeDashboardScreen extends StatelessWidget {
             if (snap.connectionState == ConnectionState.waiting) {
               return const _LoadingCard();
             }
-            final total = (snap.data ?? 0) / 100.0;
+            final pence = snap.data ?? 0;
+            if (pence == 0) {
+              return _MonthlyCommitmentEmpty(
+                onAddBill: () =>
+                    context.push('${AppRouter.addRecord}?mode=manual'),
+              );
+            }
+            final total = pence / 100.0;
             return LCard(
               child: Row(
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
                       color: AppColors.paleLavender,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: const Icon(Icons.currency_pound,
-                        color: AppColors.royalPurple, size: 24),
+                        color: AppColors.royalPurple, size: 22),
                   ),
                   const SizedBox(width: 14),
                   Column(
@@ -124,7 +164,7 @@ class HomeDashboardScreen extends StatelessWidget {
                         '£${total.toStringAsFixed(2)}',
                         style: const TextStyle(
                           color: AppColors.royalPurple,
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
                         ),
@@ -160,14 +200,11 @@ class HomeDashboardScreen extends StatelessWidget {
                     icon: Icons.receipt_long_outlined,
                     title: 'Bills',
                     subtitle: '${s?.activeBills ?? 0} active',
-                    trailing: Text(
-                      '${s?.activeBills ?? 0}',
-                      style: const TextStyle(
-                        color: AppColors.royalPurple,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
+                    trailing: Text('${s?.activeBills ?? 0}',
+                        style: const TextStyle(
+                            color: AppColors.royalPurple,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
                     onTap: () => context.go(AppRouter.vault),
                   ),
                   const Divider(height: 1, color: AppColors.divider),
@@ -175,14 +212,11 @@ class HomeDashboardScreen extends StatelessWidget {
                     icon: Icons.shield_outlined,
                     title: 'Policies',
                     subtitle: '${s?.activePolicies ?? 0} active',
-                    trailing: Text(
-                      '${s?.activePolicies ?? 0}',
-                      style: const TextStyle(
-                        color: AppColors.royalPurple,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
+                    trailing: Text('${s?.activePolicies ?? 0}',
+                        style: const TextStyle(
+                            color: AppColors.royalPurple,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
                     onTap: () => context.go(AppRouter.vault),
                   ),
                   const Divider(height: 1, color: AppColors.divider),
@@ -190,14 +224,11 @@ class HomeDashboardScreen extends StatelessWidget {
                     icon: Icons.description_outlined,
                     title: 'Documents',
                     subtitle: '${s?.activeDocuments ?? 0} saved',
-                    trailing: Text(
-                      '${s?.activeDocuments ?? 0}',
-                      style: const TextStyle(
-                        color: AppColors.royalPurple,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
+                    trailing: Text('${s?.activeDocuments ?? 0}',
+                        style: const TextStyle(
+                            color: AppColors.royalPurple,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
                     onTap: () => context.go(AppRouter.documents),
                   ),
                   const Divider(height: 1, color: AppColors.divider),
@@ -205,51 +236,17 @@ class HomeDashboardScreen extends StatelessWidget {
                     icon: Icons.subscriptions_outlined,
                     title: 'Subscriptions',
                     subtitle: '${s?.activeSubscriptions ?? 0} active',
-                    trailing: Text(
-                      '${s?.activeSubscriptions ?? 0}',
-                      style: const TextStyle(
-                        color: AppColors.royalPurple,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
+                    trailing: Text('${s?.activeSubscriptions ?? 0}',
+                        style: const TextStyle(
+                            color: AppColors.royalPurple,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
                     onTap: () => context.go(AppRouter.vault),
                   ),
                 ],
               ),
             );
           },
-        ),
-        const SizedBox(height: 20),
-
-        // ── Quick actions ────────────────────────────────────────────────
-        const SectionTitle('Quick actions'),
-        Row(
-          children: [
-            Expanded(
-              child: _QuickAction(
-                icon: Icons.lock_outline_rounded,
-                label: 'Open Vault',
-                onTap: () => context.go(AppRouter.vault),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _QuickAction(
-                icon: Icons.medical_services_outlined,
-                label: 'Emergency',
-                onTap: () => context.push(AppRouter.emergencyPack),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _QuickAction(
-                icon: Icons.bar_chart_rounded,
-                label: 'Reports',
-                onTap: () => context.go(AppRouter.reports),
-              ),
-            ),
-          ],
         ),
 
         const SizedBox(height: 100),
@@ -318,12 +315,127 @@ class _LoadingCard extends StatelessWidget {
   }
 }
 
-class _QuickAction extends StatelessWidget {
+class _ActionNeededEmpty extends StatelessWidget {
+  final VoidCallback onAddReminder;
+  const _ActionNeededEmpty({required this.onAddReminder});
+
+  @override
+  Widget build(BuildContext context) {
+    return LCard(
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: AppColors.paleLavender,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.check_circle_outline,
+                color: AppColors.royalPurple, size: 26),
+          ),
+          const SizedBox(height: 10),
+          const Text('All clear',
+              style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          const Text(
+            'No upcoming deadlines in the next 30 days.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: onAddReminder,
+            icon: const Icon(Icons.add_rounded, size: 15),
+            label: const Text('Add reminder'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.royalPurple,
+              side: const BorderSide(color: AppColors.border),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              textStyle: const TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+}
+
+class _MonthlyCommitmentEmpty extends StatelessWidget {
+  final VoidCallback onAddBill;
+  const _MonthlyCommitmentEmpty({required this.onAddBill});
+
+  @override
+  Widget build(BuildContext context) {
+    return LCard(
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.paleLavender,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.receipt_long_outlined,
+                color: AppColors.royalPurple, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('No monthly commitments yet',
+                    style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600)),
+                const SizedBox(height: 2),
+                const Text(
+                  'Add bills, policies, or subscriptions to track monthly commitments.',
+                  style:
+                      TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: onAddBill,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.add_rounded,
+                          size: 14, color: AppColors.royalPurple),
+                      SizedBox(width: 3),
+                      Text('Add bill',
+                          style: TextStyle(
+                              color: AppColors.royalPurple,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-
-  const _QuickAction(
+  const _QuickChip(
       {required this.icon, required this.label, required this.onTap});
 
   @override
@@ -331,24 +443,22 @@ class _QuickAction extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.paleLavender,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.border),
         ),
-        child: Column(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: AppColors.royalPurple, size: 26),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.deepPurple,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            Icon(icon, size: 14, color: AppColors.royalPurple),
+            const SizedBox(width: 5),
+            Text(label,
+                style: const TextStyle(
+                    color: AppColors.deepPurple,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500)),
           ],
         ),
       ),

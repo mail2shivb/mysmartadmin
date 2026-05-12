@@ -47,7 +47,7 @@ class _VaultExplorerScreenState extends State<VaultExplorerScreen> {
         const SectionTitle('Browse by category'),
         CategoryCarousel(
           items: _kVaultCategories,
-          onTap: (id) => context.go('/vault/category/$id'),
+          onTap: (id) => context.push('/vault/category/$id'),
         ),
         const SizedBox(height: 20),
 

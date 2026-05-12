@@ -5,8 +5,8 @@ import 'router.dart';
 import '../core/proto_theme/app_colors.dart';
 
 /// Shell scaffold — gradient header + rounded white content area + bottom nav.
-/// Tab screens return ONLY their scrollable content (ListView/CustomScrollView).
-/// This widget handles the full visual chrome for all 5 tabs.
+/// Tab screens return ONLY their scrollable content (ListView/Column).
+/// Sub-screens also return content only — the shell supplies the header + back button.
 class ShellScaffold extends StatelessWidget {
   final String location;
   final Widget child;
@@ -19,7 +19,7 @@ class ShellScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final info = _headerInfoFor(location);
+    final info = _headerInfoFor(location, context);
     final currentIndex = AppRouter.getIndexForLocation(location);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -35,6 +35,7 @@ class ShellScaffold extends StatelessWidget {
               searchHint: info.searchHint,
               trailing: info.trailing(context),
               onSearchTap: () => context.push(AppRouter.search),
+              onBack: info.onBack,
             ),
             Expanded(
               child: Container(
@@ -64,15 +65,80 @@ class ShellScaffold extends StatelessWidget {
 
   // ── Per-route header configuration ────────────────────────────────────────
 
-  _HeaderInfo _headerInfoFor(String loc) {
+  // Most-specific routes first to avoid prefix collisions.
+  _HeaderInfo _headerInfoFor(String loc, BuildContext ctx) {
+    // Vault category (before vault tab check)
+    if (loc.startsWith('/vault/category/')) {
+      final domainId = loc.substring('/vault/category/'.length);
+      final label = _kCatLabels[domainId] ?? _titleCase(domainId);
+      return _HeaderInfo(
+        title: label,
+        subtitle: '$label records and reminders',
+        onBack: () => ctx.pop(),
+      );
+    }
+
+    // Reports sub-screens (before reports tab check)
+    if (loc == AppRouter.reportDetail) {
+      return _HeaderInfo(title: 'Monthly bills', subtitle: 'April 2026',
+          onBack: () => ctx.pop());
+    }
+    if (loc == AppRouter.lifeTimeline) {
+      return _HeaderInfo(title: 'Life timeline',
+          subtitle: 'Major events in your records', onBack: () => ctx.pop());
+    }
+
+    // Reminders sub-screens (before reminders tab check)
+    if (loc == AppRouter.reminderDetail) {
+      return _HeaderInfo(title: 'Reminder', subtitle: 'Due date and actions',
+          onBack: () => ctx.pop());
+    }
+
+    // Record sub-screens
+    if (loc == AppRouter.recordDetail) {
+      return _HeaderInfo(
+        title: 'Record',
+        subtitle: 'Details and documents',
+        onBack: () => ctx.pop(),
+        trailing: (c) => const _MoreButton(),
+      );
+    }
+    if (loc == AppRouter.versionHistory) {
+      return _HeaderInfo(title: 'Version history', onBack: () => ctx.pop());
+    }
+
+    // Settings & Profile
+    if (loc == AppRouter.settings) {
+      return _HeaderInfo(title: 'Settings',
+          subtitle: 'Account, preferences and privacy',
+          onBack: () => ctx.pop());
+    }
+    if (loc == AppRouter.profile) {
+      return _HeaderInfo(title: 'Profile', subtitle: 'Your details',
+          onBack: () => ctx.pop());
+    }
+
+    // Emergency pack
+    if (loc == AppRouter.emergencyPack) {
+      return _HeaderInfo(title: 'Emergency pack',
+          subtitle: 'Critical info at your fingertips', onBack: () => ctx.pop());
+    }
+
+    // Search
+    if (loc == AppRouter.search) {
+      return _HeaderInfo(title: 'Search', subtitle: 'Records, reminders, tasks…',
+          onBack: () => ctx.pop());
+    }
+
+    // ── Tab screens ──────────────────────────────────────────────────────
     if (loc.startsWith(AppRouter.vault)) {
       return _HeaderInfo(
         title: 'My Vault',
         subtitle: 'All your documents in one place',
         searchHint: 'Search vault…',
-        trailing: (ctx) => HeaderIcon(
+        trailing: (c) => HeaderIcon(
           icon: Icons.tune_rounded,
-          onTap: () => ctx.go(AppRouter.search),
+          onTap: () => c.push(AppRouter.search),
         ),
       );
     }
@@ -80,37 +146,56 @@ class ShellScaffold extends StatelessWidget {
       return const _HeaderInfo(
         title: 'Reminders',
         subtitle: 'Renewals, deadlines and bills',
-        searchHint: null,
       );
     }
     if (loc.startsWith(AppRouter.reports)) {
       return const _HeaderInfo(
         title: 'Reports & Insights',
         subtitle: 'Understand your life admin',
-        searchHint: null,
       );
     }
+
     // Default: home
     return _HeaderInfo(
       title: 'LedgerAI',
       subtitle: 'Your life admin, privately on this device',
       searchHint: 'Search records, reminders, tasks…',
-      trailing: (ctx) => Row(
+      trailing: (c) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           HeaderIcon(
             icon: Icons.notifications_none_rounded,
-            onTap: () => ctx.go(AppRouter.reminders),
+            onTap: () => c.go(AppRouter.reminders),
           ),
           const SizedBox(width: 8),
           HeaderIcon(
             icon: Icons.settings_outlined,
-            onTap: () => ctx.push(AppRouter.settings),
+            onTap: () => c.push(AppRouter.settings),
           ),
         ],
       ),
     );
   }
+
+  static String _titleCase(String s) => s
+      .replaceAll('_', ' ')
+      .split(' ')
+      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+      .join(' ');
+
+  static const _kCatLabels = <String, String>{
+    'identity_legal': 'Identity & Legal',
+    'home_property': 'Home & Property',
+    'vehicles_transport': 'Vehicles & Transport',
+    'banking_credit_borrowing': 'Banking & Credit',
+    'banking_credit': 'Banking & Credit',
+    'insurance_protection': 'Insurance',
+    'insurance': 'Insurance',
+    'bills_utilities_subscriptions': 'Bills & Utilities',
+    'bills_utilities': 'Bills & Utilities',
+    'work_income_tax': 'Work & Income',
+    'person_family': 'People & Family',
+  };
 
   void _showAddSheet(BuildContext context) {
     showModalBottomSheet(
@@ -133,12 +218,14 @@ class _HeaderInfo {
   final String? subtitle;
   final String? searchHint;
   final Widget Function(BuildContext)? _trailing;
+  final VoidCallback? onBack;
 
   const _HeaderInfo({
     required this.title,
     this.subtitle,
     this.searchHint,
     Widget Function(BuildContext)? trailing,
+    this.onBack,
   }) : _trailing = trailing;
 
   Widget? trailing(BuildContext ctx) => _trailing?.call(ctx);
@@ -152,6 +239,7 @@ class _GradientHeader extends StatelessWidget {
   final String? searchHint;
   final Widget? trailing;
   final VoidCallback? onSearchTap;
+  final VoidCallback? onBack;
 
   const _GradientHeader({
     required this.title,
@@ -159,6 +247,7 @@ class _GradientHeader extends StatelessWidget {
     this.searchHint,
     this.trailing,
     this.onSearchTap,
+    this.onBack,
   });
 
   @override
@@ -172,6 +261,16 @@ class _GradientHeader extends StatelessWidget {
         children: [
           Row(
             children: [
+              if (onBack != null) ...[
+                GestureDetector(
+                  onTap: onBack,
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: Icon(Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white, size: 20),
+                  ),
+                ),
+              ],
               Expanded(
                 child: Text(
                   title,
@@ -235,7 +334,7 @@ class _GradientHeader extends StatelessWidget {
   }
 }
 
-// ── HeaderIcon (re-exported for other widgets that import shell_scaffold) ─────
+// ── HeaderIcon ────────────────────────────────────────────────────────────────
 
 class HeaderIcon extends StatelessWidget {
   final IconData icon;
@@ -258,6 +357,28 @@ class HeaderIcon extends StatelessWidget {
       ),
     );
   }
+}
+
+// ── _MoreButton ───────────────────────────────────────────────────────────────
+
+class _MoreButton extends StatelessWidget {
+  const _MoreButton();
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () {},
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.16),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+          ),
+          child: const Icon(Icons.more_horiz_rounded,
+              color: Colors.white, size: 18),
+        ),
+      );
 }
 
 // ── _ProtoBottomNavBar ────────────────────────────────────────────────────────
@@ -321,8 +442,8 @@ class _ProtoBottomNavBar extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  AppColors.royalPurple.withValues(alpha: 0.35),
+                              color: AppColors.royalPurple
+                                  .withValues(alpha: 0.35),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -395,8 +516,7 @@ class _NavItem extends StatelessWidget {
               style: TextStyle(
                 color: active ? AppColors.royalPurple : AppColors.textMuted,
                 fontSize: 10,
-                fontWeight:
-                    active ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ],
@@ -408,45 +528,141 @@ class _NavItem extends StatelessWidget {
 
 // ── _AddActionSheet ───────────────────────────────────────────────────────────
 
-class _AddActionSheet extends StatelessWidget {
+class _AddActionSheet extends StatefulWidget {
   final BuildContext parentContext;
   const _AddActionSheet({required this.parentContext});
 
   @override
-  Widget build(BuildContext context) {
-    final items = [
-      (
-        Icons.edit_note_outlined,
-        'Add manually',
-        'Enter details without uploading anything',
-        AppRouter.addRecord,
-      ),
-      (
-        Icons.camera_alt_outlined,
-        'Take a photo',
-        'Photograph a document, then review extracted details',
-        AppRouter.addDocument,
-      ),
-      (
-        Icons.image_outlined,
-        'Choose from library',
-        'Select an image from your photos',
-        AppRouter.addDocument,
-      ),
-      (
-        Icons.upload_file_outlined,
-        'Import from files',
-        'Add a PDF, image, or saved document',
-        AppRouter.addDocument,
-      ),
-      (
-        Icons.notifications_active_outlined,
-        'Add reminder',
-        'Create a renewal, expiry, or payment reminder',
-        AppRouter.addReminder,
-      ),
-    ];
+  State<_AddActionSheet> createState() => _AddActionSheetState();
+}
 
+class _AddActionSheetState extends State<_AddActionSheet> {
+  bool _moreExpanded = false;
+
+  static const _mainItems = <(IconData, String, String, String)>[
+    (
+      Icons.document_scanner_outlined,
+      'Scan Document',
+      'Capture and extract details from a document',
+      '${AppRouter.addRecord}?mode=scan',
+    ),
+    (
+      Icons.camera_alt_outlined,
+      'Take a Photo',
+      'Photograph a document, bill, policy, warranty, or paperwork',
+      '${AppRouter.addRecord}?mode=camera',
+    ),
+    (
+      Icons.image_outlined,
+      'Choose from Library',
+      'Select an image from your photos',
+      '${AppRouter.addRecord}?mode=library',
+    ),
+    (
+      Icons.upload_file_outlined,
+      'Import from Files',
+      'Add a PDF, image, or saved document',
+      '${AppRouter.addRecord}?mode=import',
+    ),
+    (
+      Icons.edit_note_outlined,
+      'Add Manually',
+      'Enter details without uploading anything',
+      '${AppRouter.addRecord}?mode=manual',
+    ),
+    (
+      Icons.notifications_active_outlined,
+      'Add Reminder',
+      'Create a renewal, expiry, or payment reminder',
+      AppRouter.addReminder,
+    ),
+  ];
+
+  static const _moreItems = <(IconData, String, String)>[
+    (Icons.task_alt_outlined, 'Add Task', AppRouter.addTask),
+    (Icons.share_outlined, 'Add Shared Item', AppRouter.addSharedItem),
+    (Icons.person_add_outlined, 'Add Person / Family Member', AppRouter.addPerson),
+    (Icons.work_outline, 'Add Employment Record', AppRouter.addEmployment),
+    (Icons.home_work_outlined, 'Add Address Record', AppRouter.addAddress),
+    (Icons.smart_toy_outlined, 'Ask LedgerAI', AppRouter.assistantChat),
+  ];
+
+  void _navigate(String route) {
+    Navigator.of(context).pop();
+    widget.parentContext.push(route);
+  }
+
+  Widget _buildItem(IconData icon, String title, String subtitle, String route) {
+    return InkWell(
+      onTap: () => _navigate(route),
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppColors.paleLavender,
+                borderRadius: BorderRadius.circular(11),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Icon(icon, color: AppColors.royalPurple, size: 19),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),
+                  Text(subtitle,
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11.5)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 16, color: AppColors.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoreSubItem(IconData icon, String title, String route) {
+    return InkWell(
+      onTap: () => _navigate(route),
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: AppColors.softLavender,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Icon(icon, color: AppColors.mediumPurple, size: 17),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(title,
+                  style: const TextStyle(
+                      color: AppColors.textPrimary, fontSize: 13.5, fontWeight: FontWeight.w500)),
+            ),
+            const Icon(Icons.chevron_right, size: 15, color: AppColors.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
@@ -476,61 +692,79 @@ class _AddActionSheet extends StatelessWidget {
             const SizedBox(height: 4),
             const Text(
               'Scan, upload, or create a record manually.',
-              style:
-                  TextStyle(color: AppColors.textSecondary, fontSize: 13),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
-            const SizedBox(height: 14),
-            ...items.map(
-              (it) => InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  parentContext.go(it.$4);
-                },
-                borderRadius: BorderRadius.circular(14),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 4, vertical: 8),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.paleLavender,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Icon(it.$1,
-                            color: AppColors.royalPurple, size: 20),
+            const SizedBox(height: 12),
+
+            // Main items
+            for (final it in _mainItems)
+              _buildItem(it.$1, it.$2, it.$3, it.$4),
+
+            const SizedBox(height: 4),
+
+            // More Options toggle row
+            InkWell(
+              onTap: () => setState(() => _moreExpanded = !_moreExpanded),
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: AppColors.paleLavender,
+                        borderRadius: BorderRadius.circular(11),
+                        border: Border.all(color: AppColors.border),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              it.$2,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              it.$3,
-                              style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 12),
-                            ),
-                          ],
-                        ),
+                      child: const Icon(Icons.more_horiz_rounded,
+                          color: AppColors.royalPurple, size: 19),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text('More Options',
+                              style: TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500)),
+                          Text('Task, shared item, person, employment, address, or ask LedgerAI',
+                              style: TextStyle(color: AppColors.textSecondary, fontSize: 11.5)),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    AnimatedRotation(
+                      turns: _moreExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: const Icon(Icons.keyboard_arrow_down_rounded,
+                          size: 20, color: AppColors.textMuted),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+
+            // More Options expanded sub-items
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              child: _moreExpanded
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 4),
+                      child: Column(
+                        children: [
+                          for (final it in _moreItems)
+                            _buildMoreSubItem(it.$1, it.$2, it.$3),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+
+            const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
               child: TextButton(
@@ -542,11 +776,8 @@ class _AddActionSheet extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18)),
                 ),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600),
-                ),
+                child: const Text('Cancel',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
               ),
             ),
           ],

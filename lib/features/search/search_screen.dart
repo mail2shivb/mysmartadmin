@@ -5,8 +5,7 @@ import '../../core/proto_theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../shared/widgets/l_widgets.dart';
 
-/// Search screen — full-text search across the vault.
-/// Uses LScreen so it renders as a push route with gradient header + back button.
+/// Search — content only. ShellScaffold provides the gradient header + back button.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -31,16 +30,12 @@ class _SearchScreenState extends State<SearchScreen> {
     if (q == _lastQuery) return;
     _lastQuery = q;
     if (q.isEmpty) {
-      setState(() {
-        _results = null;
-        _loading = false;
-      });
+      setState(() { _results = null; _loading = false; });
       return;
     }
     setState(() => _loading = true);
     try {
-      final db = DatabaseProvider.instance;
-      final results = await db.ftsSearch(q);
+      final results = await DatabaseProvider.instance.ftsSearch(q);
       if (mounted) setState(() { _results = results; _loading = false; });
     } catch (_) {
       if (mounted) setState(() { _results = []; _loading = false; });
@@ -49,59 +44,56 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LScreen(
-      title: 'Search',
-      subtitle: 'Records, reminders, tasks…',
-      onBack: () => Navigator.of(context).maybePop(),
-      child: Column(
-        children: [
-          // ── Active search bar ─────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.paleLavender,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14),
-                    child: Icon(Icons.search, color: AppColors.textMuted, size: 20),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      autofocus: true,
-                      decoration: const InputDecoration(
-                        hintText: 'Type to search…',
-                        hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      onChanged: _search,
-                      onSubmitted: _search,
+    return Column(
+      children: [
+        // ── Active search bar ─────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.paleLavender,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: Icon(Icons.search,
+                      color: AppColors.textMuted, size: 20),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Type to search…',
+                      hintStyle: TextStyle(
+                          color: AppColors.textMuted, fontSize: 14),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 14),
                     ),
+                    onChanged: _search,
+                    onSubmitted: _search,
                   ),
-                  if (_controller.text.isNotEmpty)
-                    IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
-                      onPressed: () {
-                        _controller.clear();
-                        _search('');
-                      },
-                    ),
-                ],
-              ),
+                ),
+                if (_controller.text.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.close,
+                        color: AppColors.textMuted, size: 20),
+                    onPressed: () {
+                      _controller.clear();
+                      _search('');
+                    },
+                  ),
+              ],
             ),
           ),
-
-          // ── Results / suggestions ─────────────────────────────────────────
-          Expanded(child: _buildBody()),
-        ],
-      ),
+        ),
+        Expanded(child: _buildBody()),
+      ],
     );
   }
 
@@ -129,7 +121,7 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
       itemCount: _results!.length,
       separatorBuilder: (context2, i2) => const SizedBox(height: 8),
       itemBuilder: (context, i) {
@@ -156,7 +148,7 @@ class _SearchScreenState extends State<SearchScreen> {
       (Icons.subscriptions_rounded, 'Subscriptions'),
     ];
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
       children: [
         const SectionTitle('Try searching for…'),
         const SizedBox(height: 8),
