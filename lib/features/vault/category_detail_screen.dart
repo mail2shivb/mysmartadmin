@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/router.dart';
 import '../../core/database_provider.dart';
 import '../../core/proto_theme/app_colors.dart';
 import '../../data/local/app_database.dart';
@@ -87,7 +88,8 @@ class CategoryDetailScreen extends StatelessWidget {
                   kind: _badgeKind(doc.expiryDate),
                   label: _statusLabel(doc.expiryDate),
                 ),
-                onTap: () => context.push('/records/detail'),
+                onTap: () =>
+                    context.push(AppRouter.recordDetailPath(doc.id)),
               ),
             );
           },

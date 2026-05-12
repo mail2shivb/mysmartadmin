@@ -73,7 +73,10 @@ class AppRouter {
   static const String settings = '/settings';
   static const String profile = '/profile';
   static const String emergencyPack = '/emergency-pack';
-  static const String recordDetail = '/records/detail';
+  static const String recordDetail = '/records/detail/:id';
+
+  /// Build a concrete record-detail path for a given document id.
+  static String recordDetailPath(int id) => '/records/detail/$id';
   static const String versionHistory = '/records/version-history';
   static const String reminderDetail = '/reminders/detail';
   static const String reportDetail = '/reports/detail';
@@ -179,8 +182,10 @@ class AppRouter {
           ),
           GoRoute(
             path: recordDetail,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: RecordDetailScreen()),
+            pageBuilder: (context, state) {
+              final id = int.tryParse(state.pathParameters['id'] ?? '');
+              return NoTransitionPage(child: RecordDetailScreen(recordId: id));
+            },
           ),
           GoRoute(
             path: versionHistory,

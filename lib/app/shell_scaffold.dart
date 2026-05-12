@@ -95,7 +95,7 @@ class ShellScaffold extends StatelessWidget {
     }
 
     // Record sub-screens
-    if (loc == AppRouter.recordDetail) {
+    if (loc.startsWith('/records/detail')) {
       return _HeaderInfo(
         title: 'Record',
         subtitle: 'Details and documents',
